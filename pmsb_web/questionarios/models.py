@@ -43,6 +43,7 @@ TIPO_PERGUNTA_CHOICE = (
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
+    variavel = models.CharField(max_length = 255)
     texto = models.TextField()
     tipo = models.CharField(max_length = 20, choices = TIPO_PERGUNTA_CHOICE)
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
@@ -52,6 +53,7 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
         ordering = ("questionario", "ordem", "tipo")
         verbose_name = "Pergunta"
         verbose_name_plural = "Perguntas"
+        unique_together = ("questionario", "variavel")
 
     def __str__(self):
         return "{0}: {1}".format(self.questionario, self.texto)
