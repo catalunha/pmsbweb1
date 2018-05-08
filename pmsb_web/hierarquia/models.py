@@ -16,7 +16,8 @@ class Departamento(UUIDModelMixin):
 
     class Meta:
         ordering = ["nome"]
-        verbose_name = "Departamento";verbose_name_plural = "Departamentos"
+        verbose_name = "Departamento"
+        verbose_name_plural = "Departamentos"
     
     def __concat_str__(self):
         if self.departamento_pertencente is None:
