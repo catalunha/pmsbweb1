@@ -11,7 +11,7 @@ import uuid
 """ Hierarquia Horizontal  """
 
 class Departamento(UUIDModelMixin):
-    nome         = models.CharField(max_length = 255)
+    nome = models.CharField(max_length = 255)
     departamento_pertencente = models.ForeignKey('self', on_delete = models.CASCADE, blank=True,null = True)
 
     class Meta:
@@ -28,9 +28,19 @@ class Departamento(UUIDModelMixin):
     def __str__(self):
         return self.__concat_str__()
 
+
+class Cargo(UUIDModelMixin):
+    nome = models.CharField(max_length = 255)
+    descricao = models.TextField()
+
+    class Meta:
+        ordering = ["nome"]
+        verbose_name = "Cargo"
+        verbose_name_plural = "Cargos"
+
 class Pessoa(UUIDModelMixin):
-    nome             = models.CharField(max_length = 255)
-    isCoordenador    = models.BooleanField(null = False)
+    nome = models.CharField(max_length = 255)
+    isCoordenador = models.BooleanField(null = False)
     departamento_pessoa = models.ForeignKey(Departamento, on_delete = models.CASCADE)
 
     class Meta:
@@ -43,3 +53,12 @@ class Pessoa(UUIDModelMixin):
             return "Coordenador {0}".format(self.nome)
         else:
             return "{0}".format(self.nome)
+
+class Hierarquia(UUIDModelMixin, UserOwnedModelMixin):
+    departamento = models.ForeignKey(Departamento, on_delete = models.CASCADE)
+    cargo = models.ForeignKey(Cargo, on_delete = models.CASCADE)
+
+    class Meta:
+        ordering = UserOwnedModelMixin.Meta.ordering
+        verbose_name = "Hierarquia"
+        verbose_name_plural = "Hierarquia"
