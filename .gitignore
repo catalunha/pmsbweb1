@@ -1,5 +1,8 @@
 # Created by https://www.gitignore.io
 
+# Visual Code Settings Folder
+.vscode/
+
 ### OSX ###
 .DS_Store
 .AppleDouble
