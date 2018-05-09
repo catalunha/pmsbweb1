@@ -31,6 +31,13 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     publicado = models.BooleanField()
 
+    perguntas = models.ManyToManyField(
+        "Pergunta",
+        through = "PerguntaDoQuestionario",
+        through_fields = ("questionario","pergunta"),
+        related_name = "questionarios",
+    )
+
     class Meta:
         verbose_name = "Questionario"
         verbose_name_plural = "Questionarios"
@@ -48,12 +55,10 @@ TIPO_PERGUNTA_CHOICE = (
 )
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
-    questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     variavel = models.CharField(max_length = 255)
     texto = models.TextField()
     tipo = models.CharField(max_length = 20, choices = TIPO_PERGUNTA_CHOICE)
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
-    ordem = models.SmallIntegerField()
 
     class Meta:
         ordering = ("questionario", "ordem", "tipo")
@@ -63,6 +68,11 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
 
     def __str__(self):
         return "{0}: {1}".format(self.questionario, self.texto)
+
+class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
+    questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
+    pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
+    ordem = models.SmallIntegerField()
 
 
 class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
