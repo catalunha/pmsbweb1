@@ -54,7 +54,9 @@ class Pessoa(UUIDModelMixin):
         else:
             return "{0}".format(self.nome)
 
-class Hierarquia(UUIDModelMixin, UserOwnedModelMixin):
+class Hierarquia(UUIDModelMixin):
+    usuario = models.OneToOneKey(User, on_delete = models.CASCADE)
+    superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
     departamento = models.ForeignKey(Departamento, on_delete = models.CASCADE)
     cargo = models.ForeignKey(Cargo, on_delete = models.CASCADE)
 
