@@ -38,21 +38,19 @@ class Cargo(UUIDModelMixin):
         verbose_name = "Cargo"
         verbose_name_plural = "Cargos"
 
-class Pessoa(UUIDModelMixin):
-    nome = models.CharField(max_length = 255)
-    isCoordenador = models.BooleanField(null = False)
-    departamento_pessoa = models.ForeignKey(Departamento, on_delete = models.CASCADE)
+class Perfil(UUIDModelMixin):
+    usuario = models.OneToOneKey(User, on_delete = models.CASCADE)
+    """
+    TODO: outros capos do perfil faltando, tem que ver no arquivo pdf do catalunha
+    """
 
     class Meta:
-        ordering = ["-isCoordenador"]
-        verbose_name = "Pessoa"
-        verbose_name_plural = "Pessoas"
+        ordering = ["usuario"]
+        verbose_name = "Perfil"
+        verbose_name_plural = "Perfis"
     
     def __str__(self):
-        if self.isCoordenador:
-            return "Coordenador {0}".format(self.nome)
-        else:
-            return "{0}".format(self.nome)
+        return "{0}".format(self.usuario.first_name)
 
 class Hierarquia(UUIDModelMixin):
     usuario = models.OneToOneKey(User, on_delete = models.CASCADE)
@@ -61,6 +59,6 @@ class Hierarquia(UUIDModelMixin):
     cargo = models.ForeignKey(Cargo, on_delete = models.CASCADE)
 
     class Meta:
-        ordering = UserOwnedModelMixin.Meta.ordering
+        ordering = ["usuario"]
         verbose_name = "Hierarquia"
         verbose_name_plural = "Hierarquia"
