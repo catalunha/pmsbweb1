@@ -12,9 +12,10 @@ class TimedModelMixin(models.Model):
         abstract = True
 
 class UserOwnedModelMixin(models.Model):
-    owner = models.ForeignKey(User, on_delete = models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete = models.CASCADE)
     class Meta:
         abstract = True
+        ordering = ["usuario"]
 
 class UUIDModelMixin(models.Model):
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
@@ -22,6 +23,10 @@ class UUIDModelMixin(models.Model):
         abstract = True
 """ Final Model Mixins """
 
+"""
+    Class Questionario
+    documentação
+"""
 class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     publicado = models.BooleanField()
@@ -39,6 +44,7 @@ TIPO_PERGUNTA_CHOICE = (
     ("texto", "Texto"),
     ("arquivo", "Arquivo"),
     ("coordenada", "Coordenada"),
+    ("numero", "Numero"),
 )
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
@@ -57,6 +63,7 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
 
     def __str__(self):
         return "{0}: {1}".format(self.questionario, self.texto)
+
 
 class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE, related_name="possiveis_escolhas")
@@ -144,4 +151,7 @@ class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
 class TextoResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="textos")
     texto = models.TextField()
-    
+
+class NumeroResposta(UUIDModelMixin, TimedModelMixin):
+    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="textos")
+    numero = models.IntegerField()
