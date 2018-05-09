@@ -39,7 +39,12 @@ class Cargo(UUIDModelMixin):
         verbose_name_plural = "Cargos"
 
 class Perfil(UUIDModelMixin):
-    usuario = models.OneToOneKey(User, on_delete = models.CASCADE)
+    usuario = models.OneToOneField(User, on_delete = models.CASCADE)
+    
+    superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
+    departamento = models.ForeignKey(Departamento, on_delete = models.CASCADE)
+    cargo = models.ForeignKey(Cargo, on_delete = models.CASCADE)
+
     """
     TODO: outros capos do perfil faltando, tem que ver no arquivo pdf do catalunha
     """
@@ -51,14 +56,3 @@ class Perfil(UUIDModelMixin):
     
     def __str__(self):
         return "{0}".format(self.usuario.first_name)
-
-class Hierarquia(UUIDModelMixin):
-    usuario = models.OneToOneKey(User, on_delete = models.CASCADE)
-    superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
-    departamento = models.ForeignKey(Departamento, on_delete = models.CASCADE)
-    cargo = models.ForeignKey(Cargo, on_delete = models.CASCADE)
-
-    class Meta:
-        ordering = ["usuario"]
-        verbose_name = "Hierarquia"
-        verbose_name_plural = "Hierarquia"
