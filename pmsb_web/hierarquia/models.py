@@ -12,7 +12,7 @@ import uuid
 
 class Departamento(UUIDModelMixin):
     nome = models.CharField(max_length = 255)
-    departamento_pertencente = models.ForeignKey('self', on_delete = models.CASCADE, blank=True,null = True)
+    superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True,null = True)
 
     class Meta:
         ordering = ["nome"]
