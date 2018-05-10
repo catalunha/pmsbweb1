@@ -61,18 +61,20 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
 
     class Meta:
-        ordering = ("questionario", "ordem", "tipo")
+        ordering = ("tipo",)
         verbose_name = "Pergunta"
         verbose_name_plural = "Perguntas"
-        unique_together = ("questionario", "variavel")
 
     def __str__(self):
-        return "{0}: {1}".format(self.questionario, self.texto)
+        return "{0}: {1}".format(self.variavel, self.texto)
 
 class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     ordem = models.SmallIntegerField()
+
+    class Meta:
+        ordering = ("questionario","ordem","pergunta")
 
 
 class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
@@ -163,5 +165,5 @@ class TextoResposta(UUIDModelMixin, TimedModelMixin):
     texto = models.TextField()
 
 class NumeroResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="textos")
+    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="numeros")
     numero = models.IntegerField()
