@@ -1,22 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 
 """ Model Mixins """
 from questionarios.models import UserOwnedModelMixin
 from questionarios.models import UUIDModelMixin
 """ Final Model Mixins """
-import uuid
-
-SEXO_CHOICE = (
-    ("M", "Masculino"),
-    ("F", "Feminino"),
-    ("ND", "Não-Declara"),
-)
 
 """ Hierarquia Horizontal  """
 class Departamento(UUIDModelMixin):
-    nome = models.CharField(max_length = 255)
+    nome = models.CharField(max_length = 255, unique = True)
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
+    descricao = models.TextField(verbose_name="Descrição")
 
     class Meta:
         ordering = ["superior__nome", "nome"]
@@ -34,15 +28,25 @@ class Departamento(UUIDModelMixin):
 
 
 class Cargo(UUIDModelMixin):
-    nome = models.CharField(max_length = 255)
-    descricao = models.TextField()
+    nome = models.CharField(max_length = 255, unique = True)
+    descricao = models.TextField(verbose_name="Descrição")
 
     class Meta:
         ordering = ["nome"]
         verbose_name = "Cargo"
         verbose_name_plural = "Cargos"
+    
+    def __str__(self):
+        return "{0}".format(self.nome)
 
 class UserProfile(UUIDModelMixin):
+
+    SEXO_CHOICE = (
+        ("M", "Masculino"),
+        ("F", "Feminino"),
+        ("ND", "Não-Declara"),
+    )
+
     usuario = models.OneToOneField(User, on_delete = models.CASCADE)
     #n renderizar no formulario
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True, related_name="subordinados")
@@ -59,13 +63,13 @@ class UserProfile(UUIDModelMixin):
     cidade = models.CharField(max_length=25)
     uf = models.CharField(max_length=2)
     
-        # so anexo
+    # so anexo
     comprovante_votacao = models.ImageField(upload_to='usuario/comprovante_votacao', blank=True, null = True)
     certidao_nascimento = models.ImageField(upload_to='usuario/certidao_nascimento', blank=True, null = True)
     certidao_casamento = models.ImageField(upload_to='usuario/certidao_casamento', blank=True, null = True)
     carteira_vacinacao = models.ImageField(upload_to='usuario/carteira_vacinacao', blank=True, null = True)
     
-        # dado + anexo
+    # dado + anexo
     endereco = models.CharField(max_length=50, blank=True, null=True)
     titulo_eleitor = models.CharField(max_length=12, blank=True, null=True)
     cpf = models.CharField(max_length=11)
