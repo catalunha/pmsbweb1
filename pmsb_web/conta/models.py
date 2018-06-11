@@ -52,8 +52,8 @@ class UserProfile(UUIDModelMixin):
     
     # atributos do usuario
     data_nascimeto = models.DateField(blank=True, null = True)
-    sexo = models.CharField(choices = SEXO_CHOICE, blank=True, null = True)
-    telefone_celular = models.CharField(max_lenght=12, blank=True, null = True)
+    sexo = models.CharField(max_length=1,choices = SEXO_CHOICE, blank=True, null = True)
+    telefone_celular = models.CharField(max_length=12, blank=True, null = True)
     telefone_fixo = models.CharField(max_length=12, blank=True, null = True)
     cep = models.CharField(max_length=8, blank=True, null=True)
     cidade = models.CharField(max_length=25)
@@ -67,14 +67,13 @@ class UserProfile(UUIDModelMixin):
     
         # dado + anexo
     endereco = models.CharField(max_length=50, blank=True, null=True)
-    titulo_eleitor = models.CharField(max_lenght=12, blank=True, null=True)
+    titulo_eleitor = models.CharField(max_length=12, blank=True, null=True)
     cpf = models.CharField(max_length=11)
     foto = models.ImageField(upload_to='usuario/foto_usuario/')
-    matricula_uft = models.CharField(max_lenght=10, blank=True, null=True)
-    
-
-
-
+    matricula_uft = models.CharField(max_length=10, blank=True, null=True)
+    carteira_motorista = models.ImageField(upload_to='usuario/cnh', blank=True, null = True)
+    lattes = models.ImageField(upload_to='usuario/lattes', blank=True, null = True)
+    lattes_descricao = models.CharField(max_length=255, blank=True, null=True)
 
 
     class Meta:
@@ -89,7 +88,7 @@ class DocumentoDigitalizado(models.Model):
     """Model definition for Arquivo."""
     arquivo = models.FileField()
     usuario = models.ForeignKey(UserProfile, on_delete = models.CASCADE)
-    tipo = models.CharField()
+    tipo = models.CharField(max_length=255)
 
     class Meta:
         """Meta definition for Arquivo."""
