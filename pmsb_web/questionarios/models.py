@@ -24,9 +24,9 @@ class UUIDModelMixin(models.Model):
 """ Final Model Mixins """
 
 class Localizacao(models.Model):
-    latitude = models.DecimalField(max_digits=9, decimal_places=6))
-    longitude = models.DecimalField(max_digits=9, decimal_places=6))
-    altitude = models.DecimalField(max_digits=9, decimal_places=6))
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    altitude = models.DecimalField(max_digits=9, decimal_places=6)
 
 """
     Class Questionario
@@ -95,37 +95,21 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
         return "{0} -> {1}".format(self.pergunta, self.texto)
 
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
-    questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
-    numero = models.IntegerField(editable=False)
+    questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE, related_name="respostas")
 
     objects = models.Manager()
 
     class Meta:
-        unique_together = ("questionario", "numero")
-        ordering = ("questionario","numero")
-
         verbose_name = "Resposta Questionario"
         verbose_name_plural = "Respostas Questionarios"
 
     def __str__(self):
-        return "Resposta do {0} numero {1}".format(self.questionario, self.numero)
-    
-    def save(self, *args, **kwargs):
-
-        if self.numero is None:            
-            
-            try:
-                resposta = RespostaQuestionario.objects.filter(questionario = self.questionario).order_by("-numero")[0]
-                self.numero = resposta.numero + 1
-            except IndexError:
-                self.numero = 1
-        
-        super(RespostaQuestionario, self).save(*args, **kwargs)
+        return "Resposta do {0}".format(self.questionario)
 
 class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
     resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
-    coordenada = models.
+    localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE)
 
     class Meta:
         verbose_name = "Resposta Pergunta"
