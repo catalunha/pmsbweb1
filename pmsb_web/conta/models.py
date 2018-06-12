@@ -45,6 +45,9 @@ def SET_SUPERIOR():
     """
     pass
 
+def upload_foto_usuario(instance, filename):
+    return "{0}_{1}".format(instance.pk, filename)
+
 class User(AbstractUser):
 
     SEXO_CHOICE = (
@@ -52,18 +55,27 @@ class User(AbstractUser):
         ("F", "Feminino"),
         ("ND", "Não-Declara"),
     )
+    
+    #foto de perfil
+    foto = models.ImageField(upload_to=upload_foto_usuario, null = True)
 
     #n renderizar no formulario
     superior = models.ForeignKey('self', on_delete = models.SET_NULL, blank = True, null = True, related_name="subordinados")
+
     # referencias com as tabelas
     departamento = models.ForeignKey(Departamento, on_delete = models.SET_NULL, null = True)
+
     cargo = models.ForeignKey(Cargo, on_delete = models.SET_NULL, null = True)
 
     # atributos do usuario
-    data_nascimeto = models.DateField(blank=True, null = True, verbose_name="Data de Nascimento")
     sexo = models.CharField(max_length=2, choices = SEXO_CHOICE, blank = True)
+    data_nascimeto = models.DateField(blank=True, null = True, verbose_name="Data de Nascimento")
+
+    #contato
     telefone_celular = models.CharField(max_length=12, blank=True)
     telefone_fixo = models.CharField(max_length=12, blank=True)
+    
+    #endereço
     cep = models.CharField(max_length=8, blank=True)
     cidade = models.CharField(max_length=25)
     uf = models.CharField(max_length=2)
@@ -82,7 +94,7 @@ class UserProfile(UUIDModelMixin):
     endereco = models.CharField(max_length=50, blank=True, null=True)
     titulo_eleitor = models.CharField(max_length=12, blank=True, null=True)
     cpf = models.CharField(max_length=11)
-    foto = models.ImageField(upload_to='usuario/foto_usuario/')
+    
     matricula_uft = models.CharField(max_length=10, blank=True, null=True)
     carteira_motorista = models.ImageField(upload_to='usuario/cnh', blank=True, null = True)
     lattes = models.ImageField(upload_to='usuario/lattes', blank=True, null = True)
