@@ -74,13 +74,6 @@ class User(AbstractUser):
     cidade = models.CharField(max_length=25)
     uf = models.CharField(max_length=2)
 
-def SET_SUPERIOR():
-    """
-    Define novo superior no caso de superior ser deletado do banco de dados
-    """
-    pass
-
-
 class UserProfile(UUIDModelMixin):
 
     usuario = models.OneToOneField(User, on_delete = models.CASCADE, editable = False)
