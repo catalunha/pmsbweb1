@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 """ Model Mixins """
 from questionarios.models import UserOwnedModelMixin
@@ -39,7 +39,13 @@ class Cargo(UUIDModelMixin):
     def __str__(self):
         return "{0}".format(self.nome)
 
-class UserProfile(UUIDModelMixin):
+def SET_SUPERIOR():
+    """
+    Define novo superior no caso de superior ser deletado do banco de dados
+    """
+    pass
+
+class User(AbstractUser):
 
     SEXO_CHOICE = (
         ("M", "Masculino"),
@@ -47,21 +53,24 @@ class UserProfile(UUIDModelMixin):
         ("ND", "Não-Declara"),
     )
 
-    usuario = models.OneToOneField(User, on_delete = models.CASCADE)
     #n renderizar no formulario
-    superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True, related_name="subordinados")
+    superior = models.ForeignKey('self', on_delete = models.SET_NULL, blank = True, null = True, related_name="subordinados")
     # referencias com as tabelas
-    departamento = models.ForeignKey(Departamento, on_delete = models.CASCADE)
-    cargo = models.ForeignKey(Cargo, on_delete = models.CASCADE)
-    
+    departamento = models.ForeignKey(Departamento, on_delete = models.SET_NULL, null = True)
+    cargo = models.ForeignKey(Cargo, on_delete = models.SET_NULL, null = True)
+
     # atributos do usuario
-    data_nascimeto = models.DateField(blank=True, null = True)
-    sexo = models.CharField(max_length=1,choices = SEXO_CHOICE, blank=True, null = True)
-    telefone_celular = models.CharField(max_length=12, blank=True, null = True)
-    telefone_fixo = models.CharField(max_length=12, blank=True, null = True)
-    cep = models.CharField(max_length=8, blank=True, null=True)
+    data_nascimeto = models.DateField(blank=True, null = True, verbose_name="Data de Nascimento")
+    sexo = models.CharField(max_length=2, choices = SEXO_CHOICE, blank = True)
+    telefone_celular = models.CharField(max_length=12, blank=True)
+    telefone_fixo = models.CharField(max_length=12, blank=True)
+    cep = models.CharField(max_length=8, blank=True)
     cidade = models.CharField(max_length=25)
     uf = models.CharField(max_length=2)
+
+class UserProfile(UUIDModelMixin):
+
+    usuario = models.OneToOneField(User, on_delete = models.CASCADE, editable = False)
     
     # so anexo
     comprovante_votacao = models.ImageField(upload_to='usuario/comprovante_votacao', blank=True, null = True)
