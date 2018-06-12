@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from core.mixins import UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin
 
 class Localizacao(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
