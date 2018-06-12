@@ -39,12 +39,6 @@ class Cargo(UUIDModelMixin):
     def __str__(self):
         return "{0}".format(self.nome)
 
-def SET_SUPERIOR():
-    """
-    Define novo superior no caso de superior ser deletado do banco de dados
-    """
-    pass
-
 def upload_foto_usuario(instance, filename):
     return "{0}_{1}".format(instance.pk, filename)
 
@@ -79,6 +73,13 @@ class User(AbstractUser):
     cep = models.CharField(max_length=8, blank=True)
     cidade = models.CharField(max_length=25)
     uf = models.CharField(max_length=2)
+
+def SET_SUPERIOR():
+    """
+    Define novo superior no caso de superior ser deletado do banco de dados
+    """
+    pass
+
 
 class UserProfile(UUIDModelMixin):
 
