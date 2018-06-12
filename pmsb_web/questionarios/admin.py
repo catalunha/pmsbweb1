@@ -21,7 +21,7 @@ class PerguntaDoQuestionarioInlineAdmin(admin.StackedInline):
 
 class QuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "publicado")
-    inlines = (RespostaStackedInlineAdmin, PerguntaDoQuestionarioInlineAdmin)
+    inlines = (PerguntaDoQuestionarioInlineAdmin, RespostaStackedInlineAdmin)
 
 admin.site.register(Questionario, QuestionarioAdmin)
 
