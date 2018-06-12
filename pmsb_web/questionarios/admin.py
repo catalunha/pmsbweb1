@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
-from .models import RespostaPergunta, ArquivoResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta
+from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta, NumeroResposta
 from .models import Localizacao
 
 admin.site.site_header = "PMSB"
@@ -10,6 +10,7 @@ admin.site.site_title = "PMSB"
 
 admin.site.register(Localizacao)
 
+#questionario
 class RespostaStackedInlineAdmin(admin.StackedInline):
     model = RespostaQuestionario
     extra = 0
@@ -24,6 +25,8 @@ class QuestionarioAdmin(admin.ModelAdmin):
 
 admin.site.register(Questionario, QuestionarioAdmin)
 
+
+# pergunta
 class PossivelEscolhaStackedInline(admin.StackedInline):
     model = PossivelEscolha
     extra = 0
@@ -34,12 +37,56 @@ class PerguntaAdmin(admin.ModelAdmin):
 
 admin.site.register(Pergunta, PerguntaAdmin)
 
+#resposta questionario
+
+class RespostaPerguntaStackedInline(admin.StackedInline):
+    model = RespostaPergunta
+    extra = 0
+
 class RespostaQuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "questionario")
+    inlines = (RespostaPerguntaStackedInline, )
 
 admin.site.register(RespostaQuestionario, RespostaQuestionarioAdmin)
 
-admin.site.register(RespostaPergunta)
+#resposta pergunta
+
+class ArquivoRespostaStackedInline(admin.StackedInline):
+    model = ArquivoResposta
+    extra = 0
+
+class ImagemRespostaStackedInline(admin.StackedInline):
+    model = ImagemResposta
+    extra = 0
+
+class TextoRespostaStackedInline(admin.StackedInline):
+    model = TextoResposta
+    extra = 0
+
+class NumeroRespostaStackedInline(admin.StackedInline):
+    model = NumeroResposta
+    extra = 0
+
+class CoordenadaRespostaStackedInline(admin.StackedInline):
+    model = CoordenadaResposta
+    extra = 0
+
+class PossivelEscolhaRespostaStackedInline(admin.StackedInline):
+    model = PossivelEscolhaResposta
+    extra = 0
+
+class RespostaPerguntaAdmin(admin.ModelAdmin):
+    list_display = ("id", "resposta_questionario", "pergunta")
+    inlines = (
+        ArquivoRespostaStackedInline,
+        ImagemRespostaStackedInline,
+        TextoRespostaStackedInline,
+        NumeroRespostaStackedInline,
+        CoordenadaRespostaStackedInline,
+        PossivelEscolhaRespostaStackedInline,
+    )
+
+admin.site.register(RespostaPergunta, RespostaPerguntaAdmin)
 
 class ArquivoRespostaAdmin(admin.ModelAdmin):
     list_display = ("id", "arquivo", "resposta_pergunta", "criado_em")
