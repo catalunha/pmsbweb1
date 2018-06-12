@@ -2,11 +2,13 @@ from django.contrib import admin
 
 from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
 from .models import RespostaPergunta, ArquivoResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta
+from .models import Localizacao
 
 admin.site.site_header = "PMSB"
 
 admin.site.site_title = "PMSB"
 
+admin.site.register(Localizacao)
 
 class RespostaStackedInlineAdmin(admin.StackedInline):
     model = RespostaQuestionario
@@ -49,3 +51,4 @@ admin.site.register(PossivelEscolhaResposta)
 admin.site.register(TextoResposta)
 
 admin.site.register(CoordenadaResposta)
+
