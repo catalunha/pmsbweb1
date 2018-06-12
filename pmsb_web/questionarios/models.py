@@ -132,33 +132,6 @@ class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
     class Meta:
         unique_together = ("resposta_pergunta", "possivel_escolha")
 
-
-
-def upload_to(folder):
-    """
-        Retorna uma função de upload para arquivos dentro da pasta media/questionarios/{folder}{y}{m}{d}{nome_arquivo}
-        nome_arquivo -> uuid_filename
-    """
-    def upload_to_folder(instance, filename):
-        hoje = timezone.now()
-        try:
-            file_uuid = instance.id
-        except:
-            file_uuid = uuid.uuid4()
-        
-        nome_arquivo = "{0}_{1}".format(file_uuid, filename)
-        return "questionarios/{0}/{1}/{2}/{3}/{4}".format(folder, hoje.year, hoje.month, hoje.day, nome_arquivo)
-    
-    return upload_to_folder
-
-class ArquivoResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivos")
-    arquivo = models.FileField(upload_to=upload_to("arquivos"))
-
-class ImagemResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivos")
-    imagem = models.ImageField(upload_to=upload_to("imagens"))
-
 class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="coordenadas")
     coordenada = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True)
@@ -170,3 +143,31 @@ class TextoResposta(UUIDModelMixin, TimedModelMixin):
 class NumeroResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="numeros")
     numero = models.IntegerField()
+
+def caminho_para_arquivos(instance, filename):
+    hoje = timezone.now()
+    try:
+        file_uuid = instance.id
+    except:
+        file_uuid = uuid.uuid4()
+    
+    nome_arquivo = "{0}_{1}".format(file_uuid, filename)
+    return "questionarios/arquivos/{1}/{2}/{3}/{4}".format( hoje.year, hoje.month, hoje.day, nome_arquivo)
+
+class ArquivoResposta(UUIDModelMixin, TimedModelMixin):
+    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivos")
+    arquivo = models.FileField(upload_to=caminho_para_arquivos)
+
+def caminho_para_imagens(instance, filename):
+    hoje = timezone.now()
+    try:
+        file_uuid = instance.id
+    except:
+        file_uuid = uuid.uuid4()
+    
+    nome_arquivo = "{0}_{1}".format(file_uuid, filename)
+    return "questionarios/imagens/{1}/{2}/{3}/{4}".format( hoje.year, hoje.month, hoje.day, nome_arquivo)
+
+class ImagemResposta(UUIDModelMixin, TimedModelMixin):
+    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="imagens")
+    imagem = models.ImageField(upload_to=caminho_para_imagens)
