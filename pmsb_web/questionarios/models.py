@@ -109,7 +109,7 @@ class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin)
 class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
     resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
-    localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE)
+    localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True, blank = True)
 
     class Meta:
         unique_together = ("resposta_questionario", "pergunta")
