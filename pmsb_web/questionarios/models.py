@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
 import uuid
@@ -12,7 +13,7 @@ class TimedModelMixin(models.Model):
         abstract = True
 
 class UserOwnedModelMixin(models.Model):
-    usuario = models.ForeignKey(User, on_delete = models.CASCADE)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE)
     class Meta:
         abstract = True
         ordering = ["usuario"]
@@ -34,7 +35,8 @@ class Localizacao(models.Model):
 """
 class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
-    publicado = models.BooleanField()
+
+    publicado = models.BooleanField(default = False)
 
     perguntas = models.ManyToManyField(
         "Pergunta",
@@ -50,20 +52,32 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def __str__(self):
         return "Questionario {}".format(self.nome)
 
-TIPO_PERGUNTA_CHOICE = (
-    ("unica-escolha", "Unica Escolha"),
-    ("multipla-escolha", "Multipla Escolha"),
-    ("texto", "Texto"),
-    ("arquivo", "Arquivo"),
-    ("imagem", "Imagem"),
-    ("coordenada", "Coordenada"),
-    ("numero", "Numero"),
-)
-
 class Pergunta(UUIDModelMixin, TimedModelMixin):
+
+    TIPO_UNICA_ESCOLHA = 0
+    TIPO_MULTIPLA_ESCOLHA = 1
+    TIPO_TEXTO = 2
+    TIPO_ARQUIVO = 3
+    TIPO_IMAGEM = 4
+    TIPO_COORDENADA = 5
+    TIPO_NUMERO = 6
+
+    TIPO_PERGUNTA_CHOICES = (
+        (TIPO_UNICA_ESCOLHA, "Unica Escolha"),
+        (TIPO_MULTIPLA_ESCOLHA, "Multipla Escolha"),
+        (TIPO_TEXTO, "Texto"),
+        (TIPO_ARQUIVO, "Arquivo"),
+        (TIPO_IMAGEM, "Imagem"),
+        (TIPO_COORDENADA, "Coordenada"),
+        (TIPO_NUMERO, "Numero"),
+    )
+
     variavel = models.CharField(max_length = 255)
+
     texto = models.TextField()
-    tipo = models.CharField(max_length = 20, choices = TIPO_PERGUNTA_CHOICE)
+    
+    tipo = models.PositiveSmallIntegerField(choices = TIPO_PERGUNTA_CHOICES)
+    
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
 
     class Meta:
@@ -72,14 +86,18 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
         verbose_name_plural = "Perguntas"
 
     def __str__(self):
-        return "{0}: {1}".format(self.variavel, self.texto)
+        return "{} - {}: {}".format(self.tipo_texto(), self.variavel, self.texto)
+    
+    def tipo_texto(self):
+        return self.TIPO_PERGUNTA_CHOICES[int(self.tipo)][1]
 
 class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
-    ordem = models.SmallIntegerField()
+    ordem = models.PositiveSmallIntegerField()
 
     class Meta:
+        unique_together = ("questionario", "pergunta")
         ordering = ("questionario","ordem","pergunta")
 
 
@@ -96,7 +114,6 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
 
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE, related_name="respostas")
-
     objects = models.Manager()
 
     class Meta:
@@ -112,6 +129,7 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
     localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE)
 
     class Meta:
+        unique_together = ("resposta_questionario", "pergunta")
         verbose_name = "Resposta Pergunta"
         verbose_name_plural = "Respostas Perguntas"
 
@@ -130,6 +148,9 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
 class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="escolhas")
     possivel_escolha = models.ForeignKey(PossivelEscolha, on_delete = models.CASCADE)
+
+    class Meta:
+        unique_together = ("resposta_pergunta", "possivel_escolha")
 
 
 
@@ -160,7 +181,7 @@ class ImagemResposta(UUIDModelMixin, TimedModelMixin):
 
 class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="coordenadas")
-    coordenada = models.CharField(max_length = 255)
+    coordenada = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True)
 
 class TextoResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="textos")
