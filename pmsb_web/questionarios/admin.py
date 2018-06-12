@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Questionario, Pergunta, RespostaQuestionario, PossivelEscolha
+from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
 from .models import RespostaPergunta, ArquivoResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta
 
 admin.site.site_header = "PMSB"
@@ -12,9 +12,13 @@ class RespostaStackedInlineAdmin(admin.StackedInline):
     model = RespostaQuestionario
     extra = 0
 
+class PerguntaDoQuestionarioInlineAdmin(admin.StackedInline):
+    model = PerguntaDoQuestionario
+    extra = 0
+
 class QuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "publicado")
-    inlines = (RespostaStackedInlineAdmin, )
+    inlines = (RespostaStackedInlineAdmin, PerguntaDoQuestionarioInlineAdmin)
 
 admin.site.register(Questionario, QuestionarioAdmin)
 
