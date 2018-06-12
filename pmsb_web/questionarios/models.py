@@ -10,7 +10,7 @@ class Localizacao(models.Model):
     altitude = models.DecimalField(max_digits=9, decimal_places=6)
 
     def __str__(self):
-        return "latitude: {} longitute:{} altitude:{}".format(self.latitude, self.longitude, self.altitude)
+        return "latitude:{} longitute:{} altitude:{}".format(self.latitude, self.longitude, self.altitude)
 
 """
     Class Questionario
