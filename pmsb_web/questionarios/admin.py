@@ -4,10 +4,6 @@ from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQues
 from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta, NumeroResposta
 from .models import Localizacao
 
-admin.site.site_header = "PMSB"
-
-admin.site.site_title = "PMSB"
-
 admin.site.register(Localizacao)
 
 #questionario
