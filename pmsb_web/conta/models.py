@@ -44,12 +44,8 @@ def upload_foto_usuario(instance, filename):
 
 class User(AbstractUser):
 
-    SEXO_CHOICE = (
-        ("M", "Masculino"),
-        ("F", "Feminino"),
-        ("ND", "Não-Declara"),
-    )
-    
+    cpf = models.CharField(max_length=11, unique = True, verbose_name="CPF")
+
     #foto de perfil
     foto = models.ImageField(upload_to=upload_foto_usuario, null = True)
 
@@ -59,42 +55,64 @@ class User(AbstractUser):
     # referencias com as tabelas
     departamento = models.ForeignKey(Departamento, on_delete = models.SET_NULL, null = True)
 
+    # cargo
     cargo = models.ForeignKey(Cargo, on_delete = models.SET_NULL, null = True)
 
-    # atributos do usuario
-    sexo = models.CharField(max_length=2, choices = SEXO_CHOICE, blank = True)
+    #data nascimento
     data_nascimeto = models.DateField(blank=True, null = True, verbose_name="Data de Nascimento")
 
-    #contato
+class Perfil(UUIDModelMixin):
+
+    SEXO_CHOICES = (
+        ("M", "Masculino"),
+        ("F", "Feminino"),
+    )
+
+    ESTADOS_CHOICES = (
+        ('AC', 'Acre'),
+        ('AL', 'Alagoas'),
+        ('AP', 'Amapá'),
+        ('AM', 'Amazonas'),
+        ('BA', 'Bahia'),
+        ('CE', 'Ceará'),
+        ('DF', 'Distrito Federal'),
+        ('ES', 'Espírito Santo'),
+        ('GO', 'Goiás'),
+        ('MA', 'Maranhão'),
+        ('MT', 'Mato Grosso'),
+        ('MS', 'Mato Grosso do Sul'),
+        ('MG', 'Minas Gerais'),
+        ('PA', 'Pará'),
+        ('PB', 'Paraíba'),
+        ('PR', 'Paraná'),
+        ('PE', 'Pernambuco'),
+        ('PI', 'Piauí'),
+        ('RJ', 'Rio de Janeiro'),
+        ('RN', 'Rio Grande do Norte'),
+        ('RS', 'Rio Grande do Sul'),
+        ('RO', 'Rondônia'),
+        ('RR', 'Roraima'),
+        ('SC', 'Santa Catarina'),
+        ('SP', 'São Paulo'),
+        ('SE', 'Sergipe'),
+        ('TO', 'Tocantins'),
+    )
+
+    usuario = models.OneToOneField(User, on_delete = models.CASCADE, editable = False)
+
+    # sexo
+    sexo = models.CharField(max_length=2, choices = SEXO_CHOICES, blank = True)
+
+    # contato
     telefone_celular = models.CharField(max_length=12, blank=True)
     telefone_fixo = models.CharField(max_length=12, blank=True)
     
-    #endereço
+    # endereço
+    endereco = models.CharField(max_length = 255, blank = True)
     cep = models.CharField(max_length=8, blank=True)
     cidade = models.CharField(max_length=25)
-    uf = models.CharField(max_length=2)
-
-class UserProfile(UUIDModelMixin):
-
-    usuario = models.OneToOneField(User, on_delete = models.CASCADE, editable = False)
+    uf = models.CharField(max_length=2, choices = ESTADOS_CHOICES)
     
-    # so anexo
-    comprovante_votacao = models.ImageField(upload_to='usuario/comprovante_votacao', blank=True, null = True)
-    certidao_nascimento = models.ImageField(upload_to='usuario/certidao_nascimento', blank=True, null = True)
-    certidao_casamento = models.ImageField(upload_to='usuario/certidao_casamento', blank=True, null = True)
-    carteira_vacinacao = models.ImageField(upload_to='usuario/carteira_vacinacao', blank=True, null = True)
-    
-    # dado + anexo
-    endereco = models.CharField(max_length=50, blank=True, null=True)
-    titulo_eleitor = models.CharField(max_length=12, blank=True, null=True)
-    cpf = models.CharField(max_length=11)
-    
-    matricula_uft = models.CharField(max_length=10, blank=True, null=True)
-    carteira_motorista = models.ImageField(upload_to='usuario/cnh', blank=True, null = True)
-    lattes = models.ImageField(upload_to='usuario/lattes', blank=True, null = True)
-    lattes_descricao = models.CharField(max_length=255, blank=True, null=True)
-
-
     class Meta:
         ordering = ["usuario"]
         verbose_name = "Perfil do Usuário"
@@ -103,25 +121,50 @@ class UserProfile(UUIDModelMixin):
     def __str__(self):
         return "{0}".format(self.usuario.first_name)
 
-class DocumentoDigitalizado(models.Model):
-    """Model definition for Arquivo."""
-    arquivo = models.FileField()
-    usuario = models.ForeignKey(UserProfile, on_delete = models.CASCADE)
-    tipo = models.CharField(max_length=255)
-
-    class Meta:
-        """Meta definition for Arquivo."""
-
-        verbose_name = 'Arquivo'
-        verbose_name_plural = 'Arquivos'
+class Atributo(models.Model):
+    nome = models.CharField(max_length = 255)
+    descricao = models.TextField(verbose_name="Descrição")
+    valor = models.BooleanField(default = True)
+    documento = models.BooleanField(default = False)
 
     def __str__(self):
-        """Unicode representation of Arquivo."""
-        pass
+        return self.nome
+
+class ValorAtributo(models.Model):
+    usuario = models.ForeignKey(Perfil, on_delete = models.CASCADE)
+    tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
+    valor = models.CharField(max_length = 255)
+
+    def __str__(self):
+        return "{}-{}".format(self.tipo, self.valor)
+
+def documento_atributo(instance, filename):
+    return "documentos_atributo/{}_{}".format(instance.usuario_id, filename)
+
+class DocumentoAtributo(models.Model):
+    """
+    Model definition for Arquivo.
+    """
+    usuario = models.ForeignKey(Perfil, on_delete = models.CASCADE)
+    tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
+    arquivo = models.FileField(upload_to=documento_atributo)
+
+    class Meta:
+        """
+        Meta definition for DocumentoAtributo.
+        """
+        verbose_name = 'Documento de Atributo'
+        verbose_name_plural = 'Documentos de Atributo'
+
+    def __str__(self):
+        """
+        Unicode representation of Arquivo.
+        """
+        return "{}".format(self.tipo)
 
     def get_absolute_url(self):
-        """Return absolute url for Arquivo."""
+        """
+        Return absolute url for Arquivo.
+        """
         return ('')
-
-    # TODO: Define custom methods here
 
