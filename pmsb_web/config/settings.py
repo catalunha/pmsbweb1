@@ -31,23 +31,33 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
 
 # Application definition
-
-INSTALLED_APPS = [
+DEFAULT_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
+
+
+INCLUDE_APPS = [
     'rest_framework',
+    'corsheaders',
+]
+
+LOCAL_APPS = [
     'core.apps.CoreConfig',
     'questionarios.apps.QuestionariosConfig',
     'conta.apps.ContaConfig',
 ]
 
+INSTALLED_APPS = DEFAULT_APPS + INCLUDE_APPS + LOCAL_APPS
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', #cors para ionic
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -130,3 +140,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 AUTH_USER_MODEL = "conta.User"
+
+if DEBUG:
+    """
+    Confirgurações do modo DEBUG
+    """
+    CORS_ORIGIN_WHITELIST = ('localhost:8100', )
+    pass
