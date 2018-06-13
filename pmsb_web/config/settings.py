@@ -27,7 +27,7 @@ SECRET_KEY = 'bwdtk5=_=tj+!8s(bcgd8f*jk$jdqan%#1ja8j%wx3#ep@dya@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast = bool, default = True)
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv)
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
 
 
 # Application definition
