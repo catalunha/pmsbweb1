@@ -19,11 +19,6 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-print("possivel escolha serielizer asdf asdfnla ",UserSerializer())
-print("possivel escolha serielizer asdf asdfnla ",QuestionarioSerializer())
-print("possivel escolha serielizer asdf asdfnla ",PerguntaSerializer())
-print("possivel escolha serielizer asdf asdfnla ",PossivelEscolhaSerializer())
-
 questionario_router = routers.DefaultRouter()
 questionario_router.register(r'usuarios', UserViewSet)
 questionario_router.register(r'questionarios', QuestionarioViewSet)
