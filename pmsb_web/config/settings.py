@@ -115,6 +115,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.DjangoModelPermissions',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
