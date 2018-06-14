@@ -10,20 +10,22 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = User
         fields = ("id", "username", "email", "sexo")
 
-class QuestionarioSerializer(serializers.HyperlinkedModelSerializer):
-    usuario = UserSerializer
-    class Meta:
-        model = Questionario
-        fields = "__all__"
-
 
 class PossivelEscolhaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PossivelEscolha
-        fields = "__all__"
+        fields = ("id", "url", "criado_em", "editado_em", "texto", "pergunta")
 
 class PerguntaSerializer(serializers.HyperlinkedModelSerializer):
-    possiveis_escolhas = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="possivelescolha-detail")
+    #possiveis_escolhas = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="possivelescolha-detail")
+    possiveis_escolhas = PossivelEscolhaSerializer(many = True, read_only = True)
     class Meta:
         model = Pergunta
-        fields = "__all__"
+        fields = ("id", "url","possiveis_escolhas","criado_em","editado_em","variavel","texto","tipo","possivel_escolha_requisito")
+
+class QuestionarioSerializer(serializers.HyperlinkedModelSerializer):
+    usuario = UserSerializer
+    perguntas = PerguntaSerializer(many = True, read_only = True)
+    class Meta:
+        model = Questionario
+        fields = ("id", "url", "usuario", "nome", "criado_em", "editado_em", "publicado", "perguntas")
