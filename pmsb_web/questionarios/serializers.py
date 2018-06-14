@@ -19,6 +19,7 @@ class PossivelEscolhaSerializer(serializers.HyperlinkedModelSerializer):
 class PerguntaSerializer(serializers.HyperlinkedModelSerializer):
     #possiveis_escolhas = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name="possivelescolha-detail")
     possiveis_escolhas = PossivelEscolhaSerializer(many = True, read_only = True)
+    possivel_escolha_requisito = serializers.PrimaryKeyRelatedField(read_only = True)
     class Meta:
         model = Pergunta
         fields = ("id", "url","possiveis_escolhas","criado_em","editado_em","variavel","texto","tipo","possivel_escolha_requisito")
