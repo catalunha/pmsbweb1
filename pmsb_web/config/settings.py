@@ -48,8 +48,8 @@ INCLUDE_APPS = [
 
 LOCAL_APPS = [
     'core.apps.CoreConfig',
-    'questionarios.apps.QuestionariosConfig',
     'conta.apps.ContaConfig',
+    'questionarios.apps.QuestionariosConfig',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + INCLUDE_APPS + LOCAL_APPS
