@@ -2,9 +2,10 @@ from django.contrib import admin
 
 from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
 from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta, NumeroResposta
-from .models import Localizacao
+from .models import Localizacao, PerguntaNumero, UnidadeMedida
 
 admin.site.register(Localizacao)
+admin.site.register(UnidadeMedida)
 
 #questionario
 class RespostaStackedInlineAdmin(admin.StackedInline):
@@ -32,6 +33,11 @@ class PerguntaAdmin(admin.ModelAdmin):
     inlines = (PossivelEscolhaStackedInline, )
 
 admin.site.register(Pergunta, PerguntaAdmin)
+
+class PerguntaNumeroAdmin(PerguntaAdmin):
+    list_display = ("unidade_medida", "maior_que", "menor_que") + PerguntaAdmin.list_display
+
+admin.site.register(PerguntaNumero, PerguntaNumeroAdmin)
 
 #resposta questionario
 
