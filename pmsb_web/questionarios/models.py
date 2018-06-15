@@ -37,29 +37,14 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
 
-    TIPO_UNICA_ESCOLHA = 0
-    TIPO_MULTIPLA_ESCOLHA = 1
-    TIPO_TEXTO = 2
-    TIPO_ARQUIVO = 3
-    TIPO_IMAGEM = 4
-    TIPO_COORDENADA = 5
-    TIPO_NUMERO = 6
-
-    TIPO_PERGUNTA_CHOICES = (
-        (TIPO_UNICA_ESCOLHA, "Unica Escolha"),
-        (TIPO_MULTIPLA_ESCOLHA, "Multipla Escolha"),
-        (TIPO_TEXTO, "Texto"),
-        (TIPO_ARQUIVO, "Arquivo"),
-        (TIPO_IMAGEM, "Imagem"),
-        (TIPO_COORDENADA, "Coordenada"),
-        (TIPO_NUMERO, "Numero"),
-    )
+    # tipo default = 0, Unica Escolha
+    TIPO = None
 
     variavel = models.CharField(max_length = 255)
 
     texto = models.TextField()
     
-    tipo = models.PositiveSmallIntegerField(choices = TIPO_PERGUNTA_CHOICES)
+    tipo = models.PositiveSmallIntegerField(editable = False)
     
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
 
@@ -69,15 +54,11 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
         verbose_name_plural = "Perguntas"
 
     def __str__(self):
-        return "{} - {}: {}".format(self.tipo_texto(), self.variavel, self.texto)
+        return "{}: {}".format(self.variavel, self.texto)
     
-    def tipo_texto(self):
-        return self.TIPO_PERGUNTA_CHOICES[int(self.tipo)][1]
-
-class PerguntaNumero(Pergunta):
-    unidade_medida = models.ForeignKey("UnidadeMedida", on_delete = models.CASCADE)
-    maior_que = models.FloatField(blank= True, null = True)
-    menor_que = models.FloatField(blank= True, null = True)
+    def save(self, *args, **kwargs):
+        self.tipo = self.TIPO
+        super(Pergunta, self).save(*args, **kwargs)
 
 class UnidadeMedida(models.Model):
     """
@@ -93,6 +74,31 @@ class UnidadeMedida(models.Model):
     
     def __str__(self):
         return "{} ({})".format(self.nome, self.sigla)
+
+
+class PerguntaUnicaEscolha(Pergunta):
+    TIPO = 0
+
+class PerguntaMultiplaEscolha(Pergunta):
+    TIPO = 1
+
+class PerguntaTexto(Pergunta):
+    TIPO = 2
+
+class PerguntaArquivo(Pergunta):
+    TIPO = 3
+
+class PerguntaImagem(Pergunta):
+    TIPO = 4
+
+class PerguntaCoordenada(Pergunta):
+    TIPO = 5
+
+class PerguntaNumero(Pergunta):
+    TIPO = 6
+    unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
+    maior_que = models.FloatField(blank= True, null = True)
+    menor_que = models.FloatField(blank= True, null = True)
 
 
 class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
