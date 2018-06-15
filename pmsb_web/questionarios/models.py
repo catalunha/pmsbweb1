@@ -90,6 +90,9 @@ class UnidadeMedida(models.Model):
         verbose_name = "Unidade de Medida"
         verbose_name_plural = "Unidades de Medida"
         ordering = ("nome", "sigla")
+    
+    def __str__(self):
+        return "{} ({})".format(self.nome, self.sigla)
 
 
 class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
