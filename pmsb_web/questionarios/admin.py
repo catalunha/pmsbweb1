@@ -2,7 +2,8 @@ from django.contrib import admin
 
 from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
 from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta, NumeroResposta
-from .models import Localizacao, PerguntaNumero, UnidadeMedida
+from .models import Localizacao, UnidadeMedida
+from .models import PerguntaArquivo, PerguntaCoordenada, PerguntaImagem, PerguntaMultiplaEscolha, PerguntaUnicaEscolha, PerguntaTexto, PerguntaNumero
 
 admin.site.register(Localizacao)
 admin.site.register(UnidadeMedida)
@@ -23,19 +24,52 @@ class QuestionarioAdmin(admin.ModelAdmin):
 admin.site.register(Questionario, QuestionarioAdmin)
 
 
-# pergunta
+# pergunta e seus tipos
 class PossivelEscolhaStackedInline(admin.StackedInline):
     model = PossivelEscolha
     extra = 0
 
 class PerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
+    readonly_fields = ("tipo", )
+
+class PerguntaInlinesAdmin(PerguntaAdmin):
     inlines = (PossivelEscolhaStackedInline, )
 
-admin.site.register(Pergunta, PerguntaAdmin)
+admin.site.register(Pergunta, PerguntaInlinesAdmin)
+
+class PerguntaUnicaEscolhaAdmin(PerguntaInlinesAdmin):
+    pass
+
+admin.site.register(PerguntaUnicaEscolha, PerguntaUnicaEscolhaAdmin)
+
+class PerguntaMultiplaEscolhaAdmin(PerguntaInlinesAdmin):
+    pass
+
+admin.site.register(PerguntaMultiplaEscolha, PerguntaMultiplaEscolhaAdmin)
+
+class PerguntaTextoAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaTexto, PerguntaTextoAdmin)
+
+class PerguntaArquivoAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaArquivo, PerguntaArquivoAdmin)
+
+class PerguntaImagemAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaImagem, PerguntaImagemAdmin)
+
+class PerguntaCoordenadaAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaCoordenada, PerguntaCoordenadaAdmin)
 
 class PerguntaNumeroAdmin(PerguntaAdmin):
-    list_display = ("unidade_medida", "maior_que", "menor_que") + PerguntaAdmin.list_display
+    list_display = PerguntaAdmin.list_display + ("unidade_medida", "maior_que", "menor_que")
 
 admin.site.register(PerguntaNumero, PerguntaNumeroAdmin)
 
