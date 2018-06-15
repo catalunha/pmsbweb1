@@ -74,6 +74,24 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
     def tipo_texto(self):
         return self.TIPO_PERGUNTA_CHOICES[int(self.tipo)][1]
 
+class PerguntaNumero(Pergunta):
+    unidade_medida = models.ForeignKey("UnidadeMedida", on_delete = models.CASCADE)
+    maior_que = models.FloatField(blank= True, null = True)
+    menor_que = models.FloatField(blank= True, null = True)
+
+class UnidadeMedida(models.Model):
+    """
+    Tabela - Unidade de Medida
+    """
+    nome = models.CharField(max_length = 255, unique = True)
+    sigla = models.CharField(max_length = 5, unique = True)
+
+    class Meta:
+        verbose_name = "Unidade de Medida"
+        verbose_name_plural = "Unidades de Medida"
+        ordering = ("nome", "sigla")
+
+
 class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
@@ -145,7 +163,8 @@ class TextoResposta(UUIDModelMixin, TimedModelMixin):
 
 class NumeroResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="numeros")
-    numero = models.IntegerField()
+    unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
+    numero = models.FloatField()
 
 def caminho_para_arquivos(instance, filename):
     hoje = timezone.now()
