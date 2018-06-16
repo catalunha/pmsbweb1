@@ -1,0 +1,20 @@
+{% extends "contas/base.html" %} {% block body %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            {{ form.nome }}
+        </div>
+        <div class="form-group">
+            <label for="nome">Empresa</label>
+            {{ form.nome_empresa }}
+        </div>
+        <div class="form-group">
+            <label for="nome">Telefone</label>
+            {{ form.telefone }}
+        </div>
+        <input type="submit" value="Update" />
+    </form>
+</div>
+{% endblock %}
