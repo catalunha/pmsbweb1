@@ -2,9 +2,11 @@ from django.contrib import admin
 
 from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
 from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta, NumeroResposta
-from .models import Localizacao
+from .models import Localizacao, UnidadeMedida
+from .models import PerguntaArquivo, PerguntaCoordenada, PerguntaImagem, PerguntaEscolha, PerguntaTexto, PerguntaNumero
 
 admin.site.register(Localizacao)
+admin.site.register(UnidadeMedida)
 
 #questionario
 class RespostaStackedInlineAdmin(admin.StackedInline):
@@ -22,16 +24,47 @@ class QuestionarioAdmin(admin.ModelAdmin):
 admin.site.register(Questionario, QuestionarioAdmin)
 
 
-# pergunta
+# pergunta e seus tipos
 class PossivelEscolhaStackedInline(admin.StackedInline):
     model = PossivelEscolha
     extra = 0
 
 class PerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
+    readonly_fields = ("tipo", )
+
+class PerguntaInlinesAdmin(PerguntaAdmin):
     inlines = (PossivelEscolhaStackedInline, )
 
-admin.site.register(Pergunta, PerguntaAdmin)
+class PerguntaEscolhaAdmin(PerguntaInlinesAdmin):
+    pass
+
+admin.site.register(PerguntaEscolha, PerguntaEscolhaAdmin)
+
+class PerguntaTextoAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaTexto, PerguntaTextoAdmin)
+
+class PerguntaArquivoAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaArquivo, PerguntaArquivoAdmin)
+
+class PerguntaImagemAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaImagem, PerguntaImagemAdmin)
+
+class PerguntaCoordenadaAdmin(PerguntaAdmin):
+    pass
+
+admin.site.register(PerguntaCoordenada, PerguntaCoordenadaAdmin)
+
+class PerguntaNumeroAdmin(PerguntaAdmin):
+    list_display = PerguntaAdmin.list_display + ("unidade_medida", "maior_que", "menor_que")
+
+admin.site.register(PerguntaNumero, PerguntaNumeroAdmin)
 
 #resposta questionario
 
@@ -72,15 +105,30 @@ class PossivelEscolhaRespostaStackedInline(admin.StackedInline):
     extra = 0
 
 class RespostaPerguntaAdmin(admin.ModelAdmin):
-    list_display = ("id", "resposta_questionario", "pergunta")
-    inlines = (
-        ArquivoRespostaStackedInline,
-        ImagemRespostaStackedInline,
-        TextoRespostaStackedInline,
-        NumeroRespostaStackedInline,
-        CoordenadaRespostaStackedInline,
-        PossivelEscolhaRespostaStackedInline,
-    )
+    list_display = ("id", "resposta_questionario", "pergunta", "tipo")
+    inlines = []
+    
+    def get_inline_instances(self, request, obj=None):
+        #                                    ^^^ this is new
+        inline_instances = []
+        if obj is None:
+            pass
+        elif obj.tipo == PerguntaEscolha.TIPO:
+            inline_instances = [PossivelEscolhaRespostaStackedInline]
+        elif obj.tipo == PerguntaArquivo.TIPO:
+            inline_instances = [ArquivoRespostaStackedInline]
+        elif obj.tipo == PerguntaCoordenada.TIPO:
+            inline_instances = [CoordenadaRespostaStackedInline]
+        elif obj.tipo == PerguntaImagem.TIPO:
+            inline_instances = [ImagemRespostaStackedInline]
+        elif obj.tipo == PerguntaTexto.TIPO:
+            inline_instances = [TextoRespostaStackedInline]
+        elif obj.tipo == PerguntaNumero.TIPO:
+            inline_instances = [NumeroRespostaStackedInline]
+        
+        self.inlines = inline_instances
+        return super(RespostaPerguntaAdmin, self).get_inline_instances(request, obj)
+    
 
 admin.site.register(RespostaPergunta, RespostaPerguntaAdmin)
 

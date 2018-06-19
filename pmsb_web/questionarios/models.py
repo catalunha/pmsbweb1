@@ -9,6 +9,12 @@ class Localizacao(models.Model):
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     altitude = models.DecimalField(max_digits=9, decimal_places=6)
 
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Localização"
+        verbose_name_plural = "Localizações"
+    
     def __str__(self):
         return "latitude:{} longitute:{} altitude:{}".format(self.latitude, self.longitude, self.altitude)
 
@@ -28,6 +34,8 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         related_name = "questionarios",
     )
 
+    objects = models.Manager()
+
     class Meta:
         verbose_name = "Questionario"
         verbose_name_plural = "Questionarios"
@@ -37,31 +45,18 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
 
-    TIPO_UNICA_ESCOLHA = 0
-    TIPO_MULTIPLA_ESCOLHA = 1
-    TIPO_TEXTO = 2
-    TIPO_ARQUIVO = 3
-    TIPO_IMAGEM = 4
-    TIPO_COORDENADA = 5
-    TIPO_NUMERO = 6
-
-    TIPO_PERGUNTA_CHOICES = (
-        (TIPO_UNICA_ESCOLHA, "Unica Escolha"),
-        (TIPO_MULTIPLA_ESCOLHA, "Multipla Escolha"),
-        (TIPO_TEXTO, "Texto"),
-        (TIPO_ARQUIVO, "Arquivo"),
-        (TIPO_IMAGEM, "Imagem"),
-        (TIPO_COORDENADA, "Coordenada"),
-        (TIPO_NUMERO, "Numero"),
-    )
+    # tipo default = 0, Unica Escolha
+    TIPO = None
 
     variavel = models.CharField(max_length = 255)
 
     texto = models.TextField()
     
-    tipo = models.PositiveSmallIntegerField(choices = TIPO_PERGUNTA_CHOICES)
+    tipo = models.PositiveSmallIntegerField(editable = False)
     
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
+
+    objects = models.Manager()
 
     class Meta:
         ordering = ("tipo",)
@@ -69,24 +64,96 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
         verbose_name_plural = "Perguntas"
 
     def __str__(self):
-        return "{} - {}: {}".format(self.tipo_texto(), self.variavel, self.texto)
+        return "{}: {}".format(self.variavel, self.texto)
     
-    def tipo_texto(self):
-        return self.TIPO_PERGUNTA_CHOICES[int(self.tipo)][1]
+    def save(self, *args, **kwargs):
+        self.tipo = self.TIPO
+        super(Pergunta, self).save(*args, **kwargs)
+
+class UnidadeMedida(models.Model):
+    """
+    Tabela - Unidade de Medida
+    """
+    nome = models.CharField(max_length = 255, unique = True)
+    sigla = models.CharField(max_length = 5, unique = True)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Unidade de Medida"
+        verbose_name_plural = "Unidades de Medida"
+        ordering = ("nome", "sigla")
+    
+    def __str__(self):
+        return "{} ({})".format(self.nome, self.sigla)
+
+
+class PerguntaEscolha(Pergunta):
+    TIPO = 0
+    multipla = models.BooleanField(default = False)
+
+    class Meta:
+        verbose_name = "Pergunta Escolha"
+        verbose_name_plural = "Perguntas Escolha"
+
+class PerguntaTexto(Pergunta):
+    TIPO = 1
+
+    class Meta:
+        verbose_name = "Pergunta Texto"
+        verbose_name_plural = "Perguntas Texto"
+
+class PerguntaArquivo(Pergunta):
+    TIPO = 2
+
+    class Meta:
+        verbose_name = "Pergunta Arquivo"
+        verbose_name_plural = "Perguntas Arquivo"
+
+class PerguntaImagem(Pergunta):
+    TIPO = 3
+
+    class Meta:
+        verbose_name = "Pergunta Imagem"
+        verbose_name_plural = "Perguntas Imagem"
+
+class PerguntaCoordenada(Pergunta):
+    TIPO = 4
+
+    class Meta:
+        verbose_name = "Pergunta Coordenada"
+        verbose_name_plural = "Perguntas Coordenada"
+
+class PerguntaNumero(Pergunta):
+    TIPO = 5
+    unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
+    maior_que = models.FloatField(blank= True, null = True)
+    menor_que = models.FloatField(blank= True, null = True)
+
+    class Meta:
+        verbose_name = "Pergunta Numero"
+        verbose_name_plural = "Perguntas Numero"
+
 
 class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     ordem = models.PositiveSmallIntegerField()
 
+    objects = models.Manager()
+
     class Meta:
         unique_together = ("questionario", "pergunta")
         ordering = ("questionario","ordem","pergunta")
+        verbose_name = "Pergunta do Questionario"
+        verbose_name_plural = "Perguntas dos Questionarios"
 
 
 class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE, related_name="possiveis_escolhas")
     texto = models.TextField()
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Possivel Escolha"
@@ -107,45 +174,94 @@ class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin)
         return "Resposta do {0}".format(self.questionario)
 
 class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
-    resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE)
+    resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE, related_name="perguntas")
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True, blank = True)
 
+    objects = models.Manager()
+
     class Meta:
         unique_together = ("resposta_questionario", "pergunta")
-        verbose_name = "Resposta Pergunta"
-        verbose_name_plural = "Respostas Perguntas"
-
+        verbose_name = "Resposta da Pergunta"
+        verbose_name_plural = "Respostas das Perguntas"
+    
     @property
     def tipo(self):
         return self.pergunta.tipo
+    
+    @property
+    def conteudo(self):
+        if self.tipo == PerguntaEscolha.TIPO:
+            return self.escolhas.all()
 
-    def set_resposta(self, instance):
-        if self.tipo == "":
-            pass
+        elif self.tipo == PerguntaTexto.TIPO:
+            return None
+            return self.textos.all()
         
-        if isinstance(instance, PossivelEscolhaResposta):
-            pass
-
+        elif self.tipo == PerguntaArquivo.TIPO:
+            return None
+            return self.arquivos.all()
+        
+        elif self.tipo == PerguntaImagem.TIPO:
+            return None
+            return self.imagens.all()
+        
+        elif self.tipo == PerguntaCoordenada.TIPO:
+            return None
+            return self.coordenadas.all()
+        
+        elif self.tipo == PerguntaNumero.TIPO:
+            n = self.numeros.all()
+            return n
+            if n.count() <= 0:
+                return None
+            else:
+                return n[0].numero
+        
+        return "Uma resposta ai sem tipo heuheu"
 
 class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="escolhas")
     possivel_escolha = models.ForeignKey(PossivelEscolha, on_delete = models.CASCADE)
 
+    objects = models.Manager()
+
     class Meta:
+        verbose_name = "Possivel Escolha Resposta"
+        verbose_name_plural = "Possiveis Escolhas Resposta"
         unique_together = ("resposta_pergunta", "possivel_escolha")
 
 class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="coordenadas")
     coordenada = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True)
 
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Coordenada Resposta"
+        verbose_name_plural = "Coordenadas Resposta"
+        unique_together = ("resposta_pergunta", "coordenada")
+
 class TextoResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="textos")
     texto = models.TextField()
 
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Texto Resposta"
+        verbose_name_plural = "Textos Resposta"
+
 class NumeroResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="numeros")
-    numero = models.IntegerField()
+    unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
+    numero = models.FloatField()
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Numero Resposta"
+        verbose_name_plural = "Numeros Resposta"
 
 def caminho_para_arquivos(instance, filename):
     hoje = timezone.now()
@@ -161,6 +277,12 @@ class ArquivoResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivos")
     arquivo = models.FileField(upload_to=caminho_para_arquivos)
 
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Arquivo Resposta"
+        verbose_name_plural = "Arquivos Resposta"
+
 def caminho_para_imagens(instance, filename):
     hoje = timezone.now()
     try:
@@ -174,3 +296,9 @@ def caminho_para_imagens(instance, filename):
 class ImagemResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="imagens")
     imagem = models.ImageField(upload_to=caminho_para_imagens)
+
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name = "Imagem Resposta"
+        verbose_name_plural = "Imagens Resposta"
