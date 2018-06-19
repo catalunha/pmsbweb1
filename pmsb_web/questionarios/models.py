@@ -90,7 +90,7 @@ class UnidadeMedida(models.Model):
 
 class PerguntaEscolha(Pergunta):
     TIPO = 0
-    multipla = models.BooleanField(defalt = False)
+    multipla = models.BooleanField(default = False)
 
     class Meta:
         verbose_name = "Pergunta Escolha"
@@ -174,7 +174,7 @@ class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin)
         return "Resposta do {0}".format(self.questionario)
 
 class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
-    resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE)
+    resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE, related_name="perguntas")
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True, blank = True)
 
@@ -184,6 +184,41 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
         unique_together = ("resposta_questionario", "pergunta")
         verbose_name = "Resposta da Pergunta"
         verbose_name_plural = "Respostas das Perguntas"
+    
+    @property
+    def tipo(self):
+        return self.pergunta.tipo
+    
+    @property
+    def conteudo(self):
+        if self.tipo == PerguntaUnicaEscolha.TIPO or self.tipo == PerguntaMultiplaEscolha.TIPO:
+            return self.escolhas.all()
+        
+        elif self.tipo == PerguntaTexto.TIPO:
+            return None
+            return self.textos.all()
+        
+        elif self.tipo == PerguntaArquivo.TIPO:
+            return None
+            return self.arquivos.all()
+        
+        elif self.tipo == PerguntaImagem.TIPO:
+            return None
+            return self.imagens.all()
+        
+        elif self.tipo == PerguntaCoordenada.TIPO:
+            return None
+            return self.coordenadas.all()
+        
+        elif self.tipo == PerguntaNumero.TIPO:
+            n = self.numeros.all()
+            return n
+            if n.count() <= 0:
+                return None
+            else:
+                return n[0].numero
+        
+        return "Uma resposta ai sem tipo heuheu"
 
 class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="escolhas")
