@@ -74,7 +74,7 @@
 
     </script>
 
-<body style="margin-top: 25px"></body>
+<body style="margin-top: 25px">
     <form action="{% url 'registrar' %}" method="POST" enctype="multipart/form-data" >
         {% csrf_token %}
         <div class="container">
@@ -85,9 +85,11 @@
                             <h1 style="text-align: center;">Registrar</h1>
                             <p class="text-muted" style="text-align: center;">Crie a sua conta
                                 <br> Campos necessários * </p>
-
+                                {% if Erro %}
+                                <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
+                                {% endif %}
                             {{ formulario_User }}
-                            {{ formulario_Perfill }}
+                            
                     <!-- <div class="input-group mb-3">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
