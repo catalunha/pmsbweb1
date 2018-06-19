@@ -4,12 +4,12 @@ from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 from django import forms
 
 # django project imports
-from .forms import RegisterUserForm, AtualizarPerfilForm
-from .models import User, Cargo, Departamento, Perfil, Atributo, ValorAtributo, DocumentoAtributo
+from .forms import RegisterUserForm, AtualizarUserForm
+from .models import User, Cargo, Departamento, Atributo, ValorAtributo, DocumentoAtributo
 # Register your models here.
 
 ADDITIONAL_USER_FIELDS = (
-    (None, {'fields': ('cpf','email','foto','first_name','last_name','departamento','superior','cargo','data_nascimento')}),
+    (None, {'fields': ('cpf','email','foto','first_name','last_name','departamento','superior','cargo')}),
 )
 
 
@@ -19,9 +19,10 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = UserAdmin.add_fieldsets + ADDITIONAL_USER_FIELDS
     fieldsets = UserAdmin.fieldsets + ADDITIONAL_USER_FIELDS
 
-    list_display = ('id', 'username', 'first_name', 'last_name', 'cpf', 'email', 'departamento', 'cargo', 'data_nascimento')
+    list_display = ('id', 'username', 'first_name', 'last_name', 'cpf', 'email', 'departamento', 'cargo')
 
-admin.site.register(User, CustomUserAdmin)
+#admin.site.register(User, CustomUserAdmin)
+admin.site.register(User)
 
 class DepartamentoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao", "superior")
@@ -32,11 +33,6 @@ class CargoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao")
 
 admin.site.register(Cargo, CargoAdmin)
-
-class PerfilAdmin(admin.ModelAdmin):
-    list_display = ("id", "usuario", "sexo")
-
-admin.site.register(Perfil, PerfilAdmin)
 
 class AtributoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao", "valor", "documento")
