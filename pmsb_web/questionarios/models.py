@@ -88,51 +88,44 @@ class UnidadeMedida(models.Model):
         return "{} ({})".format(self.nome, self.sigla)
 
 
-class PerguntaUnicaEscolha(Pergunta):
+class PerguntaEscolha(Pergunta):
     TIPO = 0
     multipla = models.BooleanField(defalt = False)
 
     class Meta:
-        verbose_name = "Pergunta Unica Escolha"
-        verbose_name_plural = "Perguntas Unica Escolha"
-
-class PerguntaMultiplaEscolha(Pergunta):
-    TIPO = 1
-
-    class Meta:
-        verbose_name = "Pergunta Multipla Escolha"
-        verbose_name_plural = "Perguntas Multipla Escolha"
+        verbose_name = "Pergunta Escolha"
+        verbose_name_plural = "Perguntas Escolha"
 
 class PerguntaTexto(Pergunta):
-    TIPO = 2
+    TIPO = 1
 
     class Meta:
         verbose_name = "Pergunta Texto"
         verbose_name_plural = "Perguntas Texto"
 
 class PerguntaArquivo(Pergunta):
-    TIPO = 3
+    TIPO = 2
 
     class Meta:
         verbose_name = "Pergunta Arquivo"
         verbose_name_plural = "Perguntas Arquivo"
 
 class PerguntaImagem(Pergunta):
-    TIPO = 4
+    TIPO = 3
 
     class Meta:
         verbose_name = "Pergunta Imagem"
         verbose_name_plural = "Perguntas Imagem"
 
 class PerguntaCoordenada(Pergunta):
-    TIPO = 5
+    TIPO = 4
 
     class Meta:
         verbose_name = "Pergunta Coordenada"
         verbose_name_plural = "Perguntas Coordenada"
 
 class PerguntaNumero(Pergunta):
-    TIPO = 6
+    TIPO = 5
     unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
     maior_que = models.FloatField(blank= True, null = True)
     menor_que = models.FloatField(blank= True, null = True)
