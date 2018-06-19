@@ -191,9 +191,9 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
     
     @property
     def conteudo(self):
-        if self.tipo == PerguntaUnicaEscolha.TIPO or self.tipo == PerguntaMultiplaEscolha.TIPO:
+        if self.tipo == PerguntaEscolha.TIPO:
             return self.escolhas.all()
-        
+
         elif self.tipo == PerguntaTexto.TIPO:
             return None
             return self.textos.all()
