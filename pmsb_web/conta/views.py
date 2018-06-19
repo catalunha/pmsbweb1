@@ -102,7 +102,7 @@ def edit_user(request):
             form.save()
             time = timezone.now()
             args = {'form': form, 'time':time}
-            return render(request, 'conta/atualizar.html', args)
+            return render(request, 'conta/listardados.html', args)
     else:
         form = AtualizarUserForm(instance=request.user)
         #print('FORMULARIO GET',form.data)
