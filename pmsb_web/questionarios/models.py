@@ -69,6 +69,21 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
     def save(self, *args, **kwargs):
         self.tipo = self.TIPO
         super(Pergunta, self).save(*args, **kwargs)
+    
+    def cast(self):
+        if self.tipo == PerguntaEscolha.TIPO:
+            return self.perguntaescolha
+        elif self.tipo == PerguntaTexto.TIPO:
+            return self.perguntatexto
+        elif self.tipo == PerguntaCoordenada.TIPO:
+            return self.perguntacoordenada
+        elif self.tipo == PerguntaArquivo.TIPO:
+            return self.perguntaarquivo
+        elif self.tipo == PerguntaImagem.TIPO:
+            return self.perguntaimagem
+        elif self.tipo == PerguntaNumero.TIPO:
+            return self.perguntanumero
+            
 
 class UnidadeMedida(models.Model):
     """
