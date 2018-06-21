@@ -31,9 +31,16 @@
         </a>
       </li>
       <li class="nav-item dropdown">
+        {% if user.foto %}
         <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-          <img class="img-avatar" src="{{MEDIA}}{{user.foto.url}}" alt="">
-        </a>
+            <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="">
+          </a>
+        {% else %}
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <img class="img-avatar" src="media/default.png" alt="">
+          </a>
+        {% endif %}
+                
         <div class="dropdown-menu dropdown-menu-right">
           <div class="dropdown-header text-center">
             <strong>Conta</strong>
@@ -139,7 +146,7 @@
           <ul>
             <li class="list-group">Plano Municipal de Saneamento Básico (Abastacimento, Esgotamento Sanitário, Resíduos Sólidos, Saúde Ambiental) </li>
             <li class="list-group">Estado do Tocantins - Funasa-TO, UFT, FAPTO </li>
-            <li class="list-group">Olá Sr {{user.first_name}} {{user.last_name}}. Hoje são {{ time }}</li>
+            <li class="list-group">Olá Sr {{user.first_name}}. Hoje são {{ time }}</li>
           </ul>
         </div>
 
