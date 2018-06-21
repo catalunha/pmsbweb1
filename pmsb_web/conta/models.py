@@ -45,7 +45,7 @@ def upload_foto_usuario(instance, filename):
 
 class User(AbstractUser, UUIDModelMixin):
 
-    cpf = models.CharField(max_length=11, unique = True, verbose_name="CPF")
+    # cpf = models.CharField(max_length=11, unique = True, verbose_name="CPF")
 
     #foto de perfil
     foto = models.ImageField(upload_to=upload_foto_usuario, null = True)
@@ -59,7 +59,11 @@ class User(AbstractUser, UUIDModelMixin):
     # cargo
     cargo = models.ForeignKey(Cargo, on_delete = models.SET_NULL, blank=True,null = True)
 
-    # objects = UserManager()
+    # contato
+    telefone_celular = models.CharField(max_length=12, blank=True, null=True)
+    
+    telefone_fixo = models.CharField(max_length=12, blank=True, null=True)
+
 
     def __str__(self):
         return "{0}: {1} {2}".format(self.departamento, self.first_name, self.last_name)
