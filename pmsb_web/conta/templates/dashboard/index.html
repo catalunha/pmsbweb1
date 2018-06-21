@@ -31,9 +31,16 @@
         </a>
       </li>
       <li class="nav-item dropdown">
+        {% if user.foto %}
         <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-          <img class="img-avatar" src="{{MEDIA}}{{user.foto.url}}" alt="">
-        </a>
+            <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="">
+          </a>
+        {% else %}
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <img class="img-avatar" src="media/default.png" alt="">
+          </a>
+        {% endif %}
+                
         <div class="dropdown-menu dropdown-menu-right">
           <div class="dropdown-header text-center">
             <strong>Conta</strong>
@@ -92,24 +99,24 @@
 
           <li class="nav-item nav-dropdown open">
             <a class="nav-link nav-dropdown-toggle" href="#">
-              <i class="nav-icon icon-list"></i> Menu 01</a>
+              <i class="nav-icon icon-list"></i>Conta</a>
             <ul class="nav-dropdown-items">
               <li class="nav-item">
-                <a class="nav-link" href="base/tabs.html">
-                  <i class="nav-icon icon-settings"></i> aaaa</a>
+                <a class="nav-link" href="{% url 'user_dados' %}">
+                  <i class="nav-icon icon-user"></i>Perfil</a>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <a class="nav-link" href="base/tooltips.html">
                   <i class="nav-icon icon-settings"></i> bbbb</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="base/tooltips.html">
                   <i class="nav-icon icon-settings"></i> cccc</a>
-              </li>
+              </li> -->
             </ul>
           </li>
 
-          <li class="nav-item nav-dropdown open">
+          <!-- <li class="nav-item nav-dropdown open">
             <a class="nav-link nav-dropdown-toggle" href="#">
               <i class="nav-icon icon-list"></i> Menu 02</a>
             <ul class="nav-dropdown-items">
@@ -126,7 +133,7 @@
                   <i class="nav-icon icon-settings"></i> cccc</a>
               </li>
             </ul>
-          </li>
+          </li> -->
 
         </ul>
 
@@ -139,7 +146,7 @@
           <ul>
             <li class="list-group">Plano Municipal de Saneamento Básico (Abastacimento, Esgotamento Sanitário, Resíduos Sólidos, Saúde Ambiental) </li>
             <li class="list-group">Estado do Tocantins - Funasa-TO, UFT, FAPTO </li>
-            <li class="list-group">Olá Sr {{user.first_name}} {{user.last_name}}. Hoje são {{ time }}</li>
+            <li class="list-group">Olá Sr {{user.first_name}}. Hoje são {{ time }}</li>
           </ul>
         </div>
 

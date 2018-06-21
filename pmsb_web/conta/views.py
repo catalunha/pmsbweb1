@@ -71,9 +71,11 @@ class ResgisterUser(View):
         formUser = RegisterUserForm(request.POST, request.FILES)
         # verifico se o formulario esta correto
         if formUser.is_valid():
-            formUser = RegisterUserForm(request.POST, request.FILES)
+            #formUser = RegisterUserForm(request.POST, request.FILES)
             # pego os dados do formulario
             dados_formUser = formUser.data
+            print(dados_formUser['telefone_fixo'],dados_formUser['telefone_celular'])
+            #print(formUser.data)
             # salvo o Abstract User
             formUser.save()
             # autentico o novo usuario
@@ -97,11 +99,17 @@ def edit_user(request):
     '''
     if request.method == 'POST':
         form = AtualizarUserForm(request.POST, request.FILES, instance=request.user)
+        time = timezone.now()
+        args = {'form': form, 'time':time}
         #print('FORMULARIO POST',form.data)
         if form.is_valid():
             form.save()
             time = timezone.now()
             args = {'form': form, 'time':time}
+            return render(request, 'conta/listardados.html', args)
+        # erro no form
+        else:
+            args.update({'erro':True})
             return render(request, 'conta/listardados.html', args)
     else:
         form = AtualizarUserForm(instance=request.user)
