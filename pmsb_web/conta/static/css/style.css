@@ -1,16 +1,6 @@
 @charset "UTF-8";
 /*!
- * CoreUI - Open Source Dashboard UI Kit
- * @version v2.0.0
- * @link https://coreui.io
- * Copyright (c) 2018 creativeLabs Łukasz Holeczek
- * Licensed under MIT (https://coreui.io/license)
- */
-/*!
- * Bootstrap v4.1.1 (https://getbootstrap.com/)
- * Copyright 2011-2018 The Bootstrap Authors
- * Copyright 2011-2018 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * TODOS OS CSS CUSTOM ESTÃO NO FIM DESTE ARQUIVO
  */
 :root {
   --blue: #20a8d8;
@@ -14247,8 +14237,16 @@ body {
   breakpoint-xl: 1200px;
 }
 
+/* CUSTOM CSS */
+.header1 {
+  background: url(../../../media/LOGO.jpg) no-repeat center;
+  background-size:cover;
+  height: 350px; 
+  margin-bottom: 5px
+}
 
 .helptext {
   color: #73818f;
 }
+
 /*# sourceMappingURL=style.css.map */

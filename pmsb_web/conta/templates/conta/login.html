@@ -1,11 +1,9 @@
-<!--
-* CoreUI - Free Bootstrap Admin Template
-* @version v2.0.0
-* @link https://coreui.io
-* Copyright (c) 2018 creativeLabs Łukasz Holeczek
-* Licensed under MIT (https://coreui.io/license)
--->
-{% extends "conta/base.html" %} {% block body %}
+{% extends "conta/base.html" %} 
+{% block body %}
+<body class='disney'> 
+    <header class="header1">
+    </header>
+</body>
 
 <body class="container">
   <form action="{% url 'login' %}" method="POST">
@@ -54,11 +52,13 @@
                   </div>
                 </div>
                 <div class="row">
-                   
+
                   <div class="col-12" style="margin-top: 5px;">
-                  <a href="{% url 'registrar' %}" class="btn btn-secondary btn-lg btn-block" role="button"> <span class="hidden-xs">Cadastre-se aqui.</span></a>
+                    <a href="{% url 'registrar' %}" class="btn btn-secondary btn-lg btn-block" role="button">
+                      <span class="hidden-xs">Primeiro acesso? Cadastre-se aqui.</span>
+                    </a>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
