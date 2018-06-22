@@ -38,6 +38,11 @@ class RegisterUserForm(UserCreationForm):
         self.fields['last_name'].label = "Nome usual no projeto"
         self.fields['password1'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
         self.fields['password2'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
+        # required tags
+        self.fields['telefone_celular'].required=True
+        self.fields['first_name'].required=True
+        self.fields['last_name'].required=True
+        self.fields['email'].required=True
     
     class Meta(UserCreationForm.Meta):
         model = User
@@ -72,6 +77,10 @@ class AtualizarUserForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].label = 'Nome completo'
         self.fields['last_name'].label = 'Nome do projeto'
+        self.fields['telefone_celular'].required=True
+        self.fields['first_name'].required=True
+        self.fields['last_name'].required=True
+        self.fields['email'].required=True
 
     class Meta:
         model = User

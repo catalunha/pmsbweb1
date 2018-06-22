@@ -1,11 +1,11 @@
 {% extends "conta/base.html" %} 
 {% block body %}
-<body class='disney'> 
-    <header class="header1">
-    </header>
-</body>
+
+
 
 <body class="container">
+    <header class="header1">
+      </header>
   <form action="{% url 'login' %}" method="POST">
     {% csrf_token %}
     <div class="container">

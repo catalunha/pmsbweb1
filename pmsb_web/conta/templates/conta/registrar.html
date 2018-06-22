@@ -1,100 +1,23 @@
-{% extends 'conta/base.html' %}
+{% extends 'conta/base.html' %} {% block body %}
 
+<body class='container'>
+    <header class="header1">
+    </header>
 
-{% block body %}
-<body class='disney'>
-        <header class="header1">
-        </header>
-    </body>
-<script type="text/javascript">
+    <form action="{% url 'registrar' %}" onsubmit="remover_mascaras(this)" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card mx-4">
+                        <div class="card-body p-4">
+                            <h1 style="text-align: center;">Cadastro para acesso ao projeto</h1>
+                            <p class="text-muted" style="text-align: center;">Crie a sua conta</p>
+                            {% if Erro %}
+                            <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
+                            {% endif %} {{ formulario_User.as_p }}
 
-    function limpa_formulário_cep() {
-        //Limpa valores do formulário de cep.
-        // document.getElementById('rua').value=("");
-        // document.getElementById('bairro').value=("");
-        document.getElementById('cidade').value = ("");
-        document.getElementById('endereco').value = ("");
-        document.getElementById('uf').value = ("");
-        //document.getElementById('ibge').value=("");
-    }
-
-    function meu_callback(conteudo) {
-        if (!("erro" in conteudo)) {
-            //Atualiza os campos com os valores.
-            //document.getElementById('rua').value=(conteudo.logradouro);
-            console.log(conteudo);
-            document.getElementById('endereco').value = (conteudo.bairro + ', ' + conteudo.logradouro);
-            document.getElementById('cidade').value = (conteudo.localidade);
-            document.getElementById('uf').value = (conteudo.uf);
-            //document.getElementById('ibge').value=(conteudo.ibge);
-        } //end if.
-        else {
-            //CEP não Encontrado.
-            limpa_formulário_cep();
-            alert("CEP não encontrado.");
-        }
-    }
-
-    function pesquisacep(valor) {
-
-        //Nova variável "cep" somente com dígitos.
-        var cep = valor.replace(/\D/g, '');
-
-        //Verifica se campo cep possui valor informado.
-        if (cep != "") {
-
-            //Expressão regular para validar o CEP.
-            var validacep = /^[0-9]{8}$/;
-
-            //Valida o formato do CEP.
-            if (validacep.test(cep)) {
-
-                //Preenche os campos com "..." enquanto consulta webservice.
-                //document.getElementById('rua').value="...";
-                //document.getElementById('bairro').value="...";
-                document.getElementById('cidade').value = "...";
-                document.getElementById('uf').value = "...";
-                document.getElementById('endereco').value = "...";
-                //document.getElementById('ibge').value="...";
-
-                //Cria um elemento javascript.
-                var script = document.createElement('script');
-
-                //Sincroniza com o callback.
-                script.src = 'https://viacep.com.br/ws/' + cep + '/json/?callback=meu_callback';
-
-                //Insere script no documento e carrega o conteúdo.
-                document.body.appendChild(script);
-
-            } //end if.
-            else {
-                //cep é inválido.
-                limpa_formulário_cep();
-                alert("Formato de CEP inválido.");
-            }
-        } //end if.
-        else {
-            //cep sem valor, limpa formulário.
-            limpa_formulário_cep();
-        }
-    };
-
-</script>
-
-<form action="{% url 'registrar' %}" onsubmit="remover_mascaras(this)" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card mx-4">
-                    <div class="card-body p-4">
-                        <h1 style="text-align: center;">Cadastro para acesso ao projeto</h1>
-                        <p class="text-muted" style="text-align: center;">Crie a sua conta</p>
-                        {% if Erro %}
-                        <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
-                        {% endif %} {{ formulario_User.as_p }}
-
-                        <!-- <div class="input-group mb-3">
+                            <!-- <div class="input-group mb-3">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
                         <i class="icon-user">*</i>
@@ -127,10 +50,10 @@
                     </div>
                     <input type="password" class="form-control" placeholder="Confirmar a senha">
                   </div> -->
-                        <br>
-                        <button type="submit" id='myForm' class="btn btn-lg btn-block btn-outline-primary">Enviar dados para análise</button>
-                    </div>
-                    <!-- <div class="card-footer p-4">
+                            <br>
+                            <button type="submit" id='myForm' class="btn btn-lg btn-block btn-outline-primary">Enviar dados para análise</button>
+                        </div>
+                        <!-- <div class="card-footer p-4">
                   <div class="row">
                     <div class="col-6">
                       <button class="btn btn-block btn-facebook" type="button">
@@ -144,11 +67,12 @@
                     </div>
                   </div>
                 </div> -->
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</body>
 <script>
     function remover_mascaras(form) {
         $(form).find(':input[class*="-mask"]').unmask();
