@@ -5,18 +5,16 @@
 
     <!-- <form action="{% url 'dashboard' %}" method="POST" enctype="multipart/form-data" > -->
         <!-- {% csrf_token %} -->
-        <div class="container">
+        <div class="container" style="margin-top: 10px;">
             <div class="row justify-content-center">
                 <div class="col-md-10">
                     <div class="card mx-4">
                         <div class="card-body p-4">
-                            <h1 style="text-align: center;">Perfil</h1>
+                            <h1 style="text-align: center;">Conta</h1>
                             <p class="text-muted" style="text-align: center;"></p>
                                 {% if Erro %}
                                 <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
                                 {% endif %}
-
-                            
                             <div class='form-control'>Nome Completo: {{ user.first_name }} </div>
                             <div class='form-control'>Nome Projeto: {{ user.last_name }} </div>
                             <div class='form-control'>Email: {{ user.email }} </div>
@@ -60,8 +58,8 @@
                     <input type="password" class="form-control" placeholder="Confirmar a senha">
                   </div> -->
                             <br>
-                            <a  href="{% url 'user_edit'  %}" type="submit" class="btn btn-warning ">Atualizar Dados</a>
-                            <a  href="{% url 'dashboard' %}" type="submit" class="btn btn-primary " style="float: right;" >Voltar</a>
+                            <a class="btn btn-warning " href="{% url 'user_edit' %}" > Atualizar Dados </a>
+                            <a  href="{% url 'dashboard' %}"  class="btn btn-primary " style="float: right;" >Voltar</a>
                         </div>
                         <!-- <div class="card-footer p-4">
                   <div class="row">

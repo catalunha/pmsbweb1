@@ -103,8 +103,7 @@ def edit_user(request):
         #print('FORMULARIO POST',form.data)
         if form.is_valid():
             form.save()
-            time = timezone.now()
-            args = {'form': form, 'time':time}
+            args = {'form': form}
             return render(request, 'conta/listardados.html', args)
         # erro no form
         else:
@@ -113,8 +112,7 @@ def edit_user(request):
     else:
         form = AtualizarUserForm(instance=request.user)
         #print('FORMULARIO GET',form.data)
-        time = timezone.now()
-        args = {'form': form, 'time':time}
+        args = {'form': form}
         return render(request, 'conta/atualizar.html', args)
 
 class Dashboard(View):
@@ -125,8 +123,7 @@ class Dashboard(View):
         # futuramente passo a estrutura da árvore
         if request.user.is_authenticated:
             user = User.objects.get(id=request.user.id)
-            time = timezone.now()
-        return render(request, 'dashboard/index.html', {'perfil_logado': user, 'time':time})
+        return render(request, 'dashboard/index.html', {'perfil_logado': user})
     
     
     @login_required(login_url='login')
@@ -134,7 +131,6 @@ class Dashboard(View):
         '''
         Function-Based View para listar os atributos do usuario
         '''
-        time = timezone.now()
-        args = {'user': request.user, 'time': time}
+        args = {'user': request.user}
         return render(request, 'conta/listardados.html', args)
         # outras funcionalidades

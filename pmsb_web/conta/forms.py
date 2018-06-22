@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.forms import ModelForm, FileInput, TextInput, Select, EmailInput, PasswordInput
 from django.contrib.auth.admin import UserAdmin
-
+from django.forms.fields import ImageField
 # imports do projeto
 from .models import User
 
@@ -81,6 +81,7 @@ class AtualizarUserForm(ModelForm):
         self.fields['first_name'].required=True
         self.fields['last_name'].required=True
         self.fields['email'].required=True
+        self.fields['foto'].required=False
 
     class Meta:
         model = User
