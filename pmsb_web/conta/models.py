@@ -62,8 +62,6 @@ class User(AbstractUser, UUIDModelMixin):
     # contato
     telefone_celular = models.CharField(max_length=12, blank=True, null=True)
     
-    telefone_fixo = models.CharField(max_length=12, blank=True, null=True)
-
 
     def __str__(self):
         return "{0}: {1} {2}".format(self.departamento, self.first_name, self.last_name)

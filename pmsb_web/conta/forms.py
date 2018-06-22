@@ -19,7 +19,6 @@ class RegisterUserForm(UserCreationForm):
                     'password1',
                     'password2',
                     'telefone_celular',
-                    'telefone_fixo',
                     'foto',
                     ]
     
@@ -34,7 +33,6 @@ class RegisterUserForm(UserCreationForm):
         self.fields['first_name'].help_text = "Igual sua identidade."
         self.fields['email'].help_text = "Use preferencialmente gmail"
         self.fields['telefone_celular'].help_text = "Informe DDD+Numero. Use apenas números. Exemplo: 63912345678"
-        self.fields['telefone_fixo'].help_text = "Informe DDD+Numero. Use apenas números. Exemplo: 63912345678"
         # mundaca nas labels
         self.fields['first_name'].label = "Nome Completo"
         self.fields['last_name'].label = "Nome usual no projeto"
@@ -56,7 +54,6 @@ class RegisterUserForm(UserCreationForm):
             'departamento': Select(attrs={'class': 'form-control'}),
             'cargo': Select(attrs={'class': 'form-control'}),
             'foto': FileInput(attrs={'class': 'form-control'}),
-            'telefone_fixo': TextInput(attrs={'class': 'form-control phone_with_ddd -mask', 'type':'text','id':'phone_with_ddd_fixo'}),
             'telefone_celular': TextInput(attrs={'class': 'form-control phone_with_ddd -mask', 'type':'text','id':'phone_with_ddd_celular'}),
         }
 
@@ -68,7 +65,6 @@ class AtualizarUserForm(ModelForm):
                     'last_name',
                     'email',
                     'telefone-celular',
-                    'telefone-fixo',
                     'foto',
                     ]
      # rescrevendo o construtor para adequar os fields do formulario
@@ -80,7 +76,7 @@ class AtualizarUserForm(ModelForm):
     class Meta:
         model = User
         exclude = ['username','id','password1','password2','password','is_superuser','groups','user_permissions','is_staff','last_login','is_active','date_joined','superior','cargo','cpf']
-        fields = ['first_name','last_name','email','telefone_celular','telefone_fixo','foto']
+        fields = ['first_name','last_name','email','telefone_celular','foto']
         widgets = {
             'email': EmailInput(attrs={'class': 'form-control'}),
             'username': TextInput(attrs={'class': 'form-control'}),
@@ -90,7 +86,6 @@ class AtualizarUserForm(ModelForm):
             'superior': Select(attrs={'class': 'form-control'}),
             'departamento': Select(attrs={'class': 'form-control'}),
             'cargo': Select(attrs={'class': 'form-control'}),
-            'telefone_fixo': TextInput(attrs={'class': 'form-control phone_with_ddd -mask', 'type':'text','id':'phone_with_ddd_fixo'}),
             'telefone_celular': TextInput(attrs={'class': 'form-control phone_with_ddd -mask', 'type':'text','id':'phone_with_ddd_celular'}),
             'foto': FileInput(attrs={'class': 'form-control'}),
         }
