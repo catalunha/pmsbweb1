@@ -74,7 +74,6 @@ class ResgisterUser(View):
             #formUser = RegisterUserForm(request.POST, request.FILES)
             # pego os dados do formulario
             dados_formUser = formUser.data
-            print(dados_formUser['telefone_fixo'],dados_formUser['telefone_celular'])
             #print(formUser.data)
             # salvo o Abstract User
             formUser.save()
