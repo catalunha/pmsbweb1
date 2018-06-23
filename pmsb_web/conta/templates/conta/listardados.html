@@ -1,10 +1,5 @@
 {% extends "dashboard/index.html" %} 
-
 {% block main %}
-
-
-    <!-- <form action="{% url 'dashboard' %}" method="POST" enctype="multipart/form-data" > -->
-        <!-- {% csrf_token %} -->
         <div class="container" style="margin-top: 10px;">
             <div class="row justify-content-center">
                 <div class="col-md-10">
@@ -22,64 +17,12 @@
                             <div class='form-control'>Superior: {{ user.superior|default:"Nenhum" }} </div>
                             <div class='form-control'>Cargo: {{ user.cargo|default:"Nenhum" }} </div>
                             <div class='form-control' id='phone_with_ddd_fixo' >Telefone celular:  <a class='phone_with_ddd -mask'> {{ user.telefone_celular }} </a> </div>
-                            
-                            
-                    <!-- <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="icon-user">*</i>
-                      </span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Usuário">
-                  </div>
-    
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">@*</span>
-                    </div>
-                    <input type="text" class="form-control" placeholder="Email">
-                  </div>
-    
-                  <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="icon-lock">*</i>
-                      </span>
-                    </div>
-                    <input type="password" class="form-control" placeholder="Senha">
-                  </div>
-    
-                  <div class="input-group mb-4">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text">
-                        <i class="icon-lock">*</i>
-                      </span>
-                    </div>
-                    <input type="password" class="form-control" placeholder="Confirmar a senha">
-                  </div> -->
                             <br>
                             <a class="btn btn-warning " href="{% url 'user_edit' %}" > Atualizar Dados </a>
                             <a  href="{% url 'dashboard' %}"  class="btn btn-primary " style="float: right;" >Voltar</a>
                         </div>
-                        <!-- <div class="card-footer p-4">
-                  <div class="row">
-                    <div class="col-6">
-                      <button class="btn btn-block btn-facebook" type="button">
-                        <span>facebook</span>
-                      </button>
-                    </div>
-                    <div class="col-6">
-                      <button class="btn btn-block btn-twitter" type="button">
-                        <span>twitter</span>
-                      </button>
-                    </div>
-                  </div>
-                </div> -->
                     </div>
                 </div>
             </div>
         </div>
-    <!-- </form> -->
-
-
 {% endblock %}

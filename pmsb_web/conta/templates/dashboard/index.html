@@ -1,7 +1,7 @@
 {% extends "conta/base.html" %} {% block body %}
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
-  <header class="app-header navbar" >
+  <header class="app-header navbar">
     <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -23,23 +23,135 @@
             </li>
           </ul> -->
     <ul class="nav navbar-nav ml-auto">
-      <li class="nav-item d-md-down-none">
-        <a class="nav-link" href="#">
+      <!-- NOTIFICACOES -->
+      <li class="nav-item dropdown d-md-down-none">
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
           <i class="icon-bell"></i>
-          <span class="badge badge-pill badge-danger">5</span>
+          <span class="badge badge-pill badge-info">5</span>
         </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg">
+          <div class="dropdown-header text-center">
+            <strong>Você tem 5 notificações</strong>
+          </div>
+          <a class="dropdown-item" href="#">
+            <i class="icon-envelope-letter text-primary"></i> Nova Mensagem</a>
+          <a class="dropdown-item" href="#">
+            <i class="fa fa-tasks text-danger"></i> Nova Tarefa</a>
+          
+        </div>
       </li>
+
+      <!-- TAREFAS -->
+      <li class="nav-item dropdown d-md-down-none">
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <i class="icon-list"></i>
+          <span class="badge badge-pill badge-danger">15</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg">
+          <div class="dropdown-header text-center">
+            <strong>Você tem X tarefas pendentes</strong>
+          </div>
+          <a class="dropdown-item" href="#">
+            <div class="small mb-1">Upgrade NPM &amp; Bower
+              <span class="float-right">
+                <strong>0%</strong>
+              </span>
+            </div>
+            <span class="progress progress-xs">
+              <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </span>
+          </a>
+          <a class="dropdown-item" href="#">
+            <div class="small mb-1">ReactJS Version
+              <span class="float-right">
+                <strong>25%</strong>
+              </span>
+            </div>
+            <span class="progress progress-xs">
+              <div class="progress-bar bg-danger" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+            </span>
+          </a>
+          <a class="dropdown-item" href="#">
+            <div class="small mb-1">VueJS Version
+              <span class="float-right">
+                <strong>50%</strong>
+              </span>
+            </div>
+            <span class="progress progress-xs">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            </span>
+          </a>
+          <a class="dropdown-item" href="#">
+            <div class="small mb-1">Add new layouts
+              <span class="float-right">
+                <strong>75%</strong>
+              </span>
+            </div>
+            <span class="progress progress-xs">
+              <div class="progress-bar bg-info" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+            </span>
+          </a>
+          <a class="dropdown-item" href="#">
+            <div class="small mb-1">Angular 2 Cli Version
+              <span class="float-right">
+                <strong>100%</strong>
+              </span>
+            </div>
+            <span class="progress progress-xs">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+            </span>
+          </a>
+          <a class="dropdown-item text-center" href="#">
+            <strong>Visualizar todas as Tarefas</strong>
+          </a>
+        </div>
+      </li>
+
+      <!-- MENSAGENS -->
+      <li class="nav-item dropdown d-md-down-none">
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <i class="icon-envelope-letter"></i>
+          <span class="badge badge-pill badge-secondary">7</span>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg">
+          <div class="dropdown-header text-center">
+            <strong>Você tem X mensagens</strong>
+          </div>
+          <a class="dropdown-item" href="#">
+            <div class="message">
+              <div class="py-3 mr-3 float-left">
+                <div class="avatar">
+                  <!-- <img class="img-avatar" alt="admin@bootstrapmaster.com"> -->
+                  <!-- <span class="avatar-status badge-success"></span> -->
+                </div>
+              </div>
+              <div>
+                <small class="text-muted">Usuario X</small>
+                <small class="text-muted float-right mt-1">Hora de Envio</small>
+              </div>
+              <div class="text-truncate font-weight-bold">
+                <span class="fa fa-exclamation text-danger"></span> Título da Mensagem</div>
+              <div class="small text-muted text-truncate">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt...</div>
+            </div>
+          </a>
+          
+          <a class="dropdown-item text-center text-muted" href="#">
+            <strong>Visualizar todas as mensagens</strong>
+          </a>
+        </div>
+      </li>
+
       <li class="nav-item dropdown">
         {% if user.foto %}
         <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="">
-          </a>
+          <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="">
+        </a>
         {% else %}
         <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            <img class="img-avatar" src="media/default.png" alt="">
-          </a>
+          <img class="img-avatar" src="media/default.png" alt="">
+        </a>
         {% endif %}
-                
+
         <div class="dropdown-menu dropdown-menu-right">
           <div class="dropdown-header text-center">
             <strong>Usuário</strong>
@@ -52,10 +164,22 @@
             <i class="fa icon-user"></i> Perfil
             <!-- <span class="badge badge-danger">42</span> -->
           </a>
+          <a class="dropdown-item" href="#">
+            <i class="fa icon-envelope-letter"></i> Mensagens
+            <!-- <span class="badge badge-danger">42</span> -->
+          </a>
           <!-- <a class="dropdown-item" href="#">
                   <i class="fa fa-comments"></i> Comments
                   <span class="badge badge-warning">42</span>
                 </a> -->
+          <div class="dropdown-header text-center">
+            <strong>Tarefas</strong>
+          </div>
+          
+          <a class="dropdown-item" href="#">
+            <i class="fa fa-tasks"></i> Tarefas
+            <!-- <span class="badge badge-danger">42</span> -->
+          </a>
           <div class="dropdown-header text-center">
             <strong>Configurações</strong>
           </div>
@@ -134,11 +258,10 @@
     </div>
     <main class="main">
 
-      
+
       <div class="container-fluid">
         <div class="animated fadeIn">
-            {% block main %}
-            {% endblock %}
+          {% block main %} {% endblock %}
         </div>
       </div>
     </main>
