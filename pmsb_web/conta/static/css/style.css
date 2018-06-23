@@ -14243,8 +14243,9 @@ body {
   background-size:cover;
   display: block;
   height: 250px; 
-  width: 47%;
-  margin-left: auto;
+  width: 39%;
+  margin: center;
+  margin-left: 385px;
   margin-right: auto;
   margin-bottom: 5px;
   margin-top: 5px;
