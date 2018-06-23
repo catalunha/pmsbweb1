@@ -9,7 +9,7 @@ from .models import User, Cargo, Departamento, Atributo, ValorAtributo, Document
 # Register your models here.
 
 ADDITIONAL_USER_FIELDS = (
-    (None, {'fields': ('cpf','email','foto','first_name','last_name','departamento','superior','cargo')}),
+    ("Informações Adicionais", {'fields': ('foto','departamento','superior','cargo')}),
 )
 
 
@@ -19,10 +19,10 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = UserAdmin.add_fieldsets + ADDITIONAL_USER_FIELDS
     fieldsets = UserAdmin.fieldsets + ADDITIONAL_USER_FIELDS
 
-    list_display = ('id', 'username', 'first_name', 'last_name', 'cpf', 'email', 'departamento', 'cargo')
+    list_display = ('id', 'username', 'first_name', 'last_name', 'email', 'departamento', 'cargo')
 
 #admin.site.register(User, CustomUserAdmin)
-admin.site.register(User)
+admin.site.register(User, CustomUserAdmin)
 
 class DepartamentoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao", "superior")
