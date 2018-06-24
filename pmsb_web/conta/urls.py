@@ -10,7 +10,7 @@ urlpatterns = [
     path('registrar', views.ResgisterUser.as_view(), name='registrar'),
     
     # update views ()
-    path('editarPerfil/', views.edit_user, name="user_edit"),
+    path('editarPerfil/', views.Dashboard.edit_user, name="user_edit"),
     
     # list view ()
     path('perfil', views.Dashboard.user_profile, name="user_dados"),

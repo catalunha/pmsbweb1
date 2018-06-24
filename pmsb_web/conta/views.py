@@ -90,33 +90,7 @@ class ResgisterUser(View):
             formulario_Abstract_User = RegisterUserForm()
             return render(request, self.template_name, {'formulario_User': formulario_Abstract_User, 'Erro': True })
 
-
-@login_required(login_url='login')
-def edit_user(request):
-    '''
-    Function-Based View pra editar campos do usuario
-    '''
-    if request.method == 'POST':
-        form = AtualizarUserForm(request.POST, request.FILES, instance=request.user)
-        time = timezone.now()
-        args = {'form': form, 'time':time}
-        #print('FORMULARIO POST',form.data)
-        if form.is_valid():
-            form.save()
-            args = {'form': form}
-            return render(request, 'conta/listardados.html', args)
-        # erro no form
-        else:
-            args.update({'erro':True})
-            return render(request, 'conta/listardados.html', args)
-    else:
-        form = AtualizarUserForm(instance=request.user)
-        #print('FORMULARIO GET',form.data)
-        args = {'form': form}
-        return render(request, 'conta/atualizar.html', args)
-
 class Dashboard(View):
-    
     @login_required(login_url='login')
     def painel(request):
         # passo o usuario e seus dados
@@ -132,5 +106,29 @@ class Dashboard(View):
         Function-Based View para listar os atributos do usuario
         '''
         args = {'user': request.user}
-        return render(request, 'conta/listardados.html', args)
+        return render(request, 'dashboard/listardados.html', args)
         # outras funcionalidades
+
+    @login_required(login_url='login')
+    def edit_user(request):
+        '''
+        Function-Based View pra editar campos do usuario
+        '''
+        if request.method == 'POST':
+            form = AtualizarUserForm(request.POST, request.FILES, instance=request.user)
+            args = {'form': form}
+            #print('FORMULARIO POST',form.data)
+            if form.is_valid():
+                form.save()
+                args = {'form': form}
+                return render(request, 'dashboard/listardados.html', args)
+            # erro no form
+            else:
+                args.update({'erro':True})
+                return render(request, 'dashboard/listardados.html', args)
+        else:
+            form = AtualizarUserForm(instance=request.user)
+            #print('FORMULARIO GET',form.data)
+            user = request.user
+            args = {'form': form,'user': user}
+            return render(request, 'dashboard/atualizar.html', args)
