@@ -10,13 +10,13 @@
                                 {% if Erro %}
                                 <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
                                 {% endif %}
-                            <div class='form-control'>Nome Completo: {{ user.first_name }} </div>
-                            <div class='form-control'>Nome Projeto: {{ user.last_name }} </div>
-                            <div class='form-control'>Email: {{ user.email }} </div>
-                            <div class='form-control'>Departamento: {{ user.departamento|default:"Nenhum" }} </div>
-                            <div class='form-control'>Superior: {{ user.superior|default:"Nenhum" }} </div>
-                            <div class='form-control'>Cargo: {{ user.cargo|default:"Nenhum" }} </div>
-                            <div class='form-control' id='phone_with_ddd_fixo' >Telefone celular:  <a class='phone_with_ddd -mask'> {{ user.telefone_celular }} </a> </div>
+                            <div class='form-control'>Nome Completo: {{ request.user.first_name }} </div>
+                            <div class='form-control'>Nome Projeto: {{ request.user.last_name }} </div>
+                            <div class='form-control'>Email: {{ request.user.email }} </div>
+                            <div class='form-control'>Departamento: {{ request.user.departamento|default:"Nenhum" }} </div>
+                            <div class='form-control'>Superior: {{ request.user.superior|default:"Nenhum" }} </div>
+                            <div class='form-control'>Cargo: {{ request.user.cargo|default:"Nenhum" }} </div>
+                            <div class='form-control' id='phone_with_ddd_fixo' >Telefone celular:  <a class='phone_with_ddd -mask'> {{ request.user.telefone_celular }} </a> </div>
                             <br>
                             <a class="btn btn-warning " href="{% url 'user_edit' %}" > Atualizar Dados </a>
                             <a  href="{% url 'dashboard' %}"  class="btn btn-primary " style="float: right;" >Voltar</a>
