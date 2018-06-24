@@ -11,16 +11,7 @@ from .models import User
     Forms de Create AbstractUser->Perfil
 '''
 class RegisterUserForm(UserCreationForm):
-    field_order = [ 
-                    'first_name',
-                    'last_name',
-                    'email',
-                    'username',
-                    'password1',
-                    'password2',
-                    'telefone_celular',
-                    'foto',
-                    ]
+    field_order = [ 'first_name','last_name','email','username','password1','password2','telefone_celular','foto']
     
     # rescrevendo o construtor para adequar os fields do formulario
     def __init__(self, *args, **kwargs):
@@ -66,12 +57,7 @@ class RegisterUserForm(UserCreationForm):
     Forms de Update AbstractUser->Perfil
 '''
 class AtualizarUserForm(ModelForm):
-    field_order = [ 'first_name',
-                    'last_name',
-                    'email',
-                    'telefone-celular',
-                    'foto',
-                    ]
+    field_order = [ 'first_name','last_name','email','telefone-celular','foto']
      # rescrevendo o construtor para adequar os fields do formulario
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
