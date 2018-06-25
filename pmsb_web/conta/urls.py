@@ -11,7 +11,8 @@ urlpatterns = [
     
     # update views ()
     path('editarPerfil/', views.Dashboard.edit_user, name="user_edit"),
-    
+    path('editarSenha/', views.Dashboard.edit_password, name='user_password'),
+
     # list view ()
     path('perfil', views.Dashboard.user_profile, name="user_dados"),
     

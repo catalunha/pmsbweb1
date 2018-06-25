@@ -1,14 +1,14 @@
 # encoding: utf-8
 # django imports
-from django.shortcuts import render, redirect 
-from django.views.generic.base import View
-from django.views.generic import UpdateView
 from django.urls import reverse_lazy
-from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponse
+from django.shortcuts import render, redirect 
+from django.views.generic import UpdateView
+from django.views.generic.base import View
+from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 
 # project imports
 from .forms import RegisterUserForm, AtualizarUserForm
@@ -106,6 +106,7 @@ class Dashboard(View):
         Function-Based View para listar os atributos do usuario
         '''
         args = {'user': request.user}
+        args.update({'message':messages.get_messages(request)})
         return render(request, 'dashboard/listardados.html', args)
         # outras funcionalidades
 
@@ -121,6 +122,7 @@ class Dashboard(View):
             if form.is_valid():
                 form.save()
                 args = {'form': form}
+                messages.success(request, 'Seus dados foram atualizados com sucesso!')
                 return render(request, 'dashboard/listardados.html', args)
             # erro no form
             else:
@@ -132,3 +134,20 @@ class Dashboard(View):
             user = request.user
             args = {'form': form,'user': user}
             return render(request, 'dashboard/atualizar.html', args)
+
+    @login_required(login_url='login')
+    def edit_password(request):
+        if request.method == 'POST':
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user)  # Important!
+                messages.success(request, 'Sua senha foi atualizada com sucesso!')
+                return redirect('user_dados')
+            else:
+                messages.error(request, 'Please correct the error below.')
+        else:
+            form = PasswordChangeForm(request.user)
+        return render(request, 'dashboard/atualizar_password.html', {
+            'form': form
+        })
