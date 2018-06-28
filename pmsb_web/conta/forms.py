@@ -86,7 +86,6 @@ class AtualizarUserForm(ModelForm):
             'telefone_celular': TextInput(attrs={'class': 'form-control phone_with_ddd -mask', 'type':'text','id':'phone_with_ddd_celular'}),
             'foto': FileInput(attrs={'class': 'form-control'}),
         }
-        }
 
 class AtualizarSenhaForm(PasswordChangeForm):
     def __init__(self, user, *args, **kwargs):
