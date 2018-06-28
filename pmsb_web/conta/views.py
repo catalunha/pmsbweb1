@@ -3,7 +3,7 @@
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.shortcuts import render, redirect 
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, ListView
 from django.views.generic.base import View
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
@@ -11,8 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
 
 # project imports
-from .forms import RegisterUserForm, AtualizarUserForm
-from .models import User
+from .forms import RegisterUserForm, AtualizarUserForm, AtualizarSenhaForm
+from .models import User, Atributo
 
 def login_view(request):
     '''
@@ -138,16 +138,14 @@ class Dashboard(View):
     @login_required(login_url='login')
     def edit_password(request):
         if request.method == 'POST':
-            form = PasswordChangeForm(request.user, request.POST)
+            form = AtualizarSenhaForm(request.user, request.POST)
             if form.is_valid():
                 user = form.save()
                 update_session_auth_hash(request, user)  # Important!
                 messages.success(request, 'Sua senha foi atualizada com sucesso!')
                 return redirect('user_dados')
-            else:
-                messages.error(request, 'Please correct the error below.')
         else:
-            form = PasswordChangeForm(request.user)
+            form = AtualizarSenhaForm(request.user)
         return render(request, 'dashboard/atualizar_password.html', {
             'form': form
         })
