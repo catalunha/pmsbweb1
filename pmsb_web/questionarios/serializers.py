@@ -28,9 +28,16 @@ class PossivelEscolhaViewSet(viewsets.ModelViewSet):
 class PerguntaSerializer(serializers.HyperlinkedModelSerializer):
     possiveis_escolhas = PossivelEscolhaSerializer(many = True, read_only = True)
     possivel_escolha_requisito = serializers.PrimaryKeyRelatedField(read_only = True)
+    tipo = serializers.SerializerMethodField()
     class Meta:
         model = Pergunta
         fields = ("id", "url","criado_em","editado_em","variavel","texto","tipo","possivel_escolha_requisito","possiveis_escolhas")
+    
+    def __init__(self, *args, **kwargs):
+        super(PerguntaSerializer, self).__init__(*args, **kwargs)
+    
+    def get_tipo(self, obj):
+        return obj.tipo
 
 class PerguntasViewSet(viewsets.ModelViewSet):
     queryset = Pergunta.objects.all()
