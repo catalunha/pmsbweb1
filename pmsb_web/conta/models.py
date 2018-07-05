@@ -1,13 +1,13 @@
+# encoding: utf-8
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 
 """ Model Mixins """
-from questionarios.models import UserOwnedModelMixin
-from questionarios.models import UUIDModelMixin
+from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
 """ Final Model Mixins """
 
 """ Hierarquia Horizontal  """
-class Departamento(UUIDModelMixin):
+class Departamento(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255, unique = True)
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
     descricao = models.TextField(verbose_name="Descrição")
@@ -27,7 +27,7 @@ class Departamento(UUIDModelMixin):
         return self.__concat_str__()
 
 
-class Cargo(UUIDModelMixin):
+class Cargo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255, unique = True)
     descricao = models.TextField(verbose_name="Descrição")
 
@@ -40,11 +40,11 @@ class Cargo(UUIDModelMixin):
         return "{0}".format(self.nome)
 
 def upload_foto_usuario(instance, filename):
-    return "{0}_{1}".format(instance.pk, filename)
+    return "usuario_foto/{0}_{1}".format(instance.pk, filename)
 
-class User(AbstractUser):
+class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
 
-    cpf = models.CharField(max_length=11, unique = True, verbose_name="CPF")
+    # cpf = models.CharField(max_length=11, unique = True, verbose_name="CPF")
 
     #foto de perfil
     foto = models.ImageField(upload_to=upload_foto_usuario, null = True)
@@ -53,75 +53,22 @@ class User(AbstractUser):
     superior = models.ForeignKey('self', on_delete = models.SET_NULL, blank = True, null = True, related_name="subordinados")
 
     # referencias com as tabelas
-    departamento = models.ForeignKey(Departamento, on_delete = models.SET_NULL, null = True)
+    departamento = models.ForeignKey(Departamento, on_delete = models.SET_NULL, blank=True,null = True)
 
     # cargo
-    cargo = models.ForeignKey(Cargo, on_delete = models.SET_NULL, null = True)
-
-    #data nascimento
-    data_nascimeto = models.DateField(blank=True, null = True, verbose_name="Data de Nascimento")
-
-class Perfil(UUIDModelMixin):
-
-    SEXO_CHOICES = (
-        ("M", "Masculino"),
-        ("F", "Feminino"),
-    )
-
-    ESTADOS_CHOICES = (
-        ('AC', 'Acre'),
-        ('AL', 'Alagoas'),
-        ('AP', 'Amapá'),
-        ('AM', 'Amazonas'),
-        ('BA', 'Bahia'),
-        ('CE', 'Ceará'),
-        ('DF', 'Distrito Federal'),
-        ('ES', 'Espírito Santo'),
-        ('GO', 'Goiás'),
-        ('MA', 'Maranhão'),
-        ('MT', 'Mato Grosso'),
-        ('MS', 'Mato Grosso do Sul'),
-        ('MG', 'Minas Gerais'),
-        ('PA', 'Pará'),
-        ('PB', 'Paraíba'),
-        ('PR', 'Paraná'),
-        ('PE', 'Pernambuco'),
-        ('PI', 'Piauí'),
-        ('RJ', 'Rio de Janeiro'),
-        ('RN', 'Rio Grande do Norte'),
-        ('RS', 'Rio Grande do Sul'),
-        ('RO', 'Rondônia'),
-        ('RR', 'Roraima'),
-        ('SC', 'Santa Catarina'),
-        ('SP', 'São Paulo'),
-        ('SE', 'Sergipe'),
-        ('TO', 'Tocantins'),
-    )
-
-    usuario = models.OneToOneField(User, on_delete = models.CASCADE, editable = False)
-
-    # sexo
-    sexo = models.CharField(max_length=2, choices = SEXO_CHOICES, blank = True)
+    cargo = models.ForeignKey(Cargo, on_delete = models.SET_NULL, blank=True,null = True)
 
     # contato
-    telefone_celular = models.CharField(max_length=12, blank=True)
-    telefone_fixo = models.CharField(max_length=12, blank=True)
-    
-    # endereço
-    endereco = models.CharField(max_length = 255, blank = True)
-    cep = models.CharField(max_length=8, blank=True)
-    cidade = models.CharField(max_length=25)
-    uf = models.CharField(max_length=2, choices = ESTADOS_CHOICES)
-    
-    class Meta:
-        ordering = ["usuario"]
-        verbose_name = "Perfil do Usuário"
-        verbose_name_plural = "Perfis dos Usuários"
-    
-    def __str__(self):
-        return "{0}".format(self.usuario.first_name)
+    telefone_celular = models.CharField(max_length=12, blank=True, null=True)
 
-class Atributo(models.Model):
+    class Meta:
+        unique_together = ('email',)    
+
+    def __str__(self):
+        return "{0}: {1} {2}".format(self.departamento, self.first_name, self.last_name)
+
+
+class Atributo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     descricao = models.TextField(verbose_name="Descrição")
     valor = models.BooleanField(default = True)
@@ -130,8 +77,7 @@ class Atributo(models.Model):
     def __str__(self):
         return self.nome
 
-class ValorAtributo(models.Model):
-    usuario = models.ForeignKey(Perfil, on_delete = models.CASCADE)
+class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     valor = models.CharField(max_length = 255)
 
@@ -139,13 +85,13 @@ class ValorAtributo(models.Model):
         return "{}-{}".format(self.tipo, self.valor)
 
 def documento_atributo(instance, filename):
-    return "documentos_atributo/{}_{}".format(instance.usuario_id, filename)
+    return "documentos_atributo/{0}/{1}/{0}_{2}".format(instance.usuario_id, instance.tipo.id, filename)
 
-class DocumentoAtributo(models.Model):
+class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
     Model definition for Arquivo.
     """
-    usuario = models.ForeignKey(Perfil, on_delete = models.CASCADE)
+    
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     arquivo = models.FileField(upload_to=documento_atributo)
 
