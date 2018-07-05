@@ -1,6 +1,7 @@
 Pillow==5.1.0
 Django==2.0.4
 pytz==2018.4
+django-model-utils==3.1.2
 djangorestframework==3.8.2
 django-cors-headers==2.2.0
 python-decouple==3.1

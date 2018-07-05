@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from model_utils.managers import InheritanceManager
 from core.mixins import UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin
 
 class Localizacao(models.Model):
@@ -43,6 +44,10 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def __str__(self):
         return "Questionario {}".format(self.nome)
 
+class PerguntaManager(InheritanceManager):
+    def all(self):
+        return self.select_subclasses()
+
 class Pergunta(UUIDModelMixin, TimedModelMixin):
 
     # tipo default = 0, Unica Escolha
@@ -56,7 +61,8 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
     
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
 
-    objects = models.Manager()
+    objects = PerguntaManager()
+    inherited_objects = models.Manager()
 
     class Meta:
         ordering = ("tipo",)
@@ -165,7 +171,7 @@ class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
 
 
 class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
-    pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE, related_name="possiveis_escolhas")
+    pergunta = models.ForeignKey(PerguntaEscolha, on_delete = models.CASCADE, related_name="possiveis_escolhas")
     texto = models.TextField()
 
     objects = models.Manager()
