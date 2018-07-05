@@ -87,7 +87,7 @@ class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 def documento_atributo(instance, filename):
     return "documentos_atributo/{}/{}/{}".format(instance.usuario_id, instance.tipo.nome, instance.usuario_id+filename)
 
-class DocumentoAtributo(UserOwnedModelMixin, TimedModelMixin):
+class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
     Model definition for Arquivo.
     """
