@@ -85,7 +85,7 @@ class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         return "{}-{}".format(self.tipo, self.valor)
 
 def documento_atributo(instance, filename):
-    return "documentos_atributo/{}/{}".format(instance.usuario_id, instance.usuario_id+filename)
+    return "documentos_atributo/{}/{}/{}".format(instance.usuario_id, instance.tipo.nome, instance.usuario_id+filename)
 
 class DocumentoAtributo(UserOwnedModelMixin, TimedModelMixin):
     """
