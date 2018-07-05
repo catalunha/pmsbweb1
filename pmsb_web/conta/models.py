@@ -3,12 +3,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 
 """ Model Mixins """
-from core.mixins import UserOwnedModelMixin
-from core.mixins import UUIDModelMixin
+from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
 """ Final Model Mixins """
 
 """ Hierarquia Horizontal  """
-class Departamento(UUIDModelMixin):
+class Departamento(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255, unique = True)
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
     descricao = models.TextField(verbose_name="Descrição")
@@ -28,7 +27,7 @@ class Departamento(UUIDModelMixin):
         return self.__concat_str__()
 
 
-class Cargo(UUIDModelMixin):
+class Cargo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255, unique = True)
     descricao = models.TextField(verbose_name="Descrição")
 
@@ -43,7 +42,7 @@ class Cargo(UUIDModelMixin):
 def upload_foto_usuario(instance, filename):
     return "usuario_foto/{0}_{1}".format(instance.pk, filename)
 
-class User(AbstractUser, UUIDModelMixin):
+class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
 
     # cpf = models.CharField(max_length=11, unique = True, verbose_name="CPF")
 
@@ -69,7 +68,7 @@ class User(AbstractUser, UUIDModelMixin):
         return "{0}: {1} {2}".format(self.departamento, self.first_name, self.last_name)
 
 
-class Atributo(UUIDModelMixin):
+class Atributo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     descricao = models.TextField(verbose_name="Descrição")
     valor = models.BooleanField(default = True)
@@ -78,8 +77,7 @@ class Atributo(UUIDModelMixin):
     def __str__(self):
         return self.nome
 
-class ValorAtributo(UUIDModelMixin):
-    usuario = models.ForeignKey(User, on_delete = models.CASCADE)
+class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     valor = models.CharField(max_length = 255)
 
@@ -89,11 +87,11 @@ class ValorAtributo(UUIDModelMixin):
 def documento_atributo(instance, filename):
     return "documentos_atributo/{}/{}".format(instance.usuario_id, instance.usuario_id+filename)
 
-class DocumentoAtributo(models.Model):
+class DocumentoAtributo(UserOwnedModelMixin, TimedModelMixin):
     """
     Model definition for Arquivo.
     """
-    usuario = models.ForeignKey(User, on_delete = models.CASCADE)
+    
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     arquivo = models.FileField(upload_to=documento_atributo)
 
