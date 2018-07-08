@@ -28,6 +28,7 @@ class RegisterUserForm(UserCreationForm):
         # mundaca nas labels
         self.fields['first_name'].label = "Nome Completo"
         self.fields['last_name'].label = "Nome usual no projeto"
+        self.fields['last_name'].help_text = "Nome curto no qual é conhecido"
         self.fields['password1'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
         self.fields['password2'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
         # required tags
