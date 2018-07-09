@@ -1,0 +1,53 @@
+{% extends "dashboard/index.html" %} {% load pinax_messages_tags %} 
+{% block main %}
+<div class="container" style="margin-top: 10px">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card mx-4">
+          <div class="card-body p-4">
+    <h2 style="text-align: center;">
+        {{ thread.subject }}
+        {% if thread.messages.all.0.sender == user %}
+        <a class="btn btn-primary" style="float: right;" href="#">Marcar como concluida</a>
+        <!-- <a class="btn btn-primary" style="float: right;" href="{% url "pinax_messages:thread_delete" thread.pk %}">Marcar como concluida</a> -->
+        {% endif %}
+    </h2>
+    <hr>
+
+    <section class="container-fluid">
+        {% for message in thread.messages.all %}
+            <div class="card">
+                {% if message.sender == user %}
+                    <div style="text-align: left">
+                    <div class="message-byline">
+                        <div class="text-muted">Você às {{ message.sent_at }}: </div>
+                    </div>
+                    <div class="message-content">{{ message.content|urlize|linebreaks }}</div>
+                    </div>
+                {% else %}
+                <div style="text-align: right">
+                    <div class="message-byline">
+                        <div class="text-muted">{{ message.sender.first_name }} às {{ message.sent_at }}</div>
+                    </div>
+                    <div class="message-content">{{ message.content|urlize|linebreaks }}</div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    
+
+    <form class="comment-form" action="{% url "pinax_messages:thread_detail" thread.pk %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-warning ">Enviar</button>
+            <a href="{% url "pinax_messages:inbox" %}" class="btn btn-primary " style="float: right;">Voltar</a>
+        </div>
+    </form>
+</section>
+    </div>
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

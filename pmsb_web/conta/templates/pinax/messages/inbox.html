@@ -1,0 +1,40 @@
+{% extends "dashboard/index.html" %} {% load pinax_messages_tags %} {% block main %}
+<div class="justify-content-center pinax-messages-inbox-container" style="margin-top: 10px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-tasks"></i> Tarefas
+            <a class="button" style="float: right;" href="{% url "pinax_messages:message_create" %}">
+                <i class="fa fa-tasks"></i>
+                Designar Tarefa
+            </a>
+        </div>
+        <div class="card-body">
+            <section class="mailbox">
+                {% for thread in threads %}
+                <div class="thread {% if thread|unread:user %}unread{% endif %}">
+                    <a href="{{thread.get_absolute_url}}">
+                        <div class="participants">
+                        <p class="small text-muted" >De: {{thread.first_message.sender.first_name }}</p>
+                        </div>
+                        <div class="latest-message">
+                            <p class="subject">Tarefa: {{ thread.subject }}</p>
+                            <p class="content"><strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                            {% if thread.latest_message.sender == user  %}
+                            <p class="content"><strong>Quem mandou:</strong> Você</p>
+                            {% else %}
+                            <p class="content"><strong>Quem mandou:</strong> {{ thread.latest_message.sender }}</p>
+                            {% endif %}
+                        </div>
+                            <p class="content" style="bottom: 0;"><strong>Horário: </strong>{{ thread.latest_message.sent_at }}</p>
+                    </a>
+                </div>
+                {% empty %}
+                <div class="no-messages">Você não tem tarefas.</div>
+                {% endfor %}
+            </section>
+            
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

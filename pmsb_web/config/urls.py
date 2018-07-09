@@ -22,4 +22,5 @@ urlpatterns = [
     path('', include('conta.urls')),
     path('admin/', admin.site.urls),
     path('api/', include("questionarios.api_urls")),
+    path('tarefas/', include('pinax.messages.urls', namespace='pinax_messages')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

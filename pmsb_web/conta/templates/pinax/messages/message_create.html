@@ -1,25 +1,20 @@
 {% extends "dashboard/index.html" %} {% block main %}
-<form action="{% url 'user_edit' %}" method="POST" enctype="multipart/form-data">
+<form action="{% url 'user_edit' %}" onsubmit="remover_mascaras(this)" method="POST" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="container" style="margin-top: 10px">
     <div class="row justify-content-center">
       <div class="col-md-10">
         <div class="card mx-4">
           <div class="card-body p-4">
-            <h1 style="text-align: center;">Perfil</h1>
+            <h2 style="text-align: center;">Tarefa</h2>
             <hr>
             <p class="text-muted" style="text-align: center;"></p>
             {% if Erro %}
             <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
-            {% endif %} 
-            {% for dado in object_list %}
-            <li>
-              <a href='{{ dado.get_absolute_url }}' >{{dado}}</a>
-            </li>
-            {% endfor %}
+            {% endif %} {{ form.as_p }}
             <br>
-            <button type="submit" class="btn btn-warning ">Atualizar</button>
-            <button href="{% url 'user_dados' %}" type="submit" class="btn btn-primary " style="float: right;">Voltar</button>
+            <button type="submit" class="btn btn-warning ">Enviar Tarefa</button>
+            <a href="{% url "pinax_messages:inbox" %}" class="btn btn-primary " style="float: right;">Voltar</a>
           </div>
         </div>
       </div>
