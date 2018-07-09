@@ -45,6 +45,7 @@ INCLUDE_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'pinax.messages',
 ]
 
 LOCAL_APPS = [
@@ -79,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                "pinax.messages.context_processors.user_messages",
             ],
         },
     },
