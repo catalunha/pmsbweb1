@@ -14303,7 +14303,7 @@ body {
   text-align:center;
   margin-top:20px
 }
-.pinax-messages-inbox-container section.mailbox .thread a{
+.pinax-messages-inbox-container .mailbox .thread a{
   border:1px solid #e9ecef;
   background:#f8f9fa;
   border-radius:5px;
@@ -14314,25 +14314,25 @@ body {
   color:#212529;
   transition:box-shadow .15s ease
 }
-.pinax-messages-inbox-container section.mailbox .thread a:hover{
+.pinax-messages-inbox-container .mailbox .thread a:hover{
   background:#f5faff;
   border-color:#cce5ff;
   color:#007bff;
   box-shadow:0 7px 14px 0 rgba(0,123,255,.1),0 3px 6px 0 rgba(0,0,0,.07)
 }
-.pinax-messages-inbox-container section.mailbox .thread a:hover .latest-message .content{
+.pinax-messages-inbox-container .mailbox .thread a:hover .latest-message .content{
   color:#66b0ff
 }
-.pinax-messages-inbox-container section.mailbox .thread a .participants{
+.pinax-messages-inbox-container .mailbox .thread a .participants{
   flex:1
 }
-.pinax-messages-inbox-container section.mailbox .thread a .latest-message{
+.pinax-messages-inbox-container .mailbox .thread a .latest-message{
   flex:4
 }
-.pinax-messages-inbox-container section.mailbox .thread a .latest-message .subject{
+.pinax-messages-inbox-container .mailbox .thread a .latest-message .subject{
   font-size:1.2rem
 }
-.pinax-messages-inbox-container section.mailbox .thread a .latest-message .content{
+.pinax-messages-inbox-container .mailbox .thread a .latest-message .content{
   color:#868e96;
   margin-bottom:0
 }
