@@ -44,10 +44,6 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def __str__(self):
         return "Questionario {}".format(self.nome)
 
-class PerguntaManager(InheritanceManager):
-    def all(self):
-        return self.select_subclasses()
-
 class Pergunta(UUIDModelMixin, TimedModelMixin):
 
     # tipo default = 0, Unica Escolha
@@ -61,8 +57,8 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
     
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
 
-    objects = PerguntaManager()
-    inherited_objects = models.Manager()
+    objects = models.Manager()
+    inherited_objects = InheritanceManager()
 
     class Meta:
         ordering = ("tipo",)
