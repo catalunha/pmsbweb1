@@ -101,7 +101,7 @@
               <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
             </span>
           </a>
-          <a class="dropdown-item text-center" href="#">
+          <a class="dropdown-item text-center" href="{% url 'pinax_messages:inbox' %}">
             <strong>Visualizar todas as Tarefas</strong>
           </a>
         </div>
@@ -176,7 +176,7 @@
             <strong>Tarefas</strong>
           </div>
           
-          <a class="dropdown-item" href="#">
+          <a class="dropdown-item" href="{% url 'pinax_messages:inbox' %}">
             <i class="fa fa-tasks"></i> Tarefas
             <!-- <span class="badge badge-danger">42</span> -->
           </a>
@@ -216,11 +216,15 @@
 
           <li class="nav-item nav-dropdown open">
             <a class="nav-link nav-dropdown-toggle" href="#">
-              <i class="nav-icon icon-list"></i>Menu 01</a>
+              <i class="nav-icon icon-list"></i>Tarefas</a>
             <ul class="nav-dropdown-items">
               <li class="nav-item">
-                <a class="nav-link" href="#">
-                  <i class="nav-icon icon-user"></i>Funcao 01</a>
+                <a class="nav-link" href="{% url 'pinax_messages:inbox' %}">
+                  <i class="nav-icon icon-layers"></i>Visualizar Tarefas</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'pinax_messages:message_create' %}">
+                  <i class="nav-icon icon-note"></i>Nova Tarefa</a>
               </li>
               <!-- <li class="nav-item">
                 <a class="nav-link" href="base/tooltips.html">
@@ -232,26 +236,31 @@
               </li> -->
             </ul>
           </li>
-
+          
           <!-- <li class="nav-item nav-dropdown open">
             <a class="nav-link nav-dropdown-toggle" href="#">
-              <i class="nav-icon icon-list"></i> Menu 02</a>
+              <i class="nav-icon icon-list"></i>Menu 02</a>
             <ul class="nav-dropdown-items">
               <li class="nav-item">
-                <a class="nav-link" href="base/tabs.html">
-                  <i class="nav-icon icon-settings"></i> aaaa</a>
+                <a class="nav-link" href="#">
+                  <i class="nav-icon icon-drop"></i>Funcao 2.0</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item nav-dropdown open">
+            <a class="nav-link nav-dropdown-toggle" href="#">
+              <i class="nav-icon icon-list"></i>Menu 03</a>
+            <ul class="nav-dropdown-items">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <i class="nav-icon icon-note"></i>Funcao 3.0</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="base/tooltips.html">
-                  <i class="nav-icon icon-settings"></i> bbbb</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="base/tooltips.html">
-                  <i class="nav-icon icon-settings"></i> cccc</a>
+                <a class="nav-link" href="#">
+                  <i class="nav-icon icon-layers"></i>Funcao 3.1</a>
               </li>
             </ul>
           </li> -->
-
         </ul>
 
       </nav>

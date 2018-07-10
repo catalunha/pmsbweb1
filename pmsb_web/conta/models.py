@@ -65,7 +65,7 @@ class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
         unique_together = ('email',)    
 
     def __str__(self):
-        return "{0}: {1} {2}".format(self.departamento, self.first_name, self.last_name)
+        return "{0}: {1}".format(self.departamento, self.first_name)
 
 
 class Atributo(UUIDModelMixin, TimedModelMixin):
