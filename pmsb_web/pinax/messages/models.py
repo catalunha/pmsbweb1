@@ -9,9 +9,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from .signals import message_sent
 from .utils import cached_attribute
 
+from core.mixins import TimedModelMixin, UUIDModelMixin, UserOwnedModelMixin
 
 @python_2_unicode_compatible
-class Thread(models.Model):
+class Thread(UUIDModelMixin, TimedModelMixin):
 
     subject = models.CharField(max_length=150)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through="UserThread")
@@ -26,14 +27,10 @@ class Thread(models.Model):
 
     @classmethod
     def unread(cls, user):
-        return cls.objects.filter(
-            userthread__user=user,
-            userthread__deleted=False,
-            userthread__unread=True
-        )
+        return cls.objects.filter(userthread__user=user,)
 
     def __str__(self):
-        return "Tarefa: {}, Participantes: {}".format(
+        return "{}: {}".format(
             self.subject,
             ", ".join([str(user) for user in self.users.all()])
         )
@@ -62,7 +59,7 @@ class Thread(models.Model):
         return objs
 
 
-class UserThread(models.Model):
+class UserThread(UUIDModelMixin, TimedModelMixin):
 
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -71,7 +68,7 @@ class UserThread(models.Model):
     deleted = models.BooleanField()
 
 
-class Message(models.Model):
+class Message(UUIDModelMixin, TimedModelMixin):
 
     thread = models.ForeignKey(Thread, related_name="messages", on_delete=models.CASCADE)
 
@@ -84,7 +81,6 @@ class Message(models.Model):
     def new_reply(cls, thread, user, content):
         """
         Create a new reply for an existing Thread.
-
         Mark thread as unread for all other participants, and
         mark thread as read by replier.
         """
@@ -98,7 +94,6 @@ class Message(models.Model):
     def new_message(cls, from_user, to_users, subject, content):
         """
         Create a new Message and Thread.
-
         Mark thread as unread for all recipients, and
         mark thread as read and deleted from inbox by creator.
         """
