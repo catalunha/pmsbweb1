@@ -34,12 +34,11 @@ class InboxView(TemplateView):
             folder = "deleted"
         else:
             threads = Thread.ordered(Thread.inbox(self.request.user))
-            folder = "inbox"
+            threads_unread = Thread.ordered(Thread.unread(self.request.user))
+            allthreads = threads + threads_unread
 
         context.update({
-            "folder": folder,
-            "threads": threads,
-            "threads_unread": Thread.ordered(Thread.unread(self.request.user))
+            "threads": allthreads,
         })
         return context
 
