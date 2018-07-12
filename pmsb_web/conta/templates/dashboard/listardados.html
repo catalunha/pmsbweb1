@@ -30,10 +30,10 @@
                             <div class='form-control'>Cargo: {{ request.user.cargo|default:"Nenhum" }} </div>
                             <div class='form-control' id='phone_with_ddd_fixo' >Telefone celular:  <a class='phone_with_ddd -mask'> {{ request.user.telefone_celular }} </a> </div>
                             <br>
-                            <a class="btn btn-warning " href="{% url 'user_edit' %}" > Atualizar Dados </a>
-                            {% comment %} <a class="btn btn-warning " href="{% url 'perfil_edit' %}" > Atualizar Perfil </a> {% endcomment %}
-                            <a class="btn btn-danger " href="{% url 'user_password' %}" > Atualizar Senha </a>
-                            <a  href="{% url 'dashboard' %}"  class="btn btn-primary " style="float: right;" >Voltar</a>
+                            <a class="btn btn-warning " href="{% url 'conta:user_edit' %}" > Atualizar Dados </a>
+                            {% comment %} <a class="btn btn-warning " href="{% url 'conta:perfil_edit' %}" > Atualizar Perfil </a> {% endcomment %}
+                            <a class="btn btn-danger " href="{% url 'conta:user_password' %}" > Atualizar Senha </a>
+                            <a  href="{% url 'conta:dashboard' %}"  class="btn btn-primary " style="float: right;" >Voltar</a>
                         </div>
                     </div>
                 </div>

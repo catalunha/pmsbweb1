@@ -19,7 +19,7 @@ def login_view(request):
     Function-Based View pra logar o usuario no sistemas
     '''
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('conta:dashboard')
     elif request.method == 'POST':
         # antetico o usuario
         #user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
@@ -49,7 +49,7 @@ def logout_view(request):
     # deslogo o usuario
     logout(request)
     # redieciono pra página de login
-    return redirect('login')
+    return redirect('conta:login')
 
 
 
@@ -83,8 +83,8 @@ class ResgisterUser(View):
                 #login sucesso
                 # dashboard
                 login(request, user)
-                return redirect('dashboard')
-            return redirect('dashboard')
+                return redirect('conta:dashboard')
+            return redirect('conta:dashboard')
         else:
             # retorno o formulário vazia se o formulario incorreto
             formulario_Abstract_User = RegisterUserForm()
@@ -143,7 +143,7 @@ class Dashboard(View):
                 user = form.save()
                 update_session_auth_hash(request, user)  # Important!
                 messages.success(request, 'Sua senha foi atualizada com sucesso!')
-                return redirect('user_dados')
+                return redirect('conta:user_dados')
         else:
             form = AtualizarSenhaForm(request.user)
         return render(request, 'dashboard/atualizar_password.html', {
