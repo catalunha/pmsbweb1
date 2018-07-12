@@ -16,6 +16,7 @@ class Thread(UUIDModelMixin, TimedModelMixin):
 
     subject = models.CharField(max_length=150)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through="UserThread")
+    data_de_entrega = models.DateField(null=True, blank=True)
 
     @classmethod
     def inbox(cls, user):
@@ -27,12 +28,12 @@ class Thread(UUIDModelMixin, TimedModelMixin):
 
     @classmethod
     def unread(cls, user):
-        return cls.objects.filter(userthread__user=user,)
+        return cls.objects.filter(userthread__user=user, userthread__deleted=False)
 
     def __str__(self):
-        return "{}: {}".format(
+        return "{}: {} Prazo: {}".format(
             self.subject,
-            ", ".join([str(user) for user in self.users.all()])
+            ", ".join([str(user) for user in self.users.all()]), self.data_de_entrega
         )
 
     def get_absolute_url(self):
@@ -91,16 +92,16 @@ class Message(UUIDModelMixin, TimedModelMixin):
         return msg
 
     @classmethod
-    def new_message(cls, from_user, to_users, subject, content):
+    def new_message(cls, from_user, to_users, subject, content, data_de_entrega):
         """
         Create a new Message and Thread.
         Mark thread as unread for all recipients, and
         mark thread as read and deleted from inbox by creator.
         """
-        thread = Thread.objects.create(subject=subject)
+        thread = Thread.objects.create(subject=subject, data_de_entrega=data_de_entrega)
         for user in to_users:
-            thread.userthread_set.create(user=user, deleted=False, unread=True)
-        thread.userthread_set.create(user=from_user, deleted=True, unread=False)
+            thread.userthread_set.create(user=user, deleted=False, unread=False)
+        thread.userthread_set.create(user=from_user, deleted=False, unread=False)
         msg = cls.objects.create(thread=thread, sender=from_user, content=content)
         message_sent.send(sender=cls, message=msg, thread=thread, reply=False)
         return msg
