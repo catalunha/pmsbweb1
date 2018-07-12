@@ -1,0 +1,25 @@
+{% extends "dashboard/index.html" %} {% block main %}
+<div class="container" style="margin-top: 10px">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card mx-4">
+                <div class="card-body p-4" style="text-align: center;">
+                    <h2 style="text-align: center;" >Tarefa: {{ thread.subject }}</h2>
+                    <hr>
+                    {% url "pinax_messages:thread_delete" thread.pk as post_url %}
+                    <p class="text-align: center;" role="alert">
+                        Você deseja confirmar que esta tarefa foi concluída ?
+                    </p>
+                    <form action="{{ post_url }}" method="POST">
+                        {% csrf_token %}
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-warning" style="float: left;" >Confirmar</button>
+                            <a href="{% url "pinax_messages:inbox" %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

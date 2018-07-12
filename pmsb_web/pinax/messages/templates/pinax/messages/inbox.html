@@ -1,0 +1,186 @@
+{% extends "dashboard/index.html" %} {% load pinax_messages_tags %} {% block main %}
+
+<div class="justify-content-center pinax-messages-inbox-container" style="margin-top: 10px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-tasks"></i> Tarefas
+            <a class="button" style="float: right;" href="{% url 'pinax_messages:message_create' %}">
+                <i class="fa fa-tasks"></i>
+                Designar Tarefa
+            </a>
+        </div>
+        <div class="card-body">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Procura pelo nome..." title="Escreva um nome">
+            <div class="col">
+                
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#enviadas" role="tab" aria-controls="home">Enviadas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#recebidas" role="tab" aria-controls="profile">Recebidas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#concluidasEnviadas" role="tab" aria-controls="messages">Concluídas enviadas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#concluidasRecebidas" role="tab" aria-controls="messages">Concluídas recebidas</a>
+                    </li>
+                </ul>
+                
+                <div class="tab-content">
+                    <div class="tab-pane mailbox active" id="enviadas" role="tabpanel">
+                        {% for thread in threads %} 
+                        <!-- primeira mensagem for o user = ele enviou tarefa -->
+                        {% if thread.first_message.sender == user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="participants">
+                                    <p class="small text-muted">Para: {{ thread.users.all.1.first_name}}</p>
+                                </div>
+                                <div class="latest-message text-truncate">
+                                    <p class="subject">Tarefa: {{ thread.subject }}</p>
+                                    <p class="content text-truncate">
+                                        <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                    {% if thread.latest_message.sender == user %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> Você</p>
+                                    {% else %}
+                                    <p class="content">
+                                            <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="message text-truncate">
+                                    <p class="content" style="bottom: 0;">
+                                        <strong>Horário: </strong>{{ thread.latest_message.sent_at }}</p>
+                                    <p class="content">
+                                        <strong>Prazo: </strong>{{ thread.data_de_entrega }}</p>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %}
+                        {% empty %}
+                        <div class="no-messages">Você não enviou tarefas</div>
+                        {% endfor %}
+                        <!-- se todas as mensagens ñ forem do usuário -->
+                        {% if threads.messages.all.0 != user and threads.messages.all.0  %}
+                        <div class="no-messages">Você não enviou tarefas</div>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane mailbox" id="recebidas" role="tabpanel">
+                        {% for thread in threads %} 
+                        <!-- primeira mensagem não for o user = ele recebeu tarefa -->
+                        {% if thread.first_message.sender != user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="participants">
+                                    <p class="small text-muted">De: {{thread.first_message.sender.first_name }}</p>
+                                </div>
+                                <div class="latest-message">
+                                    <p class="subject">Tarefa: {{ thread.subject }}</p>
+                                    <p class="content">
+                                        <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                    {% if thread.latest_message.sender == user %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> Você</p>
+                                    {% else %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="message text-truncate">
+                                    <p class="content" style="bottom: 0;">
+                                        <strong>Horário: </strong>{{ thread.latest_message.sent_at }}</p>
+                                    <p class="content">
+                                        <strong>Prazo: </strong>{{ thread.data_de_entrega }}</p>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} 
+                        {% endfor %}
+                        {% if not threads %}
+                        <div class="no-messages">Você não recebeu tarefas</div>
+                        {% elif threads.messages.all.0.sender == user  %}
+                        <div class="no-messages">Você não recebeu tarefas</div>
+                        {% endif %}
+                    </div>
+                    <div class="tab-pane mailbox" id="concluidasEnviadas" role="tabpanel">
+                        {% for thread in completed_threads %} 
+                        <!-- se as tarefas concluidas que eu enviei -->
+                        {% if thread.first_message.sender == user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="participants">
+                                    <p class="small text-muted">Para: {{ thread.users.all.1.first_name}}</p>
+                                </div>
+                                <div class="latest-message text-truncate">
+                                    <p class="subject">Tarefa: {{ thread.subject }}</p>
+                                    <p class="content text-truncate">
+                                        <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                    {% if thread.latest_message.sender == user %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> Você</p>
+                                    {% else %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="message text-truncate">
+                                    <p class="content" style="bottom: 0;">
+                                        <strong>Horário: </strong>{{ thread.latest_message.sent_at }}</p>
+                                    <p class="content">
+                                        <strong>Prazo: </strong>{{ thread.data_de_entrega }}</p>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% empty %}
+                        <div class="no-messages">Não concluiram suas tarefas</div>
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane mailbox" id="concluidasRecebidas" role="tabpanel">
+                        {% for thread in completed_threads %} 
+                        {{complete_threads}}
+                        <!-- tarefas concluidas que eu recebi -->
+                        {% if thread.first_message.sender != user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="participants">
+                                    <p class="small text-muted">De: {{thread.first_message.sender.first_name }}</p>
+                                </div>
+                                <div class="latest-message text-truncate">
+                                    <p class="subject">Tarefa: {{ thread.subject }}</p>
+                                    <p class="content text-truncate">
+                                        <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                    {% if thread.latest_message.sender == user %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> Você</p>
+                                    {% else %}
+                                    <p class="content">
+                                        <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="message text-truncate">
+                                <p class="content" style="bottom: 0;">
+                                    <strong>Horário: </strong>{{ thread.latest_message.sent_at }}</p>
+                                <p class="content">
+                                    <strong>Prazo: </strong>{{ thread.data_de_entrega }}</p>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} 
+                        {% empty %}
+                        <div class="no-messages">Você não concluiu suas tarefas</div>
+                        {% endfor %}
+                        <!-- {% if completed_threads %}
+                        <div class="no-messages">Você não concluiu suas tarefas</div>
+                        {% endif %} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
