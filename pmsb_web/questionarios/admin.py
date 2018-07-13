@@ -26,6 +26,7 @@ admin.site.register(Questionario, QuestionarioAdmin)
 
 # pergunta e seus tipos
 class PossivelEscolhaStackedInline(admin.StackedInline):
+    readonly_fields = ("id", "pergunta")
     model = PossivelEscolha
     extra = 0
 
@@ -33,11 +34,11 @@ class PerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
     readonly_fields = ("tipo", )
 
-class PerguntaInlinesAdmin(PerguntaAdmin):
+class PerguntaEscolhaAdmin(admin.ModelAdmin):
+    fields = ("id", "variavel", "texto", "possivel_escolha_requisito", "tipo", "multipla","criado_em", "editado_em")
+    list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
+    readonly_fields = ("tipo", "id", "criado_em", "editado_em")
     inlines = (PossivelEscolhaStackedInline, )
-
-class PerguntaEscolhaAdmin(PerguntaInlinesAdmin):
-    pass
 
 admin.site.register(PerguntaEscolha, PerguntaEscolhaAdmin)
 
