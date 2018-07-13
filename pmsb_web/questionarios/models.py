@@ -46,17 +46,13 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
 
-    # tipo default = 0, Unica Escolha
     TIPO = None
 
     variavel = models.CharField(max_length = 255)
-
     texto = models.TextField()
-    
     tipo = models.PositiveSmallIntegerField(editable = False)
-    
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
-
+    
     objects = models.Manager()
     inherited_objects = InheritanceManager()
 
@@ -69,7 +65,8 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
         return "{}: {}".format(self.variavel, self.texto)
     
     def save(self, *args, **kwargs):
-        self.tipo = self.TIPO
+        if not self.tipo:
+            self.tipo = self.TIPO
         super(Pergunta, self).save(*args, **kwargs)
     
     def cast(self):
