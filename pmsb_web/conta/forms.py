@@ -43,7 +43,7 @@ class RegisterUserForm(UserCreationForm):
         fields = '__all__'
         widgets = {
             'email': EmailInput(attrs={'class': 'form-control'}),
-            'username': TextInput(attrs={'class': 'form-control cpf -mask', 'type':'text'}),
+            'username': TextInput(attrs={'class': 'form-control', 'type':'text'}),
             'password1': PasswordInput(attrs={'class': 'form-control', 'type':'password'}), 
             'password2': PasswordInput(attrs={'class': 'form-control', 'type':'password'}), 
             'first_name': TextInput(attrs={'class': 'form-control'}),
