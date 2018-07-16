@@ -43,7 +43,7 @@ class RegisterUserForm(UserCreationForm):
         fields = '__all__'
         widgets = {
             'email': EmailInput(attrs={'class': 'form-control'}),
-            'username': TextInput(attrs={'class': 'form-control cpf -mask', 'type':'text', 'id':'cpf'}),
+            'username': TextInput(attrs={'class': 'form-control cpf -mask', 'type':'text'}),
             'password1': PasswordInput(attrs={'class': 'form-control', 'type':'password'}), 
             'password2': PasswordInput(attrs={'class': 'form-control', 'type':'password'}), 
             'first_name': TextInput(attrs={'class': 'form-control'}),
@@ -80,7 +80,7 @@ class AtualizarUserForm(ModelForm):
             'username': TextInput(attrs={'class': 'form-control'}),
             'first_name': TextInput(attrs={'class': 'form-control'}),
             'last_name': TextInput(attrs={'class': 'form-control'}),
-            'cpf': TextInput(attrs={'class': 'form-control cpf -mask', 'type':'text', 'id':'cpf','style':'visibility:hidden;'}),
+            'cpf': TextInput(attrs={'class': 'form-control cpf -mask', 'type':'text', 'style':'visibility:hidden;'}),
             'superior': Select(attrs={'class': 'form-control'}),
             'departamento': Select(attrs={'class': 'form-control'}),
             'cargo': Select(attrs={'class': 'form-control'}),

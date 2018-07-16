@@ -40,7 +40,7 @@ class Cargo(UUIDModelMixin, TimedModelMixin):
         return '{0}'.format(self.nome)
 
 def upload_foto_usuario(instance, filename):
-    return 'usuario_foto/{0}_{1}'.format(instance.pk, filename)
+    return 'usuario_foto/{0}/{1}'.format(instance.pk, filename)
 
 class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
 
