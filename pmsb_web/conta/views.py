@@ -69,22 +69,23 @@ class ResgisterUser(View):
         if formUser.is_valid():
             #formUser = RegisterUserForm(request.POST, request.FILES)
             # usuarios inativos
-            user = formUser.save(commit=False)
-            user.is_active = False
+            new_user = formUser.save(commit=False)
+            new_user.is_active = False
             # pego os dados do formulario
             dados_formUser = formUser.data
             #print(formUser.data)
             # salvo o Abstract User
-            user.save()
+            new_user.save()
             # autentico o novo usuario
-            #user = authenticate(request, username=dados_formUser['username'], password=dados_formUser['password1'])
+            user = authenticate(request, username=dados_formUser['username'], password=dados_formUser['password1'])
             if user is not None:
                 #login sucesso
                 # dashboard
                 messages.success(request, 'Sua conta foi criada com Sucesso !')
                 login(request, user)
                 return redirect('conta:dashboard')
-            return redirect('conta:login')
+            # passar pra view de sucesso no cadastro
+            return render(request, 'conta/sucess.html', {'new_user':new_user})
         else:
             # retorno o formulário vazia se o formulario incorreto
             formulario_Abstract_User = RegisterUserForm()
