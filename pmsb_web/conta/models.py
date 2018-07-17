@@ -66,7 +66,6 @@ class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
     def __str__(self):
         return '{0}: {1}'.format(self.departamento, self.first_name)
 
-
 class Atributo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     descricao = models.TextField(verbose_name='Descrição')

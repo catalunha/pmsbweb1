@@ -21,8 +21,6 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect('conta:dashboard')
     elif request.method == 'POST':
-        # antetico o usuario
-        #user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         try:
             user = authenticate(username=request.POST['username'],password=request.POST['password'])
             if user is not None:
@@ -32,13 +30,11 @@ def login_view(request):
                     return redirect('admin/')
                 else:
                     login(request, user)
-                    return redirect('dashboard')
+                    return redirect('conta:dashboard')
             else:
-                # erro no login (senha/usuario errado)
-                return render(request, "conta/login.html", {'erro': True})
+                return render(request, "conta/login.html", {'erro': True})    
         except:
-            # erro ao logar (usuario n existe)
-            return render(request, "conta/login.html", {'erro': True})
+            pass
     # se o metodo for get só retorno um formulario vazio
     return render(request, "conta/login.html")
 
@@ -72,26 +68,30 @@ class ResgisterUser(View):
         # verifico se o formulario esta correto
         if formUser.is_valid():
             #formUser = RegisterUserForm(request.POST, request.FILES)
+            # usuarios inativos
+            user = formUser.save(commit=False)
+            user.is_active = False
             # pego os dados do formulario
             dados_formUser = formUser.data
             #print(formUser.data)
             # salvo o Abstract User
-            formUser.save()
+            user.save()
             # autentico o novo usuario
-            user = authenticate(request, username=dados_formUser['username'], password=dados_formUser['password1'])
+            #user = authenticate(request, username=dados_formUser['username'], password=dados_formUser['password1'])
             if user is not None:
                 #login sucesso
                 # dashboard
+                messages.success(request, 'Sua conta foi criada com Sucesso !')
                 login(request, user)
                 return redirect('conta:dashboard')
-            return redirect('conta:dashboard')
+            return redirect('conta:login')
         else:
             # retorno o formulário vazia se o formulario incorreto
             formulario_Abstract_User = RegisterUserForm()
             return render(request, self.template_name, {'formulario_User': formulario_Abstract_User, 'Erro': True })
 
 class Dashboard(View):
-    @login_required(login_url='login')
+    @login_required(login_url='conta:login')
     def painel(request):
         # passo o usuario e seus dados
         # futuramente passo a estrutura da árvore
@@ -100,7 +100,7 @@ class Dashboard(View):
         return render(request, 'dashboard/index.html', {'perfil_logado': user})
     
     
-    @login_required(login_url='login')
+    @login_required(login_url='conta:login')
     def user_profile(request):
         '''
         Function-Based View para listar os atributos do usuario
@@ -110,7 +110,7 @@ class Dashboard(View):
         return render(request, 'dashboard/listardados.html', args)
         # outras funcionalidades
 
-    @login_required(login_url='login')
+    @login_required(login_url='conta:login')
     def edit_user(request):
         '''
         Function-Based View pra editar campos do usuario
@@ -135,7 +135,7 @@ class Dashboard(View):
             args = {'form': form,'user': user}
             return render(request, 'dashboard/atualizar.html', args)
 
-    @login_required(login_url='login')
+    @login_required(login_url='conta:login')
     def edit_password(request):
         if request.method == 'POST':
             form = AtualizarSenhaForm(request.user, request.POST)

@@ -32,7 +32,16 @@
                   {% if erro %}
                   <div class="input-group mb-3">
                     <div class="col-8 text-left" style="color: red;">
-                      Senha/usuário incorretos.
+                      Acesso não permitido.
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if messages %}
+                  <div class="input-group mb-3">
+                    <div class="col-12 text-left" style="color: gray;">
+                      {% for message in messages %}
+                      {{message}}
+                      {% endfor %}
                     </div>
                   </div>
                   {% endif %}
