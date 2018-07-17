@@ -23,6 +23,7 @@ def login_view(request):
     elif request.method == 'POST':
         try:
             user = authenticate(username=request.POST['username'],password=request.POST['password'])
+            print(user)
             if user is not None:
                 #testo se e superuser redireciono admin/
                 if user.is_staff:
@@ -88,8 +89,8 @@ class ResgisterUser(View):
             return render(request, 'conta/sucess.html', {'new_user':new_user})
         else:
             # retorno o formulário vazia se o formulario incorreto
-            formulario_Abstract_User = RegisterUserForm()
-            return render(request, self.template_name, {'formulario_User': formulario_Abstract_User, 'Erro': True })
+            formulario_Abstract_User = formUser
+            return render(request, self.template_name, {'formulario_User': formulario_Abstract_User })
 
 class Dashboard(View):
     @login_required(login_url='conta:login')

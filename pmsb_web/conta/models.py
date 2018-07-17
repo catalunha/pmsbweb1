@@ -1,7 +1,8 @@
 # encoding: utf-8
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
-
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext as _
 ''' Model Mixins '''
 from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
 ''' Final Model Mixins '''
@@ -44,6 +45,23 @@ def upload_foto_usuario(instance, filename):
 
 class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
 
+    #username = cpf
+    username_validator = UnicodeUsernameValidator()
+
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("Este cpf já foi cadastrado, comunique a equipe."),
+        },
+    )
+
+    #nome completo
+    first_name = models.CharField(_('first name'), max_length=150, blank=True)
+    
     #foto de perfil
     foto = models.ImageField(upload_to=upload_foto_usuario, null = True)
 
