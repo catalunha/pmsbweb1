@@ -37,7 +37,7 @@ class InboxView(TemplateView):
         completed_threads = Thread.ordered(Thread.deleted(self.request.user))
         
         allthreads = set(threads + threads_unread)
-
+        
 
         context.update({
             "threads": allthreads,
@@ -78,8 +78,6 @@ class ThreadView(UpdateView):
 
     def get(self, request, *args, **kwargs):
         response = super(ThreadView, self).get(request, *args, **kwargs)
-        
-        self.userthreads = 'disney'
         self.object.userthread_set.filter(user=request.user).update(unread=False)
         return response
 

@@ -23,8 +23,9 @@ class NewMessageForm(forms.ModelForm):
     data_de_entrega = forms.DateField()
     to_user = UserModelChoiceField(queryset=get_user_model().objects.none())
     content = forms.CharField(widget=forms.Textarea)
-    
-    field_order = ['subject', 'data_de_entrega', 'to_user', 'contet']
+    arquivo = forms.FileField()
+
+    field_order = ['subject', 'data_de_entrega', 'to_user', 'content']
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -35,15 +36,18 @@ class NewMessageForm(forms.ModelForm):
             self.fields["to_user"].queryset = qs
         self.fields["to_user"].label = "Para " 
         self.fields["subject"].label = "Título da Tarefa "
-        self.fields["content"].label =  "Breve Descrição "
+        self.fields["content"].label =  "Descrição Detalhada "
         self.fields["subject"].widget = TextInput(attrs={'class': 'form-control'})
         self.fields["content"].widget =  Textarea(attrs={'class': 'form-control'})
-        self.fields["data_de_entrega"].widget =  DateInput(attrs={'class': 'form-control', 'type':'date'})
+        self.fields["data_de_entrega"].widget =  DateInput(attrs={'class': 'form-control', 'type':'date', 'required':True})
+        self.fields["arquivo"].required = False
 
     def save(self, commit=True):
         data = self.cleaned_data
         return Message.new_message(
-            self.user, [data["to_user"]], data["subject"], data["content"], data["data_de_entrega"]
+            self.user, [data["to_user"]], data["subject"], data["content"], 
+            data["data_de_entrega"],
+            data["arquivo"]
         )
 
     class Meta:
@@ -77,17 +81,20 @@ class NewMessageFormMultiple(forms.ModelForm):
 
 
 class MessageReplyForm(forms.ModelForm):
+    arquivo = forms.FileField()
+
     def __init__(self, *args, **kwargs):
         self.thread = kwargs.pop("thread")
         self.user = kwargs.pop("user")
         super(MessageReplyForm, self).__init__(*args, **kwargs)
         
         self.fields["content"].label = ""
-        self.fields["content"].widget =  Textarea(attrs={'class': 'form-control', 'placeholder':'Digita uma mensagem'})
+        self.fields["content"].widget =  Textarea(attrs={'class': 'form-control', 'placeholder':'Digite detalhadamente o procedimento da tarefa'})
+        self.fields["arquivo"].required = False
 
     def save(self, commit=True):
         return Message.new_reply(
-            self.thread, self.user, self.cleaned_data["content"]
+            self.thread, self.user, self.cleaned_data["content"], self.cleaned_data["arquivo"]
         )
 
     class Meta:

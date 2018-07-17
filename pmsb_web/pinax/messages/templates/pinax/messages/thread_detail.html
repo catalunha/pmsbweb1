@@ -4,14 +4,13 @@
         <div class="col-md-10">
             <div class="card mx-4">
                 <div class="card-body p-4">
-                    {{userthreads}}
                     <h2 style="text-align: center;">
                         {{ thread.subject }} 
-                        {% if thread.messages.all.0.sender == user %}
-                        <a class="btn btn-primary" style="float: right;" href="{% url 'pinax_messages:thread_delete' thread.pk %}">Marcar como concluída</a>
-                        {% endif %}
                     </h2>
                     <hr>
+                    <h6 class="text-muted" style="text-align: center;">
+                       Prazo: {{ thread.data_de_entrega }}
+                    </h6>
                     <section class="container-fluid">
                         {% for message in thread.messages.all %}
                         <div class="card">
@@ -25,12 +24,21 @@
                             {% else %}
                             <div style="text-align: right">
                                 <div class="message-byline">
-                                    <div class="text-muted">{{ message.sender.first_name }} às {{ message.sent_at }}</div>
+                                    <div class="text-muted">{{ message.sender.first_name }} às {{ message.sent_at }}: </div>
                                 </div>
-                                <div class="message-content">{{ message.content|urlize|linebreaks }}</div>
+                                <div class="message-content">
+                                    {{ message.content|urlize|linebreaks }}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if message.file_upload %}    
+                            <hr>
+                            <div class="message-byline">
+                                    <i class="fa fa-paperclip"></i><a download="{{message.file_upload}}" target="_blank" href="{{ message.file_upload.url }}"> Anexo </a>
                             </div>
                             {% endif %}
                         </div>
+                        
                         {% endfor %}
                         <form class="comment-form" action="{% url 'pinax_messages:thread_detail' thread.pk %}" method="POST" enctype="multipart/form-data">
                             {% csrf_token %} 
@@ -38,6 +46,9 @@
                             <div class="form-actions">
                                 <button type="submit" href="{% url 'pinax_messages:thread_detail' thread.pk %}" class="btn btn-warning ">Enviar</button>
                                 <a href="{% url 'pinax_messages:inbox' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                                {% if thread.messages.all.0.sender == user %}
+                                <a class="btn btn-danger" style="float: right; margin-right: 10px;" href="{% url 'pinax_messages:thread_delete' thread.pk %}">Marcar como concluída</a>
+                                {% endif %}
                             </div>
                         </form>
                     </section>
