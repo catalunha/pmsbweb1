@@ -32,11 +32,11 @@ class InboxView(TemplateView):
     
         threads = Thread.ordered(Thread.inbox(self.request.user))
         
-        threads_unread = Thread.ordered(Thread.unread(self.request.user))
+        # threads_unread = Thread.ordered(Thread.unread(self.request.user))
         
         completed_threads = Thread.ordered(Thread.deleted(self.request.user))
         
-        allthreads = set(threads + threads_unread)
+        allthreads = threads
         
 
         context.update({

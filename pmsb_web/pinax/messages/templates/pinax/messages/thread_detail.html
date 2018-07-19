@@ -7,12 +7,12 @@
                     <h2 style="text-align: center;">
                         {{ thread.subject }}
                     </h2>
-                    <hr>
                     <h6 class="small text-muted" style="text-align: center;">
-                        <strong>Tarefa criada por:</strong> {{thread.first_message.sender}}
+                        <strong>Tarefa criada por:</strong> {{thread.first_message.sender.first_name}}
                         <strong>Iniciada em:</strong> {{thread.first_message.sent_at}}
-                        <strong>Finaliza em:</strong> {{ thread.data_de_entrega }}
+                        <strong>Finaliza em:</strong> {{thread.data_de_entrega}}
                     </h6>
+                    <hr>
                     <section class="container-fluid">
                         <div class="card">
                             <form class="comment-form" action="{% url 'pinax_messages:thread_detail' thread.pk %}" method="POST" enctype="multipart/form-data" style="padding: 5px;">

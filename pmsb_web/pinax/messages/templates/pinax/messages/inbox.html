@@ -38,15 +38,20 @@
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col latest-message">
-                                            <p class="subject" style="text-align: center;">Tarefa: {{ thread.subject }}
+                                            <p class="subject" style="text-align: center;">{{ thread.subject }}
                                             </p>
                                             <hr>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-4">
+                                            {% if thread.users.all.1 == user %}
                                             <p class="content">
-                                                <strong>Tarefa criada por:</strong> Você </p>
+                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.0.first_name}}</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.1.first_name}}</p>
+                                            {% endif %}
                                             <p class="content">
                                                 <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
                                             <p class="content">
@@ -88,13 +93,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-4">
-                                            {% if thread.users.all.1 == user %}
                                             <p class="content">
-                                                <strong>Tarefa criada por:</strong> {{ thread.users.all.0.first_name}}</p>
-                                            {% elif thread.users.all.0 == user %}
-                                            <p class="content">
-                                                <strong>Tarefa criada por:</strong> {{ thread.users.all.1.first_name}}</p>
-                                            {% endif %}
+                                                <strong>Tarefa criada por:</strong> {{ thread.first_message.sender.first_name }}</p>
                                             <p class="content">
                                                 <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
                                             <p class="content">
@@ -135,8 +135,13 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-4">
+                                            {% if thread.users.all.1 == user %}
                                             <p class="content">
-                                                <strong>Tarefa criada por:</strong> Você </p>
+                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.0.first_name}}</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.1.first_name}}</p>
+                                            {% endif %}
                                             <p class="content">
                                                 <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
                                             <p class="content">
@@ -165,7 +170,7 @@
                         {% endif %} {% endfor %}
                     </div>
                     <div class="tab-pane mailbox" id="concluidasRecebidas" role="tabpanel">
-                        {% for thread in completed_threads %} {{complete_threads}}
+                        {% for thread in completed_threads %}
                         <!-- tarefas concluidas que eu recebi -->
                         {% if thread.first_message.sender != user %}
                         <div class="thread">
