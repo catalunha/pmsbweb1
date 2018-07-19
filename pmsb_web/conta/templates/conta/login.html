@@ -3,7 +3,7 @@
 
 <body class="app flex-row align-items-center fullscreen_bg">
   <div class="container">
-    <form action="{% url 'login' %}" onsubmit="remover_mascaras(this)" method="POST">
+    <form action="{% url 'conta:login' %}" onsubmit="remover_mascaras(this)" method="POST">
       {% csrf_token %}
       <div class="container">
         <div class="row justify-content-center">
@@ -32,7 +32,16 @@
                   {% if erro %}
                   <div class="input-group mb-3">
                     <div class="col-8 text-left" style="color: red;">
-                      Senha/usuário incorretos.
+                      Acesso não permitido.
+                    </div>
+                  </div>
+                  {% endif %}
+                  {% if messages %}
+                  <div class="input-group mb-3">
+                    <div class="col-12 text-left" style="color: gray;">
+                      {% for message in messages %}
+                      {{message}}
+                      {% endfor %}
                     </div>
                   </div>
                   {% endif %}
@@ -46,7 +55,7 @@
                   </div>
                   <div class="row">
                     <div class="col-12" style="margin-top: 5px;">
-                      <a href="{% url 'registrar' %}" class="btn btn-secondary btn-lg btn-block px-0" role="button">
+                      <a href="{% url 'conta:registrar' %}" class="btn btn-secondary btn-lg btn-block px-0" role="button">
                         <span class="hidden-xs">Primeiro acesso? Cadastre-se aqui.</span>
                       </a>
                     </div>

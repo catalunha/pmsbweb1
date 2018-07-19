@@ -9,7 +9,7 @@ from django.views.generic import (
 )
 
 from .forms import MessageReplyForm, NewMessageForm, NewMessageFormMultiple
-from .models import Thread
+from .models import Thread, UserThread
 
 try:
     from account.decorators import login_required
@@ -29,16 +29,19 @@ class InboxView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(InboxView, self).get_context_data(**kwargs)
-        if self.kwargs.get("deleted", None):
-            threads = Thread.ordered(Thread.deleted(self.request.user))
-            folder = "deleted"
-        else:
-            threads = Thread.ordered(Thread.inbox(self.request.user))
-            threads_unread = Thread.ordered(Thread.unread(self.request.user))
-            allthreads = threads + threads_unread
+    
+        threads = Thread.ordered(Thread.inbox(self.request.user))
+        
+        threads_unread = Thread.ordered(Thread.unread(self.request.user))
+        
+        completed_threads = Thread.ordered(Thread.deleted(self.request.user))
+        
+        allthreads = set(threads + threads_unread)
+        
 
         context.update({
             "threads": allthreads,
+            "completed_threads": completed_threads,
         })
         return context
 
@@ -51,12 +54,15 @@ class ThreadView(UpdateView):
     form_class = MessageReplyForm
     context_object_name = "thread"
     template_name = "pinax/messages/thread_detail.html"
-    success_url = reverse_lazy("pinax_messages:inbox")
+    #success_url = reverse_lazy("pinax_messages:inbox")
 
     @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ThreadView, self).dispatch(*args, **kwargs)
-
+    def dispatch(self, request,*args, **kwargs):
+        context = super(ThreadView, self).dispatch(request, *args, **kwargs)
+        print(args)
+        print(kwargs)
+        return context
+   
     def get_queryset(self):
         qs = super(ThreadView, self).get_queryset()
         qs = qs.filter(userthread__user=self.request.user).distinct()
@@ -66,7 +72,7 @@ class ThreadView(UpdateView):
         kwargs = super(ThreadView, self).get_form_kwargs()
         kwargs.update({
             "user": self.request.user,
-            "thread": self.object
+            "thread": self.object,
         })
         return kwargs
 
@@ -125,5 +131,6 @@ class ThreadDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         success_url = self.get_success_url()
-        self.object.userthread_set.filter(user=request.user).update(deleted=True)
+        # deleto a mensagem nos n end-points possíveis da trhread
+        self.object.userthread_set.update(deleted=True)
         return HttpResponseRedirect(success_url)

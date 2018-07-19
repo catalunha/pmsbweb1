@@ -1,0 +1,224 @@
+{% extends "dashboard/index.html" %} {% load pinax_messages_tags %} {% block main %}
+
+<div class="justify-content-center pinax-messages-inbox-container" style="margin-top: 10px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-tasks"></i> Tarefas
+            <a class="button" style="float: right;" href="{% url 'pinax_messages:message_create' %}">
+                <i class="fa fa-tasks"></i>
+                Designar Tarefa
+            </a>
+        </div>
+        <div class="card-body">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Procura pelo nome..." title="Escreva um nome">
+            <div class="col">
+
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#enviadas" role="tab" aria-controls="home">Enviadas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#recebidas" role="tab" aria-controls="profile">Recebidas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#concluidasEnviadas" role="tab" aria-controls="messages">Concluídas enviadas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#concluidasRecebidas" role="tab" aria-controls="messages">Concluídas recebidas</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane mailbox active" id="enviadas" role="tabpanel">
+                        {% for thread in threads %}
+                        <!-- primeira msg for o user = ele enviou tarefa -->
+                        {% if thread.first_message.sender == user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col latest-message">
+                                            <p class="subject" style="text-align: center;">Tarefa: {{ thread.subject }}
+                                            </p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <p class="content">
+                                                <strong>Tarefa criada por:</strong> Você </p>
+                                            <p class="content">
+                                                <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
+                                            <p class="content">
+                                                <strong>Tarefa finaliza em:</strong> {{ thread.data_de_entrega }}</p>
+                                        </div>
+
+                                        <div class="col-sm-8">
+                                            <p class="content text-justify text-truncate">
+                                                <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                            <p class="content">
+                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                            {% if thread.latest_message.sender == user %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> Você</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% endfor %}
+                    </div>
+                    <div class="tab-pane mailbox" id="recebidas" role="tabpanel">
+                        {% for thread in threads %}
+                        <!-- primeira mensagem não for o user = ele recebeu tarefa -->
+                        {% if thread.first_message.sender != user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col latest-message">
+                                            <p class="subject" style="text-align: center;">Tarefa: {{ thread.subject }}
+                                            </p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            {% if thread.users.all.1 == user %}
+                                            <p class="content">
+                                                <strong>Tarefa criada por:</strong> {{ thread.users.all.0.first_name}}</p>
+                                            {% elif thread.users.all.0 == user %}
+                                            <p class="content">
+                                                <strong>Tarefa criada por:</strong> {{ thread.users.all.1.first_name}}</p>
+                                            {% endif %}
+                                            <p class="content">
+                                                <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
+                                            <p class="content">
+                                                <strong>Tarefa finaliza em:</strong> {{ thread.data_de_entrega }}</p>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p class="content text-justify text-truncate">
+                                                <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                            <p class="content">
+                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                            {% if thread.latest_message.sender == user %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> Você</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% endfor %}
+                    </div>
+                    <div class="tab-pane mailbox" id="concluidasEnviadas" role="tabpanel">
+                        {% for thread in completed_threads %}
+                        <!-- se as tarefas concluidas que eu enviei -->
+                        {% if thread.first_message.sender == user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col latest-message">
+                                            <p class="subject" style="text-align: center;">Tarefa: {{ thread.subject }}
+                                            </p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <p class="content">
+                                                <strong>Tarefa criada por:</strong> Você </p>
+                                            <p class="content">
+                                                <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
+                                            <p class="content">
+                                                <strong>Tarefa finaliza em:</strong> {{ thread.data_de_entrega }}</p>
+                                            <p class="content">
+                                                <strong>Tarefa finalizada em:</strong> {{ thread.latest_message.sent_at }}</p>
+                                        </div>
+
+                                        <div class="col-sm-8">
+                                            <p class="content text-justify text-truncate">
+                                                <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                            <p class="content">
+                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                            {% if thread.latest_message.sender == user %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> Você</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% endfor %}
+                    </div>
+                    <div class="tab-pane mailbox" id="concluidasRecebidas" role="tabpanel">
+                        {% for thread in completed_threads %} {{complete_threads}}
+                        <!-- tarefas concluidas que eu recebi -->
+                        {% if thread.first_message.sender != user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col latest-message">
+                                            <p class="subject" style="text-align: center;">Tarefa: {{ thread.subject }}
+                                            </p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            {% if thread.users.all.1 == user %}
+                                            <p class="content">
+                                                <strong>Tarefa criada por:</strong> {{ thread.users.all.0.first_name}}</p>
+                                            {% elif thread.users.all.0 == user %}
+                                            <p class="content">
+                                                <strong>Tarefa criada por:</strong> {{ thread.users.all.1.first_name}}</p>
+                                            {% endif %}
+                                            <p class="content">
+                                                <strong>Tarefa criada em:</strong> {{thread.first_message.sent_at}}</p>
+                                            <p class="content">
+                                                <strong>Tarefa finaliza em:</strong> {{ thread.data_de_entrega }}</p>
+                                            <p class="content">
+                                                <strong>Tarefa finalizada em:</strong> {{ thread.latest_message.sent_at }}</p>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p class="content text-justify text-truncate">
+                                                <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                            <p class="content">
+                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                            {% if thread.latest_message.sender == user %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> Você</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Quem enviou:</strong> {{ thread.latest_message.sender }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}

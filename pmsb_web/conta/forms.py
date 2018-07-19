@@ -20,7 +20,6 @@ class RegisterUserForm(UserCreationForm):
         # removendo helptext do username
         self.fields['username'].label = "CPF"
         self.fields['username'].help_text = "Apenas números, Exemplo: 12345678900"       
-        self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
         self.fields['first_name'].help_text = "Igual sua identidade."
         self.fields['email'].help_text = "Use preferencialmente gmail"
@@ -37,6 +36,13 @@ class RegisterUserForm(UserCreationForm):
         self.fields['last_name'].required=True
         self.fields['email'].required=True
     
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
+        
     class Meta(UserCreationForm.Meta):
         model = User
         exclude = ['id','is_superuser','groups','user_permissions','is_staff','last_login','is_active','date_joined','password','superior','departamento','cargo']
@@ -73,14 +79,13 @@ class AtualizarUserForm(ModelForm):
 
     class Meta:
         model = User
-        exclude = ['username','id','password1','password2','password','is_superuser','groups','user_permissions','is_staff','last_login','is_active','date_joined','superior','cargo','cpf']
+        exclude = ['username','id','password1','password2','password','is_superuser','groups','user_permissions','is_staff','last_login','is_active','date_joined','superior','cargo']
         fields = ['first_name','last_name','email','telefone_celular','foto']
         widgets = {
             'email': EmailInput(attrs={'class': 'form-control'}),
             'username': TextInput(attrs={'class': 'form-control'}),
             'first_name': TextInput(attrs={'class': 'form-control'}),
             'last_name': TextInput(attrs={'class': 'form-control'}),
-            'cpf': TextInput(attrs={'class': 'form-control cpf -mask', 'type':'text', 'id':'cpf','style':'visibility:hidden;'}),
             'superior': Select(attrs={'class': 'form-control'}),
             'departamento': Select(attrs={'class': 'form-control'}),
             'cargo': Select(attrs={'class': 'form-control'}),

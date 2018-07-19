@@ -16,6 +16,7 @@ class Thread(UUIDModelMixin, TimedModelMixin):
 
     subject = models.CharField(max_length=150)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through="UserThread")
+    data_de_entrega = models.DateField(null=True, blank=True)
 
     @classmethod
     def inbox(cls, user):
@@ -27,12 +28,12 @@ class Thread(UUIDModelMixin, TimedModelMixin):
 
     @classmethod
     def unread(cls, user):
-        return cls.objects.filter(userthread__user=user,)
+        return cls.objects.filter(userthread__user=user, userthread__deleted=False)
 
     def __str__(self):
-        return "{}: {}".format(
+        return "{}: {} Prazo: {}".format(
             self.subject,
-            ", ".join([str(user) for user in self.users.all()])
+            ", ".join([str(user) for user in self.users.all()]), self.data_de_entrega
         )
 
     def get_absolute_url(self):
@@ -41,12 +42,12 @@ class Thread(UUIDModelMixin, TimedModelMixin):
     @property
     @cached_attribute
     def first_message(self):
-        return self.messages.all()[0]
+        return self.messages.order_by("sent_at")[0]
 
     @property
     @cached_attribute
     def latest_message(self):
-        return self.messages.order_by("-sent_at")[0]
+        return self.messages.all()[0]
 
     @classmethod
     def ordered(cls, objs):
@@ -67,6 +68,11 @@ class UserThread(UUIDModelMixin, TimedModelMixin):
     unread = models.BooleanField()
     deleted = models.BooleanField()
 
+def documento_upload(instance, filename):
+    """
+    media/<id_thread>/<id_user>/<nome_do_arquivo>
+    """
+    return 'upload/{0}/{1}/{0}_{2}'.format(instance.thread.id, instance.sender.id, filename)
 
 class Message(UUIDModelMixin, TimedModelMixin):
 
@@ -77,36 +83,38 @@ class Message(UUIDModelMixin, TimedModelMixin):
 
     content = models.TextField()
 
+    file_upload = models.FileField(upload_to=documento_upload, null=True, blank=True)
+
     @classmethod
-    def new_reply(cls, thread, user, content):
+    def new_reply(cls, thread, user, content, arquivo):
         """
         Create a new reply for an existing Thread.
         Mark thread as unread for all other participants, and
         mark thread as read by replier.
         """
-        msg = cls.objects.create(thread=thread, sender=user, content=content)
+        msg = cls.objects.create(thread=thread, sender=user, content=content, file_upload=arquivo)
         thread.userthread_set.exclude(user=user).update(deleted=False, unread=True)
         thread.userthread_set.filter(user=user).update(deleted=False, unread=False)
         message_sent.send(sender=cls, message=msg, thread=thread, reply=True)
         return msg
 
     @classmethod
-    def new_message(cls, from_user, to_users, subject, content):
+    def new_message(cls, from_user, to_users, subject, content, data_de_entrega, arquivo):
         """
         Create a new Message and Thread.
         Mark thread as unread for all recipients, and
         mark thread as read and deleted from inbox by creator.
         """
-        thread = Thread.objects.create(subject=subject)
+        thread = Thread.objects.create(subject=subject, data_de_entrega=data_de_entrega)
         for user in to_users:
-            thread.userthread_set.create(user=user, deleted=False, unread=True)
-        thread.userthread_set.create(user=from_user, deleted=True, unread=False)
-        msg = cls.objects.create(thread=thread, sender=from_user, content=content)
+            thread.userthread_set.create(user=user, deleted=False, unread=False)
+        thread.userthread_set.create(user=from_user, deleted=False, unread=False)
+        msg = cls.objects.create(thread=thread, sender=from_user, content=content, file_upload=arquivo)
         message_sent.send(sender=cls, message=msg, thread=thread, reply=False)
         return msg
 
     class Meta:
-        ordering = ("sent_at",)
+        ordering = ("-sent_at",)
 
     def get_absolute_url(self):
         return self.thread.get_absolute_url()
