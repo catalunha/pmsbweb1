@@ -93,8 +93,8 @@ class Message(UUIDModelMixin, TimedModelMixin):
         mark thread as read by replier.
         """
         msg = cls.objects.create(thread=thread, sender=user, content=content, file_upload=arquivo)
-        thread.userthread_set.exclude(user=user).update(deleted=False, unread=True)
-        thread.userthread_set.filter(user=user).update(deleted=False, unread=False)
+        thread.userthread_set.exclude(user=user).update(unread=True)
+        thread.userthread_set.filter(user=user).update(unread=False)
         message_sent.send(sender=cls, message=msg, thread=thread, reply=True)
         return msg
 
