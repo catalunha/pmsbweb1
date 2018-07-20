@@ -38,9 +38,10 @@
             input = document.getElementById("myInput");
             filter = input.value.toUpperCase();
             div = document.getElementsByClassName("thread");
+            user = document.getElementsByClassName("participants")
             console.log(ul);
             for (i = 0; i < div.length; i++) {
-                a = div[i].innerText;
+                a = user[i].innerText;
                 console.log(a);
                 if (a.toUpperCase().indexOf(filter) > -1) {
                     div[i].style.display = "";
