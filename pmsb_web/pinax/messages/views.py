@@ -37,7 +37,7 @@ class InboxView(TemplateView):
         completed_threads = Thread.ordered(Thread.deleted(self.request.user))
         
         allthreads = threads
-        
+       
 
         context.update({
             "threads": allthreads,
@@ -59,10 +59,16 @@ class ThreadView(UpdateView):
     @method_decorator(login_required)
     def dispatch(self, request,*args, **kwargs):
         context = super(ThreadView, self).dispatch(request, *args, **kwargs)
-        print(args)
-        print(kwargs)
         return context
-   
+    
+    def get_context_data(self, **kwargs):
+        context = super(ThreadView, self).get_context_data(**kwargs)
+
+        context.update({
+            "user_thread": UserThread.objects.get(thread=self.object.pk, user=self.request.user).deleted,
+        })
+        return context
+
     def get_queryset(self):
         qs = super(ThreadView, self).get_queryset()
         qs = qs.filter(userthread__user=self.request.user).distinct()
@@ -70,6 +76,7 @@ class ThreadView(UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(ThreadView, self).get_form_kwargs()
+        print(UserThread.objects.get(thread=self.object.pk, user=self.request.user).deleted)
         kwargs.update({
             "user": self.request.user,
             "thread": self.object,

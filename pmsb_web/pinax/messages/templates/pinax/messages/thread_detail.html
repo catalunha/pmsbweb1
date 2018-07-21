@@ -10,14 +10,24 @@
                     <h6 class="small text-muted" style="text-align: center;">
                         <strong>Tarefa criada por:</strong> {{thread.first_message.sender.first_name}}
                         <strong>Iniciada em:</strong> {{thread.first_message.sent_at}}
+                        {% if user_thread %}
+                        <strong>Finalizada em:</strong> {{thread.latest_message.sent_at}}
+                        {% else %}
                         <strong>Finaliza em:</strong> {{thread.data_de_entrega}}
+                        {% endif %}
                     </h6>
                     <hr>
                     <section class="container-fluid">
+                        {% if user_thread %}
                         <div class="card">
-                            <form class="comment-form" action="{% url 'pinax_messages:thread_detail' thread.pk %}" method="POST" enctype="multipart/form-data" style="padding: 5px;">
+                            <a href="{% url 'pinax_messages:inbox' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                        </div>
+                        {% else %}
+                        <div class="card">
+                            <form class="comment-form" action="{% url 'pinax_messages:thread_detail' thread.pk %}" method="POST" enctype="multipart/form-data"
+                                style="padding: 5px;">
                                 {% csrf_token %} {{ form.as_p }}
-                                <div class="form-actions" style="padding: 5px;" >
+                                <div class="form-actions" style="padding: 5px;">
                                     <button type="submit" href="{% url 'pinax_messages:thread_detail' thread.pk %}" class="btn btn-warning ">Enviar</button>
                                     <a href="{% url 'pinax_messages:inbox' %}" class="btn btn-primary " style="float: right;">Voltar</a>
                                     {% if thread.first_message.sender == user %}
@@ -26,7 +36,7 @@
                                 </div>
                             </form>
                         </div>
-                        {% for message in thread.messages.all %}
+                        {% endif %} {% for message in thread.messages.all %}
                         <div class="card">
                             {% if message.sender == user %}
                             <div class="row">
@@ -58,8 +68,7 @@
                                     <img class="img-avatar" src="{{MEDIA}}{{message.sender.foto.url}}" alt="">
                                 </div>
                             </div>
-                            {% endif %} 
-                            {% if message.file_upload %}
+                            {% endif %} {% if message.file_upload %}
                             <hr>
                             <div class="message-byline">
                                 <i class="fa fa-paperclip"></i>
