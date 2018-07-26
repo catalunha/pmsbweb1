@@ -4,7 +4,7 @@
         <div class="col-md-10">
             <div class="card mx-4">
                 <div class="card-body p-4" style="text-align: center;">
-                    <h2 style="text-align: center;" >Tarefa: {{ thread.subject }}</h2>
+                    <h2 style="text-align: center;" >{{ thread.subject }}</h2>
                     <hr>
                     {% url "pinax_messages:thread_delete" thread.pk as post_url %}
                     <p class="text-align: center;" role="alert">
@@ -14,7 +14,7 @@
                         {% csrf_token %}
                         <div class="form-actions">
                             <button type="submit" class="btn btn-warning" style="float: left;" >Confirmar</button>
-                            <a href="{% url "pinax_messages:inbox" %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                            <a href="{{thread.get_absolute_url}}" class="btn btn-primary " style="float: right;">Voltar</a>
                         </div>
                     </form>
                 </div>

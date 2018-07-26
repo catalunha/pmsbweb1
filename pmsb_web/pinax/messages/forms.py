@@ -30,7 +30,7 @@ class NewMessageForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
         super(NewMessageForm, self).__init__(*args, **kwargs)
-        self.fields["to_user"].queryset = hookset.get_user_choices(self.user)
+        self.fields["to_user"].queryset = hookset.get_user_choices(self.user).filter(is_superuser=False)
         if self.initial.get("to_user") is not None:
             qs = self.fields["to_user"].queryset.filter(pk=self.initial["to_user"])
             self.fields["to_user"].queryset = qs
@@ -64,7 +64,7 @@ class NewMessageFormMultiple(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
         super(NewMessageFormMultiple, self).__init__(*args, **kwargs)
-        self.fields["to_user"].queryset = hookset.get_user_choices(self.user)
+        self.fields["to_user"].queryset = hookset.get_user_choices(self.user).filter(is_superuser=False)
         if self.initial.get("to_user") is not None:
             qs = self.fields["to_user"].queryset.filter(pk__in=self.initial["to_user"])
             self.fields["to_user"].queryset = qs
