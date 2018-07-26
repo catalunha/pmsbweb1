@@ -14,9 +14,10 @@ from core.mixins import TimedModelMixin, UUIDModelMixin, UserOwnedModelMixin
 @python_2_unicode_compatible
 class Thread(UUIDModelMixin, TimedModelMixin):
 
-    subject = models.CharField(max_length=150)
+    subject = models.CharField("Título da Tarefa", max_length=150)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through="UserThread")
-    data_de_entrega = models.DateField(null=True, blank=True)
+    data_de_entrega = models.DateField("Prazo", null=True, blank=True)
+    data_finalizada = models.DateField("Finalizada em", null=True, blank=True)
 
     @classmethod
     def inbox(cls, user):
