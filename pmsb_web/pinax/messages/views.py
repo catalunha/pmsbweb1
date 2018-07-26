@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+import datetime
 from django.utils.decorators import method_decorator
 from django.views.generic import (
     CreateView,
@@ -76,8 +77,7 @@ class ThreadView(UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super(ThreadView, self).get_form_kwargs()
-        print(UserThread.objects.get(thread=self.object.pk, user=self.request.user).deleted)
-        kwargs.update({
+        kwargs.update({ 
             "user": self.request.user,
             "thread": self.object,
         })
@@ -138,6 +138,9 @@ class ThreadDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         success_url = self.get_success_url()
-        # deleto a mensagem nos n end-points possíveis da trhread
+        # atualizo a hora da tarefa na hora da conclusão
+        self.object.data_finalizada = datetime.datetime.now()
+        self.object.save()
+        # marco como "deletada" a mensagem nos n end-points possíveis da thread
         self.object.userthread_set.update(deleted=True)
         return HttpResponseRedirect(success_url)
