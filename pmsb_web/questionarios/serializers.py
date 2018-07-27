@@ -2,9 +2,22 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers, viewsets, routers
 from rest_framework import generics
-from .models import Questionario, Pergunta, PerguntaEscolha, PossivelEscolha
-from .models import PerguntaArquivo, PerguntaCoordenada, PerguntaEscolha, PerguntaImagem, PerguntaNumero, PerguntaTexto
-from .models import RespostaQuestionario, RespostaPergunta, PossivelEscolhaResposta
+from .models import (
+    Questionario,
+    Pergunta,
+    PerguntaEscolha,
+    PossivelEscolha,
+    PerguntaArquivo,
+    PerguntaCoordenada,
+    PerguntaEscolha,
+    PerguntaImagem,
+    PerguntaNumero,
+    PerguntaTexto,
+    RespostaQuestionario,
+    RespostaPergunta,
+    PossivelEscolhaResposta,
+    UnidadeMedida,
+)
 
 
 User = get_user_model()
@@ -29,7 +42,8 @@ class PossivelEscolhaViewSet(viewsets.ModelViewSet):
     serializer_class = PossivelEscolhaSerializer
 
 class PerguntaSerializerMixin(serializers.HyperlinkedModelSerializer):
-    possivel_escolha_requisito = serializers.PrimaryKeyRelatedField(read_only = True)
+    possivel_escolha_requisito = PossivelEscolhaSerializer()
+    #possivel_escolha_requisito = serializers.SerializerMethodField()
     class Meta:
         model = Pergunta
         fields = (
@@ -42,12 +56,21 @@ class PerguntaSerializerMixin(serializers.HyperlinkedModelSerializer):
             "tipo",
             "possivel_escolha_requisito",
         )
+    
+    """
+    def get_possivel_escolha_requisito(self, instance):
+        print("sjaflskdjflajsdlfjla")
+        return {
+            "id": instance.possivel_escolha_requisito.id,
+            "pergunta": instance.possivel_escolha_requisito.pergunta,
+        }
+    """
+
 
 class PerguntaSerializer(PerguntaSerializerMixin):
 
-    class Meta(PerguntaSerializerMixin):
-        model = PerguntaSerializerMixin.Meta.model
-        fields = PerguntaSerializerMixin.Meta.fields
+    class Meta(PerguntaSerializerMixin.Meta):
+        pass
     
     def to_representation(self, instance):
         instance = instance.cast()
@@ -63,19 +86,17 @@ class PerguntaSerializer(PerguntaSerializerMixin):
             return PerguntaCoordenadaSerializer(instance = instance, context = self.context).data
         elif isinstance(instance, PerguntaImagem):
             return PerguntaImagemSerializer(instance = instance, context = self.context).data
-        elif isinstance(instance, Pergunta):
-            return super(PerguntaSerializer, self).to_representation(instance)
         else:
-            return None
+            return super(PerguntaSerializer, self).to_representation(instance)
 
 
 class PerguntasViewSet(viewsets.ModelViewSet):
     queryset = Pergunta.objects.all()
     serializer_class = PerguntaSerializer
 
-class PerguntaEscolhaSerializer(serializers.ModelSerializer):
+class PerguntaEscolhaSerializer(PerguntaSerializerMixin):
     possiveis_escolhas = PossivelEscolhaSerializer(many=True, read_only = True)
-    class Meta:
+    class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaEscolha
         fields = "__all__"
 
@@ -83,8 +104,14 @@ class PerguntaEscolhaViewSet(viewsets.ModelViewSet):
     queryset = PerguntaEscolha.objects.all()
     serializer_class = PerguntaEscolhaSerializer
 
-class PerguntaNumeroSerializer(serializers.ModelSerializer):
+class UnidadeMedidaSerializer(serializers.ModelSerializer):
     class Meta:
+        model = UnidadeMedida
+        fields = "__all__"
+
+class PerguntaNumeroSerializer(PerguntaSerializerMixin):
+    unidade_medida = UnidadeMedidaSerializer(read_only=True)
+    class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaNumero
         fields = "__all__"
 
@@ -92,8 +119,8 @@ class PerguntaNumeroViewSet(viewsets.ModelViewSet):
     queryset = PerguntaNumero.objects.all()
     serializer_class = PerguntaNumeroSerializer
 
-class PerguntaArquivoSerializer(serializers.ModelSerializer):
-    class Meta:
+class PerguntaArquivoSerializer(PerguntaSerializerMixin):
+    class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaArquivo
         fields = "__all__"
 
@@ -101,8 +128,8 @@ class PerguntaArquivoViewSet(viewsets.ModelViewSet):
     queryset = PerguntaArquivo.objects.all()
     serializer_class = PerguntaArquivoSerializer
 
-class PerguntaTextoSerializer(serializers.ModelSerializer):
-    class Meta:
+class PerguntaTextoSerializer(PerguntaSerializerMixin):
+    class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaTexto
         fields = "__all__"
 
@@ -110,8 +137,8 @@ class PerguntaTextoViewSet(viewsets.ModelViewSet):
     queryset = PerguntaTexto.objects.all()
     serializer_class = PerguntaTextoSerializer
 
-class PerguntaCoordenadaSerializer(serializers.ModelSerializer):
-    class Meta:
+class PerguntaCoordenadaSerializer(PerguntaSerializerMixin):
+    class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaCoordenada
         fields = "__all__"
 
@@ -119,8 +146,8 @@ class PerguntaCoordenadaViewSet(viewsets.ModelViewSet):
     queryset = PerguntaCoordenada.objects.all()
     serializer_class = PerguntaCoordenadaSerializer
 
-class PerguntaImagemSerializer(serializers.ModelSerializer):
-    class Meta:
+class PerguntaImagemSerializer(PerguntaSerializerMixin):
+    class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaImagem
         fields = "__all__"
 
