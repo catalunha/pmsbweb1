@@ -69,6 +69,10 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
             self.tipo = self.TIPO
         super(Pergunta, self).save(*args, **kwargs)
     
+        #atualiza editado_em nos questionarios com esta pergunta
+        for questionario in self.questionarios.all():
+            questionario.save()
+    
     def cast(self):
         if self.tipo == PerguntaEscolha.TIPO:
             return self.perguntaescolha
