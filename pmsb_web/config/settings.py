@@ -11,9 +11,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-
 from decouple import config, Csv
-
+import dj_database_url
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -22,12 +21,29 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'bwdtk5=_=tj+!8s(bcgd8f*jk$jdqan%#1ja8j%wx3#ep@dya@'
+SECRET_KEY = config("SECRET_KEY")
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #atenção aqui, nao temos certificado
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast = bool, default = True)
+DEBUG = config("DEBUG", cast = bool, default = False)
+
+TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+
+
+ADMINS = (
+    ('Catalunha', 'pmsb@gmail.com'),
+)
+
+MANAGERS = ADMINS
+
+LOGIN_URL = '/'
+LOGOUT_URL = '/logout'
+
 
 
 # Application definition
@@ -93,11 +109,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(
+      default = config('DATABASE_URL'))
 }
+
 
 
 # Password validation
@@ -152,7 +167,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+FILE_UPLOAD_TEMP_DIR = '/tmp/'
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_MAX_MEMORY_SIZE = 33554432
+
+
 AUTH_USER_MODEL = "conta.User"
+
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "maildumps")
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+
+DEFAULT_FROM_EMAIL = 'PMSB <pmsb@gmail.com>'
+EMAIL_SUBJECT_PREFIX = '[PMSB] '
+SERVER_EMAIL = 'pmsb@gmail.com'
 
 if DEBUG:
     """
