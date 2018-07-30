@@ -5,7 +5,7 @@ from django.utils import timezone
 from model_utils.managers import InheritanceManager
 from core.mixins import UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin
 
-class Localizacao(models.Model):
+class Localizacao(UUIDModelMixin):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     altitude = models.DecimalField(max_digits=9, decimal_places=6)
@@ -88,7 +88,7 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
             return self.perguntanumero
             
 
-class UnidadeMedida(models.Model):
+class UnidadeMedida(UUIDModelMixin):
     """
     Tabela - Unidade de Medida
     """

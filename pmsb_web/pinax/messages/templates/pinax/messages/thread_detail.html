@@ -10,10 +10,9 @@
                     <h6 class="small text-muted" style="text-align: center;">
                         <strong>Tarefa criada por:</strong> {{thread.first_message.sender.first_name}}
                         <strong>Iniciada em:</strong> {{thread.first_message.sent_at}}
-                        {% if user_thread %}
-                        <strong>Finalizada em:</strong> {{thread.latest_message.sent_at}}
-                        {% else %}
                         <strong>Finaliza em:</strong> {{thread.data_de_entrega}}
+                        {% if user_thread %}
+                        <strong>Finalizada em:</strong> {{thread.data_finalizada}}
                         {% endif %}
                     </h6>
                     <hr>
