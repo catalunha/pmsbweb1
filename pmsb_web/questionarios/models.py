@@ -165,6 +165,14 @@ class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
         ordering = ("questionario","ordem","pergunta")
         verbose_name = "Pergunta do Questionario"
         verbose_name_plural = "Perguntas dos Questionarios"
+    
+    def save(self, *args, **kwargs):
+        """
+        implementar ordem automatica
+        ordem = 0
+        self.questionario.perguntas.last()
+        """
+        super(PerguntaDoQuestionario, self).save(*args, **kwargs)
 
 
 class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
