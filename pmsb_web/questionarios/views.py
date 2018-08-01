@@ -60,9 +60,11 @@ class PerguntaUpdateView(LoginRequiredMixin, UpdateView):
     model = Pergunta
     template_name = "questionarios/update_pergunta.html"
 
-    def get_form_class(self):
-        
-        instance = self.object.cast()
+    def get_object(self):
+        self.object = self.object.cast()
+
+    def get_form_class(self):        
+        instance = self.object
 
         if isinstance(instance, PerguntaEscolha):
             return PerguntaEscolhaForm
