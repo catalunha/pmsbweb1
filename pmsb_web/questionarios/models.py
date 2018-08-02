@@ -44,6 +44,10 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def __str__(self):
         return "Questionario {}".format(self.nome)
 
+    @property
+    def perguntas_ordenadas(self):
+        return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
+
 class Pergunta(UUIDModelMixin, TimedModelMixin):
 
     TIPO = None
@@ -72,6 +76,22 @@ class Pergunta(UUIDModelMixin, TimedModelMixin):
         #atualiza editado_em nos questionarios com esta pergunta
         for questionario in self.questionarios.all():
             questionario.save()
+
+    @property
+    def verbose_name_tipo(self):
+
+        if self.tipo == PerguntaEscolha.TIPO:
+            return "Pergunta Escolha"
+        elif self.tipo == PerguntaTexto.TIPO:
+            return "Pergunta Texto"
+        elif self.tipo == PerguntaCoordenada.TIPO:
+            return "Pergunta Coordenada"
+        elif self.tipo == PerguntaArquivo.TIPO:
+            return "Pergunta Arquivo"
+        elif self.tipo == PerguntaImagem.TIPO:
+            return "Pergunta Imagem"
+        elif self.tipo == PerguntaNumero.TIPO:
+            return "Pergunta Numero"
     
     def cast(self):
         if self.tipo == PerguntaEscolha.TIPO:
@@ -167,11 +187,15 @@ class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
         verbose_name_plural = "Perguntas dos Questionarios"
     
     def save(self, *args, **kwargs):
-        """
-        implementar ordem automatica
-        ordem = 0
-        self.questionario.perguntas.last()
-        """
+        if self.ordem is None:
+            queryset = PerguntaDoQuestionario.objects.filter(questionario = self.questionario)
+            ultimo = queryset.last()
+
+            if ultimo is None:
+                self.ordem = 1
+            else:
+                self.ordem = ultimo.ordem + 1
+        
         super(PerguntaDoQuestionario, self).save(*args, **kwargs)
 
 
