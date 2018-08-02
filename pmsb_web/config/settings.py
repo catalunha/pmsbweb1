@@ -62,6 +62,7 @@ INCLUDE_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'pinax.messages',
+    'widget_tweaks',
 ]
 
 LOCAL_APPS = [
