@@ -1,0 +1,13 @@
+<div id="content-container" class="container p-none">
+    <div class="side-p">
+        <h3>Vai remover mesmo a pergunta?</h3>
+        <p>You're about to delete {{ object.pergunta }}.</p>
+        <form action="" method="post">
+            {% csrf_token %}
+            <input class="btn btn-link" 
+                    type="button" value="Cancel" 
+                    onclick="window.history.go(-1);"/>
+            <input class="btn btn-danger" type="submit" value="Confirm"/>
+        </form>
+    </div>
+</div>

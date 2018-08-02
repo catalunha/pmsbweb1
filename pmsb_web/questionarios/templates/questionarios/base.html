@@ -1,11 +1,15 @@
 <html>
     <head>
         <title>
-            Base
+            {% block titulo %} PMSB | Questionarios | {% endblock titulo %}
         </title>
     </head>
     <body>
-        {% include "questionarios/includes/in_base.html" %}
+        <ul>
+            {% block ul_menu %}
+            <li><a href="{% url "questionarios:list" %}">inicio</a></li>
+            {% endblock ul_menu%}
+        </ul>
         <div>
         {% block conteudo%}
             Treta   

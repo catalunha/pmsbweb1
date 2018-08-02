@@ -1,0 +1,20 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block titulo %} {{block.super}} Escolher Tipo Pergunta {% endblock titulo %}
+
+{% block ul_menu %}
+{{block.super}}
+<li><a href="{% url "questionarios:create_pergunta_tipo" object.id %}">Escolher Tipo Pergunta</a></li>
+{% endblock ul_menu%}
+
+{% block conteudo %}
+
+<p><a href="{% url "questionarios:create_pergunta" object.id  0 %}">Escolha</a></p>
+<p><a href="{% url "questionarios:create_pergunta" object.id  1 %}">Texto</a></p>
+<p><a href="{% url "questionarios:create_pergunta" object.id  2 %}">Arquivo</a></p>
+<p><a href="{% url "questionarios:create_pergunta" object.id  3 %}">Imagem</a></p>
+<p><a href="{% url "questionarios:create_pergunta" object.id  4 %}">Coordenada</a></p>
+<p><a href="{% url "questionarios:create_pergunta" object.id  5 %}">Numero</a></p>
+
+{% endblock %}
