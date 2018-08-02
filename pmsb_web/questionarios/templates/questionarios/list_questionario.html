@@ -1,0 +1,27 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block titulo %} {{block.super}} listagem {% endblock titulo %}
+
+{% block conteudo %}
+<a href=" {% url "questionarios:create"%}">Novo Questionario</a>
+
+<ol>
+    {% for questionario in object_list %}
+    <li>
+        Questionario: {{questionario.nome}}, id: {{questionario.id}}
+        [ <a href="{% url "questionarios:update" questionario.id %}">Editar</a> |<a href="{% url "questionarios:delete" questionario.id %}">Deletar</a> ]
+        [ <a href="{% url "questionarios:create_pergunta_tipo" questionario.id %}">Adicionar Pergunta</a> |<a href="{% url "questionarios:delete" questionario.id %}">Ordenar</a> ]
+        <ul>
+            {% for pergunta_do_questionario in questionario.perguntas_ordenadas %}
+            <li>
+                ordem: {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta}}
+                <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.questionario.id pergunta_do_questionario.pergunta.id %}">Editar Pergunta</a> 
+                | <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}">Remover Pergunta</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ol>
+{% endblock %}
