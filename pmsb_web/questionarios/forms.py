@@ -16,6 +16,14 @@ class QuestionarioForm(forms.ModelForm):
         model = Questionario
         fields = ("nome", )
 
+class QuestionarioDeleteForm(forms.Form):
+    id = forms.UUIDField()
+    object_id = None
+    def clean(self):
+        super(QuestionarioDeleteForm, self).clean()
+        if self.cleaned_data.get("id") != self.object_id:
+            print(self.cleaned_data.get("id"), self.object_id)
+            self.add_error("id", "ID do objeto não confere.")
 
 class BasePerguntaForm(forms.ModelForm):
     class Meta:
