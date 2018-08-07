@@ -41,8 +41,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-LOGIN_URL = '/'
-LOGOUT_URL = '/logout'
+LOGIN_URL = '/pmsb/'
+LOGOUT_URL = '/pmsb/logout'
 
 
 
