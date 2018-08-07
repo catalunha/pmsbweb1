@@ -211,6 +211,18 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
 
     def __str__(self):
         return "{0} -> {1}".format(self.pergunta, self.texto)
+    
+    @classmethod
+    def by_id_questionario(cls, id):
+        
+        try:
+            questionario = Questionario.objects.get(pk = id)
+        except Questionario.DoesNotExist:
+            questionario = None
+        
+        escolhas = PossivelEscolha.objects.filter(pergunta__in = questionario.perguntas.all())
+
+        return escolhas
 
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE, related_name="respostas")
