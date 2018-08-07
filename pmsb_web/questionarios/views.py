@@ -23,6 +23,7 @@ from .models import (
     PerguntaNumero,
     PerguntaTexto,
     PerguntaDoQuestionario,
+    PossivelEscolha,
 )
 from .forms import (
     QuestionarioForm,
@@ -92,7 +93,7 @@ class PerguntaCreateView(LoginRequiredMixin, CreateView):
     form_class = BasePerguntaForm
     success_url = reverse_lazy("questionarios:list")
 
-    def get_form_class(self):        
+    def get_form_class(self):
         instance = self.kwargs.get("tipo")
         if instance == 0:
             return PerguntaEscolhaForm
@@ -108,6 +109,11 @@ class PerguntaCreateView(LoginRequiredMixin, CreateView):
             return PerguntaNumeroForm
         else:
             return None
+    
+    def get_form(self):
+        form = super(PerguntaCreateView, self).get_form()
+        form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_id_questionario(self.kwargs.get("pk"))
+        return form
 
     def form_valid(self, form):
         form_valid_return = super(PerguntaCreateView, self).form_valid(form)
@@ -124,6 +130,7 @@ class PerguntaUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "questionarios/update_pergunta.html"
     model = Pergunta
     form_class = BasePerguntaForm
+    success_url = reverse_lazy("questionarios:list")
 
     def get_object(self):
         self.object = super(PerguntaUpdateView, self).get_object()
@@ -153,3 +160,6 @@ class PerguntaDoQuestionarioDeleteView(LoginRequiredMixin, DeleteView):
     model = PerguntaDoQuestionario
     success_url = reverse_lazy("questionarios:list")
 
+
+class TesteTemplateView(TemplateView):
+    template_name = "questionarios/teste.html"
