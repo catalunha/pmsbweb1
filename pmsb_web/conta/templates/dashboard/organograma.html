@@ -1,0 +1,56 @@
+{% extends "dashboard/index.html" %} {% block main %}
+<div class="container" style="margin-top: 10px;">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card mx-4">
+                <div class="card-body p-4">
+                    <div class="dtree">
+                        <small>
+                            <a href="javascript: d.openAll();">Expandir tudo</a> |
+                            <a href="javascript: d.closeAll();">Contrair tudo</a>
+                        </small>
+                        
+                        {% if tree %}
+                        <script type="text/javascript">
+                            d = new dTree('d');
+                            d.add(0,-1,'Organograma: Árvore Hierárquica');
+                            {% for user in tree %}
+                            console.log('{{user.id}}')
+                            console.log('{{user.first_name}}')
+                            console.log('{{user.superior.id}}')
+                            d.add('{{user.id}}', '{{user.superior.id}}', '{{user.first_name}}');
+                            {% endfor %}
+                            document.write(d);
+                        </script>
+                        <!-- SETORES+CARGOS -->
+                        {% elif departamentos %}
+                        <script type="text/javascript">
+                            d = new dTree('d');
+                            d.add(0,-1,'Organograma: Departamentos e Cargos');
+                            {% for dep in departamentos %}
+                            d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
+                            {% endfor %}
+                            {% for users in all_user  %}
+                            d.add('{{users.id}}', '{{users.departamento.id}}', '{{users.cargo}}');
+                            {% endfor %}
+                            document.write(d);
+                        </script>
+                        {% elif dep %}
+                        <!-- SETORES -->
+                        <script type="text/javascript">
+                            d = new dTree('d');
+                            d.add(0,-1,'Organograma: Departamentos');
+                            {% for departamentos in dep %}
+                            d.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
+                            {% endfor %}
+                            document.write(d);
+                        </script>
+                        {% endif %}
+                    </div>
+                    <a href="{% url 'conta:dashboard' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
