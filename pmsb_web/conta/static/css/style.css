@@ -14274,8 +14274,15 @@ body {
   font-size: 16px;
   padding: 12px 20px 12px 40px;
   border: 1px solid #ddd;
-margin-bottom: 12px;
+  margin-bottom: 12px;
 }
+
+/* Font-awesome itens no padrão do icones core-ui */
+.fa{
+  color: gray;
+  /* testar a responsivdade em telas diferentes */
+  margin-right: 0.5em;
+} 
 
 /* PINAX MESSAGE */
 

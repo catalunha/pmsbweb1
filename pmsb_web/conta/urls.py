@@ -18,5 +18,9 @@ urlpatterns = [
     
     # dashboard view's
     path('painel', views.Dashboard.painel, name='dashboard'),
+    # organograma
+    path('organograma/hierarquia',views.Dashboard.hierarquia_tree, name='hierarquia_tree'),
+    path('organograma/cargos',views.Dashboard.cargo_tree, name='cargo_tree'),
+    path('organograma/departamentos',views.Dashboard.departamento_tree, name='departamento_tree')
 
 ] 

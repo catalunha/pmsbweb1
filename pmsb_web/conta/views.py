@@ -9,10 +9,10 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 # project imports
 from .forms import RegisterUserForm, AtualizarUserForm, AtualizarSenhaForm
-from .models import User, Atributo
+from .models import User, Atributo, Departamento
 
 def login_view(request):
     '''
@@ -47,8 +47,6 @@ def logout_view(request):
     logout(request)
     # redieciono pra página de login
     return redirect('conta:login')
-
-
 
 class ResgisterUser(View):
     '''
@@ -92,8 +90,7 @@ class ResgisterUser(View):
             formulario_Abstract_User = formUser
             return render(request, self.template_name, {'formulario_User': formulario_Abstract_User })
 
-class Dashboard(View):
-    @login_required(login_url='conta:login')
+class Dashboard(LoginRequiredMixin, View):
     def painel(request):
         # passo o usuario e seus dados
         # futuramente passo a estrutura da árvore
@@ -101,8 +98,6 @@ class Dashboard(View):
             user = User.objects.get(id=request.user.id)
         return render(request, 'dashboard/index.html', {'perfil_logado': user})
     
-    
-    @login_required(login_url='conta:login')
     def user_profile(request):
         '''
         Function-Based View para listar os atributos do usuario
@@ -112,7 +107,6 @@ class Dashboard(View):
         return render(request, 'dashboard/listardados.html', args)
         # outras funcionalidades
 
-    @login_required(login_url='conta:login')
     def edit_user(request):
         '''
         Function-Based View pra editar campos do usuario
@@ -137,7 +131,6 @@ class Dashboard(View):
             args = {'form': form,'user': user}
             return render(request, 'dashboard/atualizar.html', args)
 
-    @login_required(login_url='conta:login')
     def edit_password(request):
         if request.method == 'POST':
             form = AtualizarSenhaForm(request.user, request.POST)
@@ -151,3 +144,16 @@ class Dashboard(View):
         return render(request, 'dashboard/atualizar_password.html', {
             'form': form
         })
+    
+    def hierarquia_tree(request):
+        user = User.objects.all()
+        return render(request, 'dashboard/organograma.html', {'tree':user})
+        
+    def departamento_tree(request):
+        dep = Departamento.objects.all()
+        return render(request, 'dashboard/organograma.html', {'dep': dep})
+
+    def cargo_tree(request):
+        dep = Departamento.objects.all()
+        user = User.objects.all()
+        return render(request, 'dashboard/organograma.html', {'departamentos':dep, 'all_user': user})
