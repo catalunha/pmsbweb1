@@ -19,7 +19,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('pmsb', include(('conta.urls','conta'), namespace='conta')),
+    path('pmsb/', include(('conta.urls','conta'), namespace='conta')),
     path('pmsb/admin/', admin.site.urls),
     path('pmsb/api/', include("questionarios.api_urls")),
     path('pmsb/tarefas/', include('pinax.messages.urls', namespace='pinax_messages')),
