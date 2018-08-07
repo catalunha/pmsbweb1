@@ -1,0 +1,14 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block conteudo %}
+confirme a ação informando o id do questionario
+
+<form method="post">
+    {% csrf_token %}
+    {% include "includes/form.html" with form=form %}
+    <button type="submit" class="btn btn-primary">Apagar</button>
+    <a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</button>
+</form>
+
+{% endblock %}

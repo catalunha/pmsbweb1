@@ -1,0 +1,28 @@
+{% extends "dashboard/index.html" %}
+
+{% block main %}
+
+<form action="{% url 'conta:user_edit' %}" onsubmit="remover_mascaras(this)" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="container" style="margin-top: 10px">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <div class="card mx-4">
+          <div class="card-body p-4">
+            <h2 style="text-align: center;">Atualizar os Dados</h2>
+            <hr>
+            <p class="text-muted" style="text-align: center;"></p>
+            {% if Erro %}
+            <p style="text-align: center; color: red;"> Ocorreu um erro !</p>
+            {% endif %} {{ form.as_p }}
+            <br>
+            <button type="submit" class="btn btn-warning ">Atualizar Dados</button>
+            <a href="{% url 'conta:user_dados' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}

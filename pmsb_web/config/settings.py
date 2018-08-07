@@ -41,8 +41,8 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-LOGIN_URL = '/'
-LOGOUT_URL = '/logout'
+LOGIN_URL = '/pmsb/'
+LOGOUT_URL = '/pmsb/logout'
 
 
 
@@ -62,6 +62,7 @@ INCLUDE_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'pinax.messages',
+    'widget_tweaks',
 ]
 
 LOCAL_APPS = [
