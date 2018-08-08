@@ -29,7 +29,7 @@ class QuestionarioDeleteForm(forms.Form):
 class BasePerguntaForm(forms.ModelForm):
     class Meta:
         model = Pergunta
-        fields = "__all__"
+        fields = ("variavel", "texto", "possivel_escolha_requisito")
 
 class PerguntaArquivoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
@@ -42,6 +42,7 @@ class PerguntaCoordenadaForm(BasePerguntaForm):
 class PerguntaEscolhaForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
         model = PerguntaEscolha
+        fields = BasePerguntaForm.Meta.fields + ("multipla", )
 
 class PerguntaImagemForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
@@ -50,6 +51,7 @@ class PerguntaImagemForm(BasePerguntaForm):
 class PerguntaNumeroForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
         model = PerguntaNumero
+        fields = BasePerguntaForm.Meta.fields + ("maior_que", "menor_que", "unidade_medida" )
 
 class PerguntaTextoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
