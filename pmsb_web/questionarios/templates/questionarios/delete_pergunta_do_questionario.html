@@ -1,13 +1,19 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block conteudo %}
+
 <div id="content-container" class="container p-none">
     <div class="side-p">
         <h3>Vai remover mesmo a pergunta?</h3>
-        <p>You're about to delete {{ object.pergunta }}.</p>
+        <p>Você esta prestes a apagar a pergunta {{ object.pergunta }} do questionario {{object.questionario}}.</p>
         <form action="" method="post">
             {% csrf_token %}
-            <input class="btn btn-link" 
-                    type="button" value="Cancel" 
+            <input class="btn btn-primary" 
+                    type="button" value="Cancelar" 
                     onclick="window.history.go(-1);"/>
-            <input class="btn btn-danger" type="submit" value="Confirm"/>
+            <input class="btn btn-danger" type="submit" value="Deletar"/>
         </form>
     </div>
 </div>
+{% endblock conteudo %}
