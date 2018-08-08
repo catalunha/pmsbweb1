@@ -53,7 +53,7 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
 
 class Pergunta(UUIDModelMixin, TimedModelMixin):
-    #adicionar UserOwnedMixin
+
     TIPO = None
 
     variavel = models.CharField(max_length = 255)
