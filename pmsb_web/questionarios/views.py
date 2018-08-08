@@ -123,6 +123,7 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
         return form
 
     def form_valid(self, form):
+        form.instance.usuario = self.request.user
         form_valid_return = super(PerguntaCreateView, self).form_valid(form)
         
         questionario = get_object_or_404(Questionario, pk = self.kwargs.get("pk"))
@@ -144,7 +145,7 @@ class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
         self.object = super(PerguntaUpdateView, self).get_object()
         self.object = self.object.cast()
         return self.object
-
+    
     def get_form_class(self):        
 
         if isinstance(self.object, PerguntaEscolha):
