@@ -1,5 +1,9 @@
 {% extends "questionarios/base.html" %}
 
+{% block ul_menu %}
+<a class="btn btn-success" href=" {% url "questionarios:create"%}">Novo Questionario</a>
+{% endblock ul_menu%}
+
 {% block conteudo %}
 
 {% for questionario in object_list %}
