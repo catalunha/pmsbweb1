@@ -91,7 +91,9 @@ class PerguntaCreateView(LoginRequiredMixin, CreateView):
     template_name = "questionarios/create_pergunta.html"
     model = Pergunta
     form_class = BasePerguntaForm
-    success_url = reverse_lazy("questionarios:list")
+    
+    def get_success_url(self):
+        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.object.pk, "questionario_pk":self.kwargs.get("pk")})
 
     def get_form_class(self):
         instance = self.kwargs.get("tipo")
@@ -138,19 +140,18 @@ class PerguntaUpdateView(LoginRequiredMixin, UpdateView):
         return self.object
 
     def get_form_class(self):        
-        instance = self.get_object()
 
-        if isinstance(instance, PerguntaEscolha):
+        if isinstance(self.object, PerguntaEscolha):
             return PerguntaEscolhaForm
-        elif isinstance(instance, PerguntaNumero):
+        elif isinstance(self.object, PerguntaNumero):
             return PerguntaNumeroForm
-        elif isinstance(instance, PerguntaArquivo):
+        elif isinstance(self.object, PerguntaArquivo):
             return PerguntaArquivoForm
-        elif isinstance(instance, PerguntaTexto):
+        elif isinstance(self.object, PerguntaTexto):
             return PerguntaTextoForm
-        elif isinstance(instance, PerguntaCoordenada):
+        elif isinstance(self.object, PerguntaCoordenada):
             return PerguntaCoordenadaForm
-        elif isinstance(instance, PerguntaImagem):
+        elif isinstance(self.object, PerguntaImagem):
             return PerguntaImagemForm
         else:
             return None
