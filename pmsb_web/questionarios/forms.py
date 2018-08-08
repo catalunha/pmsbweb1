@@ -9,6 +9,7 @@ from .models import (
     PerguntaImagem,
     PerguntaNumero,
     PerguntaTexto,
+    PossivelEscolha,
 )
 
 class QuestionarioForm(forms.ModelForm):
@@ -53,3 +54,8 @@ class PerguntaNumeroForm(BasePerguntaForm):
 class PerguntaTextoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
         model = PerguntaTexto
+
+class PossivelEscolhaForm(forms.ModelForm):
+    class Meta:
+        model = PossivelEscolha
+        fields = ("texto", )
