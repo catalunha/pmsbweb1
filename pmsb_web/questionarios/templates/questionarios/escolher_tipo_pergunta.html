@@ -3,11 +3,6 @@
 
 {% block titulo %} {{block.super}} Escolher Tipo Pergunta {% endblock titulo %}
 
-{% block ul_menu %}
-{{block.super}}
-<li><a href="{% url "questionarios:create_pergunta_tipo" object.id %}">Escolher Tipo Pergunta</a></li>
-{% endblock ul_menu%}
-
 {% block conteudo %}
 
 <p><a href="{% url "questionarios:create_pergunta" object.id  0 %}">Escolha</a></p>
