@@ -76,6 +76,24 @@
               </li>
             </ul>
           </li>
+
+          <li class="nav-item nav-dropdown open">
+              <a class="nav-link nav-dropdown-toggle" href="#">
+                  <i class="nav-icon icon-list"></i>Questionarios</a>
+              <ul class="nav-dropdown-items">                
+
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'questionarios:list' %}">
+                    <i class="nav-icon icon-layers"></i>Lista</a>
+                </li>
+
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'questionarios:create' %}">
+                    <i class="nav-icon icon-note"></i>Novo Questionario</a>
+                </li>
+                
+              </ul>
+            </li>
         </ul>
       </nav>
     </div>
