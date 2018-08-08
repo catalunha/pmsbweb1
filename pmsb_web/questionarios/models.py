@@ -52,7 +52,7 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def perguntas_ordenadas(self):
         return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
 
-class Pergunta(UUIDModelMixin, TimedModelMixin):
+class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
     TIPO = None
 
