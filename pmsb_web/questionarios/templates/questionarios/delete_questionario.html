@@ -8,7 +8,7 @@ confirme a ação informando o id do questionario
     {% csrf_token %}
     {% include "includes/form.html" with form=form %}
     <button type="submit" class="btn btn-primary">Apagar</button>
-    <a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</button>
+    <a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</a>
 </form>
 
 {% endblock %}
