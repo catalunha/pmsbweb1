@@ -11,7 +11,7 @@ from django.views.generic import (
     FormView,
 )
 from django.views.generic.edit import FormMixin, ProcessFormView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
 
 from .models import (
     Questionario,
@@ -38,38 +38,39 @@ from .forms import (
 )
 
 
-class QuestionarioListView(LoginRequiredMixin, ListView):
+class QuestionarioListView(PermissionRequiredMixin, ListView):
     model = Questionario
     template_name = "questionarios/list_questionario.html"
+    permission_required = ["questionarios.view_questionario"]
 
     def get_queryset(self):
         queryset = super(QuestionarioListView, self).get_queryset()
         return queryset.filter(usuario = self.request.user)
 
-class QuestionarioCreateView(LoginRequiredMixin, CreateView):
+class QuestionarioCreateView(PermissionRequiredMixin, CreateView):
     model = Questionario
     form_class = QuestionarioForm
     template_name = "questionarios/create_questionario.html"
+    permission_required = ["questionarios.add_questionario"]
     success_url = reverse_lazy("questionarios:list")
 
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         return super(QuestionarioCreateView, self).form_valid(form)
 
-class QuestioanrioUpdateView(LoginRequiredMixin, UpdateView):
+class QuestioanrioUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "questionarios/update_questionario.html"
     model = Questionario
     form_class = QuestionarioForm
+    permission_required = ["questionarios.change_questionario"]
     success_url = reverse_lazy("questionarios:list")
 
-class QuestionarioOrdenarView(View):
-    pass 
-
-class QuestioanrioDeleteView(FormMixin, DeleteView):
+class QuestioanrioDeleteView(PermissionRequiredMixin, FormMixin, DeleteView):
     template_name = "questionarios/delete_questionario.html"
     model = Questionario
     form_class = QuestionarioDeleteForm
     success_url = reverse_lazy("questionarios:list")
+    permission_required = ["questionarios.delete_questionario"]
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -80,17 +81,19 @@ class QuestioanrioDeleteView(FormMixin, DeleteView):
         else:
             return self.form_invalid(form)
 
-
-
+class QuestionarioOrdenarView(View):
+    pass 
     
-class PerguntaEscolherTipoTemplateView(LoginRequiredMixin, DetailView):
+class PerguntaEscolherTipoTemplateView(PermissionRequiredMixin, DetailView):
     model = Questionario
     template_name = "questionarios/escolher_tipo_pergunta.html"
+    permission_required = ["questionarios.change_questionario"]
 
-class PerguntaCreateView(LoginRequiredMixin, CreateView):
+class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     template_name = "questionarios/create_pergunta.html"
     model = Pergunta
     form_class = BasePerguntaForm
+    permission_required = ["questionarios.change_questionario", "questionarios.add_pergunta"]
     
     def get_success_url(self):
         return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.object.pk, "questionario_pk":self.kwargs.get("pk")})
@@ -128,11 +131,12 @@ class PerguntaCreateView(LoginRequiredMixin, CreateView):
 
         return form_valid_return
 
-class PerguntaUpdateView(LoginRequiredMixin, UpdateView):
+class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "questionarios/update_pergunta.html"
     model = Pergunta
     form_class = BasePerguntaForm
     success_url = reverse_lazy("questionarios:list")
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
 
     def get_object(self):
         self.object = super(PerguntaUpdateView, self).get_object()
@@ -156,10 +160,11 @@ class PerguntaUpdateView(LoginRequiredMixin, UpdateView):
         else:
             return None
 
-class PerguntaDoQuestionarioDeleteView(LoginRequiredMixin, DeleteView):
+class PerguntaDoQuestionarioDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = "questionarios/delete_pergunta_do_questionario.html"
     model = PerguntaDoQuestionario
     success_url = reverse_lazy("questionarios:list")
+    permission_required = ["questionarios.change_questionario", "questionarios.delete_pergunta", "questionarios.delete_perguntadoquestionario"]
 
 
 class TesteTemplateView(TemplateView):
