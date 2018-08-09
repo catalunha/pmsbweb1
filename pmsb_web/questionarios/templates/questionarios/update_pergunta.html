@@ -29,7 +29,8 @@
     <div class="col-lg-12">
         <ul class="list-group">
         {% for a in object.possiveis_escolhas.all %}
-            <li class="list-group-item">{{a.texto}} 
+            <li class="list-group-item">{{a.texto}}
+                <a href="{% url "questionarios:update_possivelescolha" object.pk a.pk %}"><span class="badge badge-secondary">Editar</span></a>
                 <a href="{% url "questionarios:delete_possivelescolha" object.pk a.pk %}"><span class="badge badge-secondary">Remover</span></a>
             </li>
         {% empty %}

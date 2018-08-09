@@ -2,12 +2,14 @@
 
 
 {% block conteudo %}
+<p><h5>Questionario: {{questionario.nome}}, id: {{questionario.id}}</h5></p>
+
 confirme a ação informando o id do questionario
 
 <form method="post">
     {% csrf_token %}
     {% include "includes/form.html" with form=form %}
-    <button type="submit" class="btn btn-primary">Apagar</button>
+    <button type="submit" class="btn btn-danger">Apagar</button>
     <a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</a>
 </form>
 

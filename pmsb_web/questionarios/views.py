@@ -98,7 +98,7 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     permission_required = ["questionarios.change_questionario", "questionarios.add_pergunta"]
     
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.object.pk})
+        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.object.pk, "questionario_pk":self.kwargs.get("pk")})
 
     def get_form_class(self):
         instance = self.kwargs.get("tipo")
@@ -119,7 +119,8 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     
     def get_form(self):
         form = super(PerguntaCreateView, self).get_form()
-        form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_id_questionario(self.kwargs.get("pk"))
+        questionario = get_object_or_404(Questionario, pk = self.kwargs.get("pk"))
+        form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(questionario)
         return form
 
     def form_valid(self, form):
@@ -145,6 +146,12 @@ class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
         self.object = super(PerguntaUpdateView, self).get_object()
         self.object = self.object.cast()
         return self.object
+    
+    def get_form(self):
+        form = super(PerguntaUpdateView, self).get_form()
+        questionario = get_object_or_404(Questionario, pk = self.kwargs.get("questionario_pk"))
+        form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(questionario, exclude_pergunta=self.object)
+        return form
     
     def get_form_class(self):        
 
@@ -190,6 +197,21 @@ class PossivelEscolhaCreateView(PermissionRequiredMixin, CreateView):
         context["pergunta_object"] = pergunta
         return context
 
+
+class PossivelEscolhaUpdateView(PermissionRequiredMixin, UpdateView):
+    template_name = "questionarios/update_possivelescolha.html"
+    model = PossivelEscolha
+    form_class = PossivelEscolhaForm
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+
+    def get_context_data(self, **kwargs):
+        context = super(PossivelEscolhaUpdateView, self).get_context_data(**kwargs)
+        pergunta = get_object_or_404(PerguntaEscolha, pk = self.kwargs.get("pergunta_pk"))
+        context["pergunta_object"] = pergunta
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_pk")})
 
 class PossivelEscolhaDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = "questionarios/delete_possivelescolha.html"

@@ -217,15 +217,10 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
         return "{0} -> {1}".format(self.pergunta, self.texto)
     
     @classmethod
-    def by_id_questionario(cls, id):
-        
-        try:
-            questionario = Questionario.objects.get(pk = id)
-        except Questionario.DoesNotExist:
-            questionario = None
-        
+    def by_questionario(cls, questionario, exclude_pergunta = None):
         escolhas = PossivelEscolha.objects.filter(pergunta__in = questionario.perguntas.all())
-
+        if exclude_pergunta and isinstance(exclude_pergunta, PerguntaEscolha):
+            escolhas = escolhas.exclude( pergunta = exclude_pergunta )
         return escolhas
 
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
