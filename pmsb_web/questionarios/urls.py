@@ -12,6 +12,7 @@ urlpatterns = [
     path("criar/", views.QuestionarioCreateView.as_view(), name = "create"),
     path("editar/<uuid:pk>/", views.QuestioanrioUpdateView.as_view(), name = "update"),
     path("ordenar/<uuid:pk>",views.QuestionarioOrdenarDetailView.as_view(), name = "ordenar"),
+    path("ajax/ordenar/",views.QuestionarioOrdenarSubmitAjaxView.as_view(), name = "ordenar_submit"),
     path("delete/<uuid:pk>/", views.QuestioanrioDeleteView.as_view(), name = "delete"),
 
     #perguntas
