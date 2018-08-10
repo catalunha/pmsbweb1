@@ -31,7 +31,7 @@
                             d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
                             {% endfor %}
                             {% for users in all_user  %}
-                            d.add('{{users.id}}', '{{users.departamento.id}}', '{{users.cargo}} {{users.first_name}}');
+                            d.add('{{users.id}}', '{{users.departamento.id}}', '{{users.cargo}}: {{users.first_name}}');
                             {% endfor %}
                             document.write(d);
                         </script>
