@@ -9,7 +9,7 @@
 {% for questionario in object_list %}
 <div class="row">
     <div class="col-lg-12">
-    <p><h5>Questionario: {{questionario.nome}}, id: {{questionario.id}}</h5></p>
+    <p><h5>Questionario: {{questionario.nome}}</h5></p>
     <p>
         <a class="btn btn-primary" href="{% url "questionarios:update" questionario.id %}">Editar</a>
         <a class="btn btn-primary" href="{% url "questionarios:delete" questionario.id %}">Deletar</a>
@@ -21,7 +21,7 @@
         {% for pergunta_do_questionario in questionario.perguntas_ordenadas %}
         <li class="list-group-item">
             {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}
-            <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.pergunta.id %}"><span class="badge badge-secondary">Editar</span></a> 
+            <a href="{% url "questionarios:update_pergunta" questionario.pk  pergunta_do_questionario.pergunta.id %}"><span class="badge badge-secondary">Editar</span></a> 
             <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Remover</span></a>
         </li>
         {% empty %}

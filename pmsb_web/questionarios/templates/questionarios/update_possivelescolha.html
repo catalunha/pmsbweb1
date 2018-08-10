@@ -1,0 +1,14 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block conteudo %}
+
+Pergunta - {{pergunta_object}}
+
+<form method="post">
+    {% csrf_token %}
+    {% include "includes/form.html" with form=form %}
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a class="btn btn-danger" href="{% url "questionarios:update_pergunta" pergunta_object.pk %}">Cancelar</a>
+</form>
+{% endblock %}

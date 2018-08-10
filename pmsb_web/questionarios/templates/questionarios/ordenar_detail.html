@@ -7,17 +7,15 @@
     <p><h5>Questionario: {{object.nome}}, id: {{object.id}}</h5></p>
 
     <p>
-        <a class="btn btn-primary" href="{% url "questionarios:update" object.id %}">Editar</a>
-        <a class="btn btn-primary" href="{% url "questionarios:delete" object.id %}">Deletar</a>
-        <a class="btn btn-primary" href="{% url "questionarios:create_pergunta_tipo" object.id %}">Adicionar Pergunta</a>
-        <a class="btn btn-primary" href="{% url "questionarios:ordenar" questionario.id %}">Ordenar</a>
+        <a class="btn btn-primary" href="{% url "questionarios:list" %}">Voltar</a>
+        <a class="btn btn-success" href="{% url "questionarios:list" %}">Salvar</a>
     </p>
     
     <ul id="sortable" class="list-group">
         {% for pergunta_do_questionario in object.perguntas_ordenadas %}
-        <li class="list-group-item">
+        <li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
             {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}
-            <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.pergunta.id %}"><span class="badge badge-secondary">Editar</span></a> 
+            <a href="{% url "questionarios:update_pergunta" object.pk pergunta_do_questionario.pergunta.id %}"><span class="badge badge-secondary">Editar</span></a> 
             <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Remover</span></a>
         </li>
         {% empty %}
@@ -34,7 +32,10 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
 $( function() {
-  $( "#sortable" ).sortable();
+  $( "#sortable" ).sortable({update:function(event, ui){
+    var serial = $('#sortable').sortable('toArray');
+      console.log(serial);
+  }});
   
 } );
 </script>

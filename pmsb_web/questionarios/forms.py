@@ -61,3 +61,6 @@ class PossivelEscolhaForm(forms.ModelForm):
     class Meta:
         model = PossivelEscolha
         fields = ("texto", )
+        widgets = {
+          'texto': forms.Textarea(attrs={'rows':2, 'cols':15}),
+        }
