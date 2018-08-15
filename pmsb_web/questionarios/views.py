@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (
@@ -82,10 +83,26 @@ class QuestioanrioDeleteView(PermissionRequiredMixin, FormMixin, DeleteView):
         else:
             return self.form_invalid(form)
 
-class QuestionarioOrdenarDetailView(DetailView):
+class QuestionarioOrdenarDetailView(PermissionRequiredMixin, DetailView):
     model = Questionario
     template_name = "questionarios/ordenar_detail.html"
-    
+    permission_required = ["questionarios.change_questionario"]
+
+class QuestionarioOrdenarSubmitAjaxView(PermissionRequiredMixin, View):
+    template_name = "questionarios/ordenar_detail.html"
+    permission_required = ["questionarios.change_questionario"]
+
+    def get(self, request, *args, **kwargs):
+        uuid = self.request.GET.get("id")
+        ordem = self.request.GET.get("ordem")
+        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = uuid)
+        pergunta_do_questionario.ordem = ordem
+        pergunta_do_questionario.save()
+        return JsonResponse({"id":uuid})
+
+
+
+        
 class PerguntaEscolherTipoTemplateView(PermissionRequiredMixin, DetailView):
     model = Questionario
     template_name = "questionarios/escolher_tipo_pergunta.html"

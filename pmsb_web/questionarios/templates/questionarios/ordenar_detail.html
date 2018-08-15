@@ -4,19 +4,25 @@
 
 <div class="row">
     <div class="col-lg-12">
-    <p><h5>Questionario: {{object.nome}}, id: {{object.id}}</h5></p>
+    <p><h5>Questionario: {{object.nome}}</h5></p>
 
     <p>
         <a class="btn btn-primary" href="{% url "questionarios:list" %}">Voltar</a>
-        <a class="btn btn-success" href="{% url "questionarios:list" %}">Salvar</a>
+        <a id="salvar_ordem" class="btn btn-success" href="#" >Salvar</a>
+        <a class="btn btn-primary" href="{% url "questionarios:list" %}">Recarregar</a>
     </p>
     
     <ul id="sortable" class="list-group">
         {% for pergunta_do_questionario in object.perguntas_ordenadas %}
         <li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
-            {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}
-            <a href="{% url "questionarios:update_pergunta" object.pk pergunta_do_questionario.pergunta.id %}"><span class="badge badge-secondary">Editar</span></a> 
-            <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Remover</span></a>
+            <p>
+                <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span>
+                -
+                {{pergunta_do_questionario.pergunta.variavel}}
+            </p>
+            <p> 
+                {{pergunta_do_questionario.pergunta.texto}}
+            </p>
         </li>
         {% empty %}
         <li class="list-group-item">Nenhuma pergunta</li>
@@ -32,10 +38,31 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
 $( function() {
-  $( "#sortable" ).sortable({update:function(event, ui){
-    var serial = $('#sortable').sortable('toArray');
-      console.log(serial);
-  }});
+    $("#salvar_ordem").click(function () {
+        
+        var children = $("#sortable").children();
+
+        for (var i = 0; i < children.length; i++){
+            
+            var id = $(children[i]).attr("id");
+
+            var old_i = parseInt($("#ordem_"+id).html()) - 1;
+
+            var new_i = i + 1;
+            update = false;
+            if(i != old_i){
+                $.get("{% url "questionarios:ordenar_submit" %}", {"id":id, "ordem": new_i}, function(data){
+                /*
+                verificar porque esta linha de codigo não funciona aqui dentro
+                $("#ordem_"+id).html(new_i); 
+                */
+                });
+                $("#ordem_"+id).html(new_i);
+            }
+        }
+    });
+
+    $( "#sortable" ).sortable();
   
 } );
 </script>
