@@ -1,18 +1,23 @@
 # encoding: utf-8
 # django imports
-from django.urls import reverse_lazy
-from django.http import HttpResponse
 from django.shortcuts import render, redirect 
-from django.views.generic import UpdateView, ListView
+from django.views.generic import ListView
 from django.views.generic.base import View
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserChangeForm, PasswordChangeForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
 # project imports
-from .forms import RegisterUserForm, AtualizarUserForm, AtualizarSenhaForm
-from .models import User, Atributo, Departamento
+from .forms import (
+    RegisterUserForm,
+    AtualizarUserForm,
+    AtualizarSenhaForm
+)
+from .models import (
+    User,
+    Atributo,
+    Departamento,
+    Cargo,
+)
 
 def login_view(request):
     '''
@@ -90,7 +95,7 @@ class ResgisterUser(View):
             formulario_Abstract_User = formUser
             return render(request, self.template_name, {'formulario_User': formulario_Abstract_User })
 
-class Dashboard(LoginRequiredMixin, View):
+class Dashboard(PermissionRequiredMixin, View):
     def painel(request):
         # passo o usuario e seus dados
         # futuramente passo a estrutura da árvore
@@ -145,15 +150,24 @@ class Dashboard(LoginRequiredMixin, View):
             'form': form
         })
     
-    def hierarquia_tree(request):
-        user = User.objects.all()
-        return render(request, 'dashboard/organograma.html', {'tree':user})
-        
-    def departamento_tree(request):
-        dep = Departamento.objects.all()
-        return render(request, 'dashboard/organograma.html', {'dep': dep})
+class HierarquiaListView(ListView):
+    template_name = 'dashboard/organograma.html'
+    context_object_name = 'tree_list'
+    model = User    
+    
+class DepartamentoListView(ListView):
+    template_name = 'dashboard/organograma.html'
+    context_object_name = 'dep'
+    model = Departamento
 
-    def cargo_tree(request):
-        dep = Departamento.objects.all()
-        user = User.objects.all()
-        return render(request, 'dashboard/organograma.html', {'departamentos':dep, 'all_user': user})
+class CargoListView(ListView):
+    template_name = 'dashboard/organograma.html'
+    context_object_name = 'departamentos'
+    model = Departamento
+    
+    def get_context_data(self, **kwargs):
+        context = super(CargoListView, self).get_context_data(**kwargs)
+        context.update({
+            'all_user': User.objects.all(),
+        })
+        return context
