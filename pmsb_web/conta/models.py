@@ -5,9 +5,9 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext as _
 ''' Model Mixins '''
 from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
-''' Final Model Mixins '''
+""" Final Model Mixins """
 
-''' Hierarquia Horizontal  '''
+""" Hierarquia Horizontal """
 class Departamento(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
@@ -26,7 +26,6 @@ class Departamento(UUIDModelMixin, TimedModelMixin):
 
     def __str__(self):
         return self.__concat_str__()
-
 
 class Cargo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
@@ -84,17 +83,6 @@ class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
     def __str__(self):
         return '{0}: {1}'.format(self.departamento, self.first_name)
 
-    def children(self):
-        print('filhos', str(User.objects.filter(superior=self.id)).encode())
-        print('id', self.id)
-        return User.objects.filter(superior=self.id)
-
-    def serializable_object(self):
-        obj = {'name': self.first_name, 'filhos': []}
-        for child in self.children():
-            obj['filhos'].append(child.serializable_object())
-        return obj
-
 class Atributo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     descricao = models.TextField(verbose_name='Descrição')
@@ -115,10 +103,9 @@ def documento_atributo(instance, filename):
     return 'documentos_atributo/{0}/{1}/{0}_{2}'.format(instance.usuario_id, instance.tipo.id, filename)
 
 class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
-    '''
+    """
     Model definition for Arquivo.
-    '''
-    
+    """    
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     arquivo = models.FileField(upload_to=documento_atributo)
 
@@ -128,16 +115,4 @@ class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         '''
         verbose_name = 'Documento de Atributo'
         verbose_name_plural = 'Documentos de Atributo'
-
-    def __str__(self):
-        '''
-        Unicode representation of Arquivo.
-        '''
-        return '{}'.format(self.tipo)
-
-    def get_absolute_url(self):
-        '''
-        Return absolute url for Arquivo.
-        '''
-        return ('')
 
