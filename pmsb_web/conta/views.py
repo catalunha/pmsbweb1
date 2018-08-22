@@ -1,7 +1,10 @@
 # encoding: utf-8
 # django imports
 from django.shortcuts import render, redirect 
-from django.views.generic import ListView
+from django.views.generic import (
+    ListView,
+    CreateView,
+)
 from django.views.generic.base import View
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
@@ -171,3 +174,11 @@ class CargoListView(ListView):
             'all_user': User.objects.all(),
         })
         return context
+
+class AtributoListView(ListView):
+    template_name = 'dashboard/perfil_list.html'
+    context_object_name = 'atributos'
+    model = Atributo
+
+class ValorAtributoCreateView(CreateView):
+    pass
