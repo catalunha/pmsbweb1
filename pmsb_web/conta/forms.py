@@ -1,12 +1,20 @@
 # django imports
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.forms import ModelForm, FileInput, TextInput, Select, EmailInput, PasswordInput
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserCreationForm
+from django.forms import (
+    ModelForm,
+    FileInput,
+    TextInput,
+    Select,
+    EmailInput,
+    PasswordInput
+)
 from django.contrib.auth.forms import PasswordChangeForm
-from django.forms.fields import ImageField
 # imports do projeto
-from .models import User
+from .models import (
+    User, 
+    ValorAtributo
+)
 
 '''
     Forms de Create AbstractUser->Perfil
@@ -99,3 +107,8 @@ class AtualizarSenhaForm(PasswordChangeForm):
         self.fields['new_password1'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
         self.fields['new_password2'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
         self.fields['old_password'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
+
+class ValorAtributoForm(forms.ModelForm):
+    class Meta:
+        model = ValorAtributo
+        fields = ("valor",)
