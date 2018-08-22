@@ -1,0 +1,39 @@
+{% extends "dashboard/index.html" %} {% block main %}
+<div class="container" style="margin-top: 10px;">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card mx-4">
+                <div class="card-body p-4">
+                    <h2 style="text-align: center;">Perfil</h2>
+                    <hr>
+
+                    <table class="table table-responsive-sm table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Atributo</th>
+                                <th>Status</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for atributo in atributos %}
+                            <tr>
+                                <td>{{atributo.nome}}</td>
+                                <td>
+                                    <span class="badge badge-success">Preenchido</span>
+                                </td>
+                                <td>
+                                    <a class="btn btn-warning" href="id do atributo"><i class="fa fa-edit"></i>editar</a>
+                                    <a class="btn btn-success" href="id do atributo"><i class="fa fa-plus"></i>preencher</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <a href="{% url 'conta:dashboard' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
