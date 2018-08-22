@@ -96,6 +96,9 @@ class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     valor = models.CharField(max_length = 255)
 
+    class Meta:
+        unique_together = ("tipo", "usuario")
+
     def __str__(self):
         return '{}-{}'.format(self.tipo, self.valor)
 
