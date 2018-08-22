@@ -39,7 +39,7 @@ class AtributoAdmin(admin.ModelAdmin):
 admin.site.register(Atributo, AtributoAdmin)
 
 class ValorAtributoAdmin(admin.ModelAdmin):
-    list_display = ("usuario", "tipo", "valor")
+    list_display = ("id", "usuario", "tipo", "valor")
 
 admin.site.register(ValorAtributo, ValorAtributoAdmin)
 
