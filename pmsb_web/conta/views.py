@@ -1,10 +1,12 @@
 # encoding: utf-8
 # django imports
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect 
 from django.views.generic import (
     ListView,
     CreateView,
+    UpdateView,
 )
 from django.views.generic.base import View
 from django.contrib import messages
@@ -37,7 +39,6 @@ def login_view(request):
     elif request.method == 'POST':
         try:
             user = authenticate(username=request.POST['username'],password=request.POST['password'])
-            print(user)
             if user is not None:
                 #testo se e superuser redireciono admin/
                 if user.is_staff:
@@ -214,14 +215,10 @@ class AtributoListView(ListView):
         })
         return context
 
-
-class ValorAtributoCreateView(View):
+# trocar esta joça feia
+class ValorAtributoCreateView(CreateView):
     template_name = 'dashboard/perfil_form.html'
-    model = Atributo
     
-    def get_success_url(self):
-        return reverse_lazy("conta:perfil_list")
-
     def get(self, request, *args, **kwargs):
         atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
         #valoratributo = ValorAtributo.objects.get(tipo=atributo.id, usuario=self.request.user)
@@ -233,38 +230,67 @@ class ValorAtributoCreateView(View):
             formValor = BaseValorAtributoForm()
             return render(request, self.template_name, {'args':atributo, 'formValor': formValor})
         elif atributo.documento == True:
-            formValor = BaseValorAtributoForm()
+            formDocumento = BaseDocumentoAtributoForm()
             return render(request, self.template_name, {'args':atributo, 'formValor': formDocumento})
 
     def post(self, request, *args, **kwargs):
         atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
+        print(atributo.id)
         if atributo.valor == atributo.documento:
-            formValor = BaseValorAtributoForm(request.POST, atributo, self.request.user)
+            formValor = BaseValorAtributoForm(request.POST)
             formDocumento = BaseDocumentoAtributoForm(request.POST, request.FILES)
             if formValor.is_valid() and formDocumento.is_valid():
-                valor = formValor.save(commit=False)
-                documento = formDocumento.save(commit=False)
-                valor.tipo_id = atributo.id
-                valor.usuario_id = self.request.user.id
-                documento.tipo_id = atributo.id
-                documento.usuario_id = self.request.user.id
-                valor.save()
-                documento.save()
-                return redirect('conta:perfil_list')
+                try:
+                    ValorAtributo.objects.get(tipo=atributo,usuario=self.request.user)
+                    ValorAtributo.objects.filter(tipo=atributo, usuario=self.request.user).update(valor=formValor.data['valor'])
+                    instance = DocumentoAtributo.objects.get(tipo=atributo, usuario=self.request.user)
+                    instance.delete()
+                    documento = formDocumento.save(commit=False)
+                    documento.tipo_id = atributo.id
+                    documento.usuario_id = self.request.user.id
+                    documento.save()
+                    return redirect('conta:perfil_list')
+                except ObjectDoesNotExist:
+                    valor = formValor.save(commit=False)
+                    documento = formDocumento.save(commit=False)
+                    valor.tipo_id = atributo.id
+                    valor.usuario_id = self.request.user.id
+                    documento.tipo_id = atributo.id
+                    documento.usuario_id = self.request.user.id
+                    valor.save()
+                    documento.save()
+                    return redirect('conta:perfil_list')
         elif atributo.valor == True:
+            print("atributo valor = True")
             formValor = BaseValorAtributoForm(request.POST)
+            #formValor = BaseValorAtributoForm(request.POST)
             if formValor.is_valid():
-                formValor.save()
-                ValorAtributo.objects.create()
-                # valor.tipo_id = atributo.id
-                # valor.usuario_id = self.request.user.id
-                # valor.save()
-                return redirect('conta:perfil_list')
+                try:
+                    ValorAtributo.objects.get(tipo=atributo,usuario=self.request.user)
+                    ValorAtributo.objects.filter(tipo=atributo, usuario=self.request.user).update(valor=formValor.data['valor'])
+                    print("registro ja existe")
+                    return redirect('conta:perfil_list')
+                except ObjectDoesNotExist:
+                    data = formValor.save(commit=False)
+                    data.tipo = atributo
+                    data.usuario = self.request.user
+                    data.save()
+                    return redirect('conta:perfil_list')
         elif atributo.documento == True:
             formDocumento = BaseDocumentoAtributoForm(request.POST, request.FILES)
             if formDocumento.is_valid():
-                documento = formDocumento.save(commit=False)
-                documento.tipo_id = atributo.id
-                documento.usuario_id = self.request.user.id
-                documento.save()
-                return redirect('conta:perfil_list')
+                try:
+                    instance = DocumentoAtributo.objects.get(tipo=atributo, usuario=self.request.user)
+                    instance.delete()
+                    documento = formDocumento.save(commit=False)
+                    documento.tipo_id = atributo.id
+                    documento.usuario_id = self.request.user.id
+                    documento.save()
+                    return redirect('conta:perfil_list')
+                except ObjectDoesNotExist:
+                    documento = formDocumento.save(commit=False)
+                    documento.tipo_id = atributo.id
+                    documento.usuario_id = self.request.user.id
+                    documento.save()
+                    return redirect('conta:perfil_list')    
+                
