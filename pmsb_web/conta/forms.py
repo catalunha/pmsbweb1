@@ -111,16 +111,17 @@ class AtualizarSenhaForm(PasswordChangeForm):
         self.fields['old_password'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
 
 class BaseValorAtributoForm(ModelForm):
-    def __init__(self, *args, **kwargs):
-        print(args,kwargs)
-        super(BaseValorAtributoForm, self).__init__(*args, **kwargs)
-        print(self.fields)
-
     class Meta:
         model = ValorAtributo
         fields = ("valor",)
+        widgets = {
+            'valor': TextInput(attrs={'class': 'form-control', 'type':'text'}),
+        }
 
 class BaseDocumentoAtributoForm(ModelForm):
     class Meta:
         model = DocumentoAtributo
         fields = ("arquivo",)
+        widgets = {
+            'arquivo': FileInput(attrs={'class': 'form-control'}),
+        }
