@@ -1,5 +1,6 @@
 # encoding: utf-8
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext as _
@@ -91,19 +92,24 @@ class Atributo(UUIDModelMixin, TimedModelMixin):
 
     def __str__(self):
         return self.nome
+    
+    def get_absolute_url(self):
+        return reverse("conta:perfil_create", args=[self.pk])
 
 class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     valor = models.CharField(max_length = 255)
-
+    
     class Meta:
-        unique_together = ("tipo", "usuario")
+        unique_together = ('tipo', 'usuario')
+        verbose_name = 'Valor do Atributo'
+        verbose_name_plural = 'Valores dos Atributos'
 
     def __str__(self):
         return '{}-{}'.format(self.tipo, self.valor)
 
 def documento_atributo(instance, filename):
-    return 'documentos_atributo/{0}/{1}/{0}_{2}'.format(instance.usuario_id, instance.tipo.id, filename)
+    return 'documentos_atributo/{0}/{1}/{2}'.format(instance.usuario_id, instance.tipo.id, filename)
 
 class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
@@ -116,6 +122,7 @@ class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         '''
         Meta definition for DocumentoAtributo.
         '''
+        unique_together = ('tipo', 'usuario')
         verbose_name = 'Documento de Atributo'
         verbose_name_plural = 'Documentos de Atributo'
 
