@@ -21,6 +21,10 @@ urlpatterns = [
     # dashboard view
     path('painel/', views.Dashboard.painel, name='dashboard'),
     
+    # perfil
+    path('perfil/preencher/<uuid:pk>/', views.ValorAtributoCreateView.as_view(), name='perfil_create'),
+
+    
     # organograma
     path('organograma/hierarquia/',views.HierarquiaListView.as_view(), name='hierarquia_tree'),
     path('organograma/cargos/',views.CargoListView.as_view(), name='cargo_tree'),

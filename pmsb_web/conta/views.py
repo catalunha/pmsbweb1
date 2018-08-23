@@ -1,5 +1,6 @@
 # encoding: utf-8
 # django imports
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect 
 from django.views.generic import (
     ListView,
@@ -13,14 +14,19 @@ from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMi
 from .forms import (
     RegisterUserForm,
     AtualizarUserForm,
-    AtualizarSenhaForm
+    AtualizarSenhaForm,
+    BaseDocumentoAtributoForm,
+    BaseValorAtributoForm,
 )
 from .models import (
     User,
     Atributo,
     Departamento,
     Cargo,
+    ValorAtributo,
+    DocumentoAtributo,
 )
+import collections
 
 def login_view(request):
     '''
@@ -152,7 +158,10 @@ class Dashboard(PermissionRequiredMixin, View):
         return render(request, 'dashboard/atualizar_password.html', {
             'form': form
         })
-    
+
+"""
+    List view dos Organogramas
+"""
 class HierarquiaListView(ListView):
     template_name = 'dashboard/organograma.html'
     context_object_name = 'tree_list'
@@ -180,5 +189,82 @@ class AtributoListView(ListView):
     context_object_name = 'atributos'
     model = Atributo
 
-class ValorAtributoCreateView(CreateView):
-    pass
+    def get_context_data(self, **kwargs):
+        context = super(AtributoListView, self).get_context_data(**kwargs)
+        # todos atributos
+        atributos = self.get_queryset()
+        lista = []
+        check_valor = collections.namedtuple('check', 'atributo isPreenchido')
+        # checo pra cada atributo se o meu usuário o preencheu pra atualizar o contexto da ListView
+        for atributo in atributos:
+            if atributo.valor == True:
+                valor = check_valor(atributo=atributo, 
+                isPreenchido=ValorAtributo.objects.filter(usuario=self.request.user, tipo=atributo))
+                lista.append(valor)
+            elif atributo.documento == True:    
+                documento = check_valor(atributo=atributo, 
+                isPreenchido=DocumentoAtributo.objects.filter(usuario=self.request.user, tipo=atributo))
+                lista.append(documento)
+            elif atributo.valor == atributo.documento:
+                valor_documento = check_valor(atributo=atributo, 
+                isPreenchido=ValorAtributo.objects.filter(usuario=self.request.user, tipo=atributo)+DocumentoAtributo.objects.filter(usuario=self.request.user, tipo=atributo))
+                lista.append(valor_documento)
+        context.update({
+            'atributos': lista,
+        })
+        return context
+
+
+class ValorAtributoCreateView(View):
+    template_name = 'dashboard/perfil_form.html'
+    model = Atributo
+    
+    def get_success_url(self):
+        return reverse_lazy("conta:perfil_list")
+
+    def get(self, request, *args, **kwargs):
+        atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
+        #valoratributo = ValorAtributo.objects.get(tipo=atributo.id, usuario=self.request.user)
+        if atributo.valor == atributo.documento:
+            formValor = BaseValorAtributoForm() 
+            formDocumento = BaseDocumentoAtributoForm()
+            return render(request, self.template_name, {'args':atributo, 'formValor': formValor, 'formDocumento':formDocumento})
+        elif atributo.valor == True:
+            formValor = BaseValorAtributoForm()
+            return render(request, self.template_name, {'args':atributo, 'formValor': formValor})
+        elif atributo.documento == True:
+            formValor = BaseValorAtributoForm()
+            return render(request, self.template_name, {'args':atributo, 'formValor': formDocumento})
+
+    def post(self, request, *args, **kwargs):
+        atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
+        if atributo.valor == atributo.documento:
+            formValor = BaseValorAtributoForm(request.POST, atributo, self.request.user)
+            formDocumento = BaseDocumentoAtributoForm(request.POST, request.FILES)
+            if formValor.is_valid() and formDocumento.is_valid():
+                valor = formValor.save(commit=False)
+                documento = formDocumento.save(commit=False)
+                valor.tipo_id = atributo.id
+                valor.usuario_id = self.request.user.id
+                documento.tipo_id = atributo.id
+                documento.usuario_id = self.request.user.id
+                valor.save()
+                documento.save()
+                return redirect('conta:perfil_list')
+        elif atributo.valor == True:
+            formValor = BaseValorAtributoForm(request.POST)
+            if formValor.is_valid():
+                formValor.save()
+                ValorAtributo.objects.create()
+                # valor.tipo_id = atributo.id
+                # valor.usuario_id = self.request.user.id
+                # valor.save()
+                return redirect('conta:perfil_list')
+        elif atributo.documento == True:
+            formDocumento = BaseDocumentoAtributoForm(request.POST, request.FILES)
+            if formDocumento.is_valid():
+                documento = formDocumento.save(commit=False)
+                documento.tipo_id = atributo.id
+                documento.usuario_id = self.request.user.id
+                documento.save()
+                return redirect('conta:perfil_list')

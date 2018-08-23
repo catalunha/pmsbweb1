@@ -12,8 +12,10 @@ from django.forms import (
 from django.contrib.auth.forms import PasswordChangeForm
 # imports do projeto
 from .models import (
-    User, 
-    ValorAtributo
+    User,
+    Atributo,
+    ValorAtributo,
+    DocumentoAtributo,
 )
 
 '''
@@ -74,7 +76,7 @@ class RegisterUserForm(UserCreationForm):
 '''
 class AtualizarUserForm(ModelForm):
     field_order = [ 'first_name','last_name','email','telefone-celular','foto']
-     # rescrevendo o construtor para adequar os fields do formulario
+    # rescrevendo o construtor para adequar os fields do formulario
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].label = 'Nome completo'
@@ -108,7 +110,17 @@ class AtualizarSenhaForm(PasswordChangeForm):
         self.fields['new_password2'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
         self.fields['old_password'].widget = PasswordInput(attrs={'class': 'form-control', 'type':'password'})
 
-class ValorAtributoForm(forms.ModelForm):
+class BaseValorAtributoForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        print(args,kwargs)
+        super(BaseValorAtributoForm, self).__init__(*args, **kwargs)
+        print(self.fields)
+
     class Meta:
         model = ValorAtributo
         fields = ("valor",)
+
+class BaseDocumentoAtributoForm(ModelForm):
+    class Meta:
+        model = DocumentoAtributo
+        fields = ("arquivo",)

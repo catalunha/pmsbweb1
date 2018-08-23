@@ -10,25 +10,34 @@
                     <table class="table table-responsive-sm table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th>Atributo</th>
-                                <th>Status</th>
-                                <th>Ação</th>
+                                <th style="text-align:center;">Atributo</th>
+                                <th style="text-align:center;width:50px;">Status</th>
+                                <th style="text-align:center;width:50px;">Ação</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for atributo in atributos %}
                             <tr>
-                                <td>{{atributo.nome}}</td>
-                                <td>
-                                    <span class="badge badge-success">Preenchido</span>
+                                <td>{{atributo.0.nome}} {{atributo.0.id}} </td>
+                                {% if atributo.1 %}
+                                <td style="text-align:center">
+                                    <span class="badge badge-info">Preenchido</span>
                                 </td>
-                                <td>
-                                    <a class="btn btn-warning" href="id do atributo"><i class="fa fa-edit"></i>editar</a>
-                                    <a class="btn btn-success" href="id do atributo"><i class="fa fa-plus"></i>preencher</a>
+                                <td style="text-align:center" >
+                                    <a class="btn btn-info" href="{{atributo.0.get_absolute_url}}"><i class="fa fa-edit"></i>editar</a>
                                 </td>
+                                {% else %}
+                                <td style="text-align:center">
+                                    <span class="badge badge-danger">Não Preenchido</span>
+                                </td>
+                                <td style="text-align:center">
+                                    <a class="btn btn-danger" href="{{atributo.0.get_absolute_url}}"><i class="fa fa-plus"></i>preencher</a>
+                                </td>
+                                {% endif %}
                             </tr>
                             {% endfor %}
                         </tbody>
+                        {{valor}}
                     </table>
                     <a href="{% url 'conta:dashboard' %}" class="btn btn-primary " style="float: right;">Voltar</a>
                 </div>
