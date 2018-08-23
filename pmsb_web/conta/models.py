@@ -1,9 +1,11 @@
 # encoding: utf-8
+import uuid
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext as _
+from django.utils import timezone
 ''' Model Mixins '''
 from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
 """ Final Model Mixins """
@@ -109,7 +111,8 @@ class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         return '{}-{}'.format(self.tipo, self.valor)
 
 def documento_atributo(instance, filename):
-    return 'documentos_atributo/{0}/{1}/{2}'.format(instance.usuario_id, instance.tipo.id, filename)
+    hoje = timezone.now()
+    return "documentos_atributo/{}/{}/{}/{}/{}".format( instance.usuario.id, hoje.year, hoje.month, hoje.day, filename)
 
 class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
