@@ -23,7 +23,7 @@ class MaxLevelExcided(Exception):
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
 
-class Bloco(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     
     PART = 0
     CHAPTER = 1
@@ -39,7 +39,7 @@ class Bloco(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMode
     titulo = models.CharField(max_length = 255)
     texto = models.TextField()
 
-    nivel_superior = models.ForeignKey("Bloco", null = True, on_delete = models.CASCADE, related_name="subblocos")
+    nivel_superior = models.ForeignKey("Bloco", null = True, blank = True, on_delete = models.CASCADE, related_name="subblocos")
     nivel = models.PositiveSmallIntegerField(editable = False)
 
     def save(self, *args, **kwargs):
@@ -53,6 +53,10 @@ class Bloco(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMode
             raise MaxLevelExcided
     
         super(Bloco, self).save(*args, **kwargs)
+    
+    @property
+    def usuario(self):
+        return self.relatorio.usuario
     
     def nivel_para_filhos(self):
         if self.nivel < self.NIVEL_MAXIMO:
@@ -73,5 +77,5 @@ def upload_figura(instance, filename):
 
 class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     relatorio = models.ForeignKey(Relatorio, on_delete = models.CASCADE, related_name="figuras")
-    imagem = models.ImageField(upload_to = upload_figura)
+    imagem = models.ImageField(upload_to = upload_figura, max_length = 255)
     legenda = models.CharField(max_length = 255)

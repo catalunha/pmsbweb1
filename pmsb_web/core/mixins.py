@@ -26,7 +26,7 @@ class FakeDeleteModelMixin(models.Model):
     Mixin para 'deletar' objetos sem removelos do banco de dados
     """    
     fake_deletado = models.BooleanField(default = False)
-    fake_deletado_em = models.DateTimeField(null = True)
+    fake_deletado_em = models.DateTimeField(null = True, blank = True)
 
     class Meta:
         abstract = True
