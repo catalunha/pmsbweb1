@@ -59,6 +59,7 @@ class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     variavel = models.CharField(max_length = 255)
     texto = models.TextField()
     tipo = models.PositiveSmallIntegerField(editable = False)
+    pergunta_requisito = models.ForeignKey("Pergunta", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     
     objects = models.Manager()
