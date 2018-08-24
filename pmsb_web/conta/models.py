@@ -97,6 +97,9 @@ class Atributo(UUIDModelMixin, TimedModelMixin):
     
     def get_absolute_url(self):
         return reverse("conta:perfil_create", args=[self.pk])
+    
+    class Meta:
+        ordering = ['nome']
 
 class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
