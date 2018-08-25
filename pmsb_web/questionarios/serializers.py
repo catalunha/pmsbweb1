@@ -201,7 +201,7 @@ class RespostaPerguntaViewSet(viewsets.ModelViewSet):
 class RespostaQuestionarioSerializer(serializers.ModelSerializer):
     usuario = UserSerializer
     questionario = QuestionarioSerializer
-    perguntas = RespostaPerguntaSerializer(many = True, read_only = True)
+    perguntas = RespostaPerguntaSerializer(many = True, read_only = False)
 
     class Meta:
         model = RespostaQuestionario
