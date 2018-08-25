@@ -75,6 +75,7 @@ class PerguntaSerializerMixin(serializers.HyperlinkedModelSerializer):
             "variavel",
             "texto",
             "tipo",
+            "pergunta_requisito",
             "possivel_escolha_requisito",
         )
     
