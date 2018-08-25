@@ -158,18 +158,22 @@ class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
     form_class = BasePerguntaForm
     success_url = reverse_lazy("questionarios:list")
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    pergunta_do_questionario = None
 
     def get_object(self):
-        self.object = super(PerguntaUpdateView, self).get_object()
-        self.object = self.object.cast()
-        return self.object
+        self.pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = self.kwargs.get("pk"))
+        return self.pergunta_do_questionario.pergunta.cast()
     
     def get_form(self):
         form = super(PerguntaUpdateView, self).get_form()
-        questionario = get_object_or_404(Questionario, pk = self.kwargs.get("questionario_pk"))
-        form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(questionario, exclude_pergunta=self.object)
+        form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(self.pergunta_do_questionario.questionario, exclude_pergunta=self.object)
         return form
     
+    def get_context_data(self, **kwargs):
+        context = super(PerguntaUpdateView, self).get_context_data(**kwargs)
+        context["pergunta_do_questionario_pk"] = self.pergunta_do_questionario.pk
+        return context
+
     def get_form_class(self):        
 
         if isinstance(self.object, PerguntaEscolha):
@@ -199,10 +203,14 @@ class PossivelEscolhaCreateView(PermissionRequiredMixin, CreateView):
     model = PossivelEscolha
     form_class = PossivelEscolhaForm
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    pergunta_do_questionario = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = self.kwargs.get("pk"))
+        return super(PossivelEscolhaCreateView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        pergunta = get_object_or_404(PerguntaEscolha, pk = self.kwargs.get("pk"))
-        form.instance.pergunta = pergunta
+        form.instance.pergunta = self.pergunta_do_questionario.pergunta.cast()
         return super(PossivelEscolhaCreateView, self).form_valid(form)
 
     def get_success_url(self):
@@ -210,8 +218,7 @@ class PossivelEscolhaCreateView(PermissionRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs):
         context = super(PossivelEscolhaCreateView, self).get_context_data(**kwargs)
-        pergunta = get_object_or_404(PerguntaEscolha, pk = self.kwargs.get("pk"))
-        context["pergunta_object"] = pergunta
+        context["pergunta_do_questionario_pk"] = self.pergunta_do_questionario.pk
         return context
 
 

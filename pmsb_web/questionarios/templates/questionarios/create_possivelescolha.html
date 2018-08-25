@@ -9,6 +9,6 @@ Pergunta - {{pergunta_object}}
     {% csrf_token %}
     {% include "includes/form.html" with form=form %}
     <button type="submit" class="btn btn-primary">Adicionar</button>
-    <a class="btn btn-danger" href="{% url "questionarios:update_pergunta" pergunta_object.pk %}">Cancelar</a>
+    <a class="btn btn-danger" href="{% url "questionarios:update_pergunta"  pergunta_do_questionario_pk %}">Cancelar</a>
 </form>
 {% endblock %}
