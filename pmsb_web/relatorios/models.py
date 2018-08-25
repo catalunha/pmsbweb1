@@ -1,5 +1,6 @@
 from django.utils import timezone
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.conf import settings
 
@@ -20,8 +21,21 @@ class MaxLevelExcided(Exception):
         self.expression = expression
         self.message = "excede nivel maximo de sub-blocos"
 
+class RelatorioManager(models.Manager):
+    
+    def by_dono_ou_editor(self, user):
+        dono = Q(usuario = user)
+        editor = Q(blocos__editores__editor = user)
+
+        return self.filter(editor | dono)
+
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
+
+    objetcs = RelatorioManager()
+
+    def __str__(self):
+        return self.titulo
 
 class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     
@@ -41,6 +55,9 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
     nivel_superior = models.ForeignKey("Bloco", null = True, blank = True, on_delete = models.CASCADE, related_name="subblocos")
     nivel = models.PositiveSmallIntegerField(editable = False)
+
+    def __str__(self):
+        return "{} - {}".format(self.relatorio, self.titulo)
 
     def save(self, *args, **kwargs):
         if self.nivel is None:
