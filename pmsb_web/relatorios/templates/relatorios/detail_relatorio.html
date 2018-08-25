@@ -1,0 +1,16 @@
+<p>
+    {{object.titulo}}
+</p>
+<p>
+    {{object.usuario}}
+</p>
+<p>
+    {{object.criado_em}}
+</p>
+
+{% for bloco in object.blocos.all %}
+<p>
+    <h3>{{bloco.titulo}}</h3>
+    {{bloco.texto}}
+</p>
+{% endfor %}

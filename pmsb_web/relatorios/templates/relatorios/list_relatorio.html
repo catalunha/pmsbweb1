@@ -1,0 +1,10 @@
+{% for r in object_list %}
+
+{{r}}
+dono:{{r.usuario}}
+<a href="{% url "relatorios:detail_relatorio" r.pk %}">{{r.titulo}}</a>
+<br>
+
+{% empty %}
+sem relatorios
+{% endfor %}
