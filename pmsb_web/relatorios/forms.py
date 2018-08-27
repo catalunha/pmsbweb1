@@ -10,12 +10,12 @@ from .models import (
 class RelatorioForm(forms.ModelForm):
     class Meta:
         model = Relatorio
-        fields = ("titulo",)
+        fields = ("titulo", "descricao")
 
 class BlocoForm(forms.ModelForm):
     class Meta:
         model = Bloco
-        fields = ("titulo", )
+        fields = ("titulo", "descricao")
 
 class BlocoChangeForm(forms.ModelForm):
     class Meta:
@@ -30,4 +30,4 @@ class EditorForm(forms.ModelForm):
 class FiguraForm(forms.ModelForm):
     class Meta:
         model = Figura
-        fields = ("imagem", "legenda")
+        fields = ("imagem", "legenda", "descricao")
