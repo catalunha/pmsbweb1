@@ -31,7 +31,7 @@ class RelatorioManager(models.Manager):
 
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
-
+    descricao = models.TextField()
     objetcs = RelatorioManager()
 
     def __str__(self):
@@ -51,6 +51,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
     relatorio = models.ForeignKey(Relatorio, on_delete = models.CASCADE, related_name="blocos")
     titulo = models.CharField(max_length = 255)
+    descricao = models.TextField()
     texto = models.TextField()
 
     nivel_superior = models.ForeignKey("Bloco", null = True, blank = True, on_delete = models.CASCADE, related_name="subblocos")
@@ -92,7 +93,20 @@ def upload_figura(instance, filename):
     hoje = timezone.now()
     return "{}/figuras/{}/{}/{}/{}-{}".format(RELATORIOS_MEDIA, hoje.year, hoje.month, hoje.day, instance.pk, filename)
 
+
+class FiguraManager(models.Manager):
+    
+    def by_dono_ou_editor(self, user):
+        dono = Q(usuario = user) #dono imagem
+        dono_relatorio = Q(relatorio__usuario = user) # dono relatorio
+        editor = Q(relatorio__blocos__editores__editor = user) # editor relatorio
+
+        return self.filter(editor | dono | dono_relatorio)
+
 class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     relatorio = models.ForeignKey(Relatorio, on_delete = models.CASCADE, related_name="figuras")
     imagem = models.ImageField(upload_to = upload_figura, max_length = 255)
+    descricao = models.TextField()
     legenda = models.CharField(max_length = 255)
+
+    objetcs = FiguraManager()
