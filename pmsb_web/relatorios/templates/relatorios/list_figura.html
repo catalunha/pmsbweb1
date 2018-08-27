@@ -1,0 +1,16 @@
+<a href="{% url "relatorios:detail_relatorio" relatorio_object.pk %}">Relatorio</a>
+<a href="{% url "relatorios:create_figura" relatorio_object.pk %}">Nova Figura</a>
+
+{% for figura in object_list %}
+<p>
+{{figura.url}}
+{{figura.legenda}}
+
+<a href="{% url "relatorios:update_figura" figura.pk %}">Editar</a>
+<a href="{% url "relatorios:delete_figura" figura.pk %}">Delete</a>
+</p>
+{% empty %}
+
+Sem figuras
+
+{% endfor %}

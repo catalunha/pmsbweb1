@@ -14,4 +14,11 @@ urlpatterns = [
     path("<uuid:pk>/deletar", views.RelatorioDetailView.as_view(), name = "delete_relatorio"),
 
     #blocos
+
+    #figuras
+    path("<uuid:relatorio_pk>/figuras/", views.FiguraListView.as_view(), name = "list_figura"),
+    path("figuras/<uuid:pk>", views.FiguraDetailView.as_view(), name = "detail_figura"),
+    path("<uuid:relatorio_pk>/figuras/nova", views.FiguraCreateView.as_view(), name = "create_figura"),
+    path("figuras/<uuid:pk>/editar", views.FiguraUpdateView.as_view(), name = "update_figura"),
+    path("figuras/<uuid:pk>/delete", views.FiguraDeleteView.as_view(), name = "delete_figura"),
 ]
