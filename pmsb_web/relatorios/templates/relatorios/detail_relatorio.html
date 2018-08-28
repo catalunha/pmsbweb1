@@ -1,20 +1,25 @@
-<p>
-    <a href="">Editar</a>
-    <a href="{% url "relatorios:list_figura" object.pk %}">Figuras</a>
-</p>
-<p>
-    {{object.titulo}}
-</p>
-<p>
-    {{object.usuario}}
-</p>
-<p>
-    {{object.criado_em}}
-</p>
+{% extends "base/base.html" %} {% block conteudo %}
+<div class="card-body p-4">
+    <h2 style="text-align: center;">
+        {{object.titulo}}
+    </h2>
+    <hr>
+    <p>
+        <a href="{% url 'relatorios:update_relatorio' object.pk %}">Editar</a>
+        <a href="{% url 'relatorios:list_figura' object.pk %}">Gerenciar Figuras</a>
+        <a href="{% url 'relatorios:list_figura' object.pk %}" style="float:right;">Visualizar PDF</a>
+    </p>
+    <p>
+        {{object.usuario}}
+    </p>
+    <p>
+        {{object.criado_em}}
+    </p>
 
-{% for bloco in object.blocos.all %}
-<p>
-    <h3>{{bloco.titulo}}</h3>
-    {{bloco.texto}}
-</p>
-{% endfor %}
+    {% comment %} aplicar dtree nos bloco {% endcomment %} {% for bloco in object.blocos.all %}
+    <p>
+        <h3>{{bloco.titulo}}</h3>
+        {{bloco.texto}}
+    </p>
+    {% endfor %} {% endblock %}
+</div>
