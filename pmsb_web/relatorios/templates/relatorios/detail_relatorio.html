@@ -9,7 +9,8 @@
             <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Gerenciar Figuras</a>
         <a class="btn btn-primary" href="#">
             <i aria-hidden="true" data-hidden="true" class="fa fa-file-text-o fa-fw" style="color:white;"></i>Visualizar PDF</a>
-        
+            <a class="btn btn-primary" href="{% url 'relatorios:update_relatorio' object.pk %}">
+                    <i aria-hidden="true" data-hidden="true" class="fa fa-file-text-o fa-fw" style="color:white;"></i>Editar Relatório</a>
         <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
     </p>
     <p>
