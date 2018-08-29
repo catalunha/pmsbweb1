@@ -1,20 +1,42 @@
-<p>
-    <a href="">Editar</a>
-    <a href="{% url "relatorios:list_figura" object.pk %}">Figuras</a>
-</p>
-<p>
-    {{object.titulo}}
-</p>
-<p>
-    {{object.usuario}}
-</p>
-<p>
-    {{object.criado_em}}
-</p>
+{% extends "base/base.html" %} {% block conteudo %}
+<div class="card-body p-4">
+    <h2 style="text-align: center;">
+        {{object.titulo}}
+    </h2>
+    <hr>
+    <p>
+        <a class="btn btn-primary" href="{% url 'relatorios:list_figura' object.pk %}">
+            <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Gerenciar Figuras</a>
+        <a class="btn btn-primary" href="#">
+            <i aria-hidden="true" data-hidden="true" class="fa fa-file-text-o fa-fw" style="color:white;"></i>Visualizar PDF</a>
+        
+        <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
+    </p>
+    <p>
+        {{object.usuario}}
+    </p>
+    <p>
+        {{object.criado_em}}
+    </p>
 
-{% for bloco in object.blocos.all %}
-<p>
-    <h3>{{bloco.titulo}}</h3>
-    {{bloco.texto}}
-</p>
-{% endfor %}
+    <p>
+        Índice <a href="{% url 'relatorios:create_bloco' object.pk  %}"><span class="badge badge-secondary">Inserir subnível</span></a>
+    </p>
+
+    {% comment %} aplicar dtree nos bloco {% endcomment %} 
+    <script type="text/javascript">
+        d = new dTree('d');
+        d.add(0,-1,'Sumário');
+    
+    {% for bloco in object.blocos.all %}
+        d.add('{{bloco.id}}', '{{bloco.superior.id}}', '{{bloco.titulo}}');
+    {% empty %}
+    <p>
+        Sem itens
+    </p>
+    {% endfor %}
+        document.write(d);
+    </script>
+    {% endblock %}
+
+</div>
