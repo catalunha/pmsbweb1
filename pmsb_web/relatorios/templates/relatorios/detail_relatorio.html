@@ -25,16 +25,17 @@
 
     {% comment %} aplicar dtree nos bloco {% endcomment %} 
     <script type="text/javascript">
-    {% for bloco in object.blocos.all %}
         d = new dTree('d');
         d.add(0,-1,'Sumário');
+    
+    {% for bloco in object.blocos.all %}
         d.add('{{bloco.id}}', '{{bloco.superior.id}}', '{{bloco.titulo}}');
-        document.write(d);
     {% empty %}
     <p>
         Sem itens
     </p>
     {% endfor %}
+        document.write(d);
     </script>
     {% endblock %}
 
