@@ -40,10 +40,6 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     class Meta:
         verbose_name = "Questionario"
         verbose_name_plural = "Questionarios"
-        permissions = (
-            ("list_questionario", "Can list questionario"),
-            ("view_questionario", "Can view questionario"),
-        )
 
     def __str__(self):
         return "Questionario {}".format(self.nome)

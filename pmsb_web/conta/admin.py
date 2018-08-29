@@ -9,7 +9,7 @@ from .models import User, Cargo, Departamento, Atributo, ValorAtributo, Document
 # Register your models here.
 
 ADDITIONAL_USER_FIELDS = (
-    ("Informações Adicionais", {'fields': ('foto','departamento','superior','cargo','email')}),
+    ("Informações Adicionais", {'fields': ('foto','departamento','superior','cargo')}),
 )
 
 

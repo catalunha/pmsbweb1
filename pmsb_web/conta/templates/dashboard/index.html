@@ -47,7 +47,7 @@
     <div class="sidebar">
       <nav class="sidebar-nav ps ps--active-y">
         <ul class="nav">
-          <li class="nav-item nav-dropdown open">
+          <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
               <i class="nav-icon icon-list"></i>Tarefas</a>
             <ul class="nav-dropdown-items">
@@ -61,7 +61,7 @@
               </li>
             </ul>
           </li>
-          <li class="nav-item nav-dropdown open">
+          <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="fa fa-sitemap"></i>Organograma</a>
             <ul class="nav-dropdown-items">
@@ -80,9 +80,7 @@
             </ul>
           </li>
           {% if 'questionarios' in perms %}
-
-          
-          <li class="nav-item nav-dropdown open">
+          <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
               <i class="nav-icon icon-list"></i>Questionarios</a>
               <ul class="nav-dropdown-items">                
@@ -93,9 +91,20 @@
                 </li>
                   
               </ul>
-            </li>
-            {% endif %}
-          
+          </li>
+          {% endif %}
+          {% if 'relatorios' in perms %}
+          <li class="nav-item nav-dropdown ">
+            <a class="nav-link nav-dropdown-toggle" href="#">
+              <i class="nav-icon icon-note"></i>Relatórios</a>
+              <ul class="nav-dropdown-items">                
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'relatorios:list_relatorio' %}">
+                  <i class="nav-icon icon-layers"></i>Lista</a>
+                </li>
+              </ul>
+          </li>
+          {% endif %}
         </ul>
       </nav>
     </div>
