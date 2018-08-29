@@ -14,6 +14,7 @@ urlpatterns = [
     path("<uuid:pk>/deletar", views.RelatorioDetailView.as_view(), name = "delete_relatorio"),
 
     #blocos
+    path("<uuid:pk>/bloco", views.BlocoCreateView.as_view(), name="create_bloco"),
 
     #figuras
     path("<uuid:relatorio_pk>/figuras/", views.FiguraListView.as_view(), name = "list_figura"),

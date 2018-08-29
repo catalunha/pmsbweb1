@@ -1,0 +1,6 @@
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% include "includes/form.html" with form=form %}
+    <a class="btn btn-primary" href="">Voltar</a>
+    <button type="submit" class="btn btn-primary">Criar</button>
+</form>

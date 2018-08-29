@@ -8,11 +8,14 @@
     </a>
 </div>
 <div class="card-body">
-    {% for r in object_list %} Título: {{r}} {% comment %} dono:{{r.usuario}} {% endcomment %}
-    <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Editar</span></a>
-    <br>
-    {% empty %}
-    <li class="list-group-item">Nenhum relatório</li>
-    {% endfor %}
+    <ul class="list-group">
+        {% for r in object_list %}{% comment %} dono:{{r.usuario}} {% endcomment %}
+        <li class="list-group-item"> Título: {{r}}
+        <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Detalhes</span></a>
+        </li>
+        {% empty %}
+        <li class="list-group-item">Nenhum relatório</li>
+        {% endfor %}
+    </ul>
 </div>
 {% endblock %}
