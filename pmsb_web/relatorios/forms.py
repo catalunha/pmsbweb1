@@ -15,7 +15,7 @@ class RelatorioForm(forms.ModelForm):
 class BlocoForm(forms.ModelForm):
     class Meta:
         model = Bloco
-        fields = ("titulo", "descricao", "texto", "nivel_superior")
+        fields = ("titulo", "nivel_superior" ,"descricao", "texto")
 
 class BlocoChangeForm(forms.ModelForm):
     class Meta:
