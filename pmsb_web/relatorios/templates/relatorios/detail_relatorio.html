@@ -20,7 +20,7 @@
     </p>
 
     <p>
-        Índice <a href="{% url 'relatorios:create_bloco' object.pk  %}"><span class="badge badge-secondary">Inserir subnível</span></a>
+        Índice <a href="{% url 'relatorios:create_bloco' object.pk  %}"><span class="badge badge-success">Inserir subnível</span></a>
     </p>
 
     {% comment %} aplicar dtree nos bloco {% endcomment %} 
@@ -29,7 +29,7 @@
         d.add(0,-1,'Sumário');
     
     {% for bloco in object.blocos.all %}
-        d.add('{{bloco.id}}', '{{bloco.superior.id}}', '{{bloco.titulo}}');
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}}');
     {% empty %}
     <p>
         Sem itens

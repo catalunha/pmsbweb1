@@ -2,8 +2,8 @@
 <div class="card-body p-4">
     <h2 style="text-align: center;">Figuras</h2>
     <hr>
-    <a class="btn btn-primary" href="{% url 'relatorios:detail_relatorio' relatorio_object.pk %}"><i aria-hidden="true" data-hidden="true" class="fa icon-note" style="color:white;"></i>Relatorio</a>
     <a class="btn btn-primary" href="{% url 'relatorios:create_figura' relatorio_object.pk %}"><i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Nova Figura</a>
+    <a class="btn btn-primary" href="{% url 'relatorios:detail_relatorio' relatorio_object.pk %}" style="float:right;"><i aria-hidden="true" data-hidden="true" class="fa icon-note" style="color:white;"></i>Voltar ao Relatório</a>
     <div class="row" style="padding-top: 10px;">
         {% for figura in object_list %} {{figura.url}}
         <div class="col-sm-6 col-md-4">
