@@ -128,8 +128,7 @@ class FiguraDonoQuerysetMixin(object):
 
 class FiguraDonoOuEditorQuerysetMixin(object):
     def get_queryset(self, queryset = None):
-        queryset = Figura.objetcs.by_dono_ou_editor(self.request.user)
-        queryset.filter(relatorio = self.kwargs.get("relatorio_pk"))
+        queryset = Figura.objetcs.filter(usuario = self.request.user, relatorio= self.kwargs.get("relatorio_pk"))
         return queryset
 
 class FiguraRelatorioContextMixin(object):
