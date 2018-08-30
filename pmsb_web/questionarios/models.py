@@ -48,6 +48,13 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def perguntas_ordenadas(self):
         return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
 
+class PerguntaManger(models.Manager):
+    def by_questionario(self, questionario, exclude_obj = None):
+        queryset = self.get_queryset().filter(questionarios = questionario)
+        if exclude_obj is not None:
+            queryset = queryset.exclude(pk = exclude_obj.pk)
+        return queryset
+
 class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
     TIPO = None
@@ -58,7 +65,7 @@ class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     pergunta_requisito = models.ForeignKey("Pergunta", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     
-    objects = models.Manager()
+    objects = PerguntaManger()
     inherited_objects = InheritanceManager()
 
     class Meta:
