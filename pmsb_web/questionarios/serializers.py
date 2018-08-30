@@ -253,15 +253,15 @@ class ImagemRespostaViewSet(viewsets.ModelViewSet):
 
 class RespostaPerguntaSerializer(serializers.ModelSerializer):
     pergunta = PerguntaSerializer
-    coordenadas = CoordenadaRespostaSerializer(many = True, read_only = False)
     escolhas = PossivelEscolhaRespostaSerializer(many = True, read_only = False)
-    textos = TextoRespostaSerializer(many = True, read_only = False)
-    numeros = NumeroRespostaSerializer(many = True, read_only = False)
-    arquivos = ArquivoRespostaSerializer(many = True, read_only = False)
-    imagens = ImagemRespostaSerializer(many = True, read_only = False)
+    coordenada = CoordenadaRespostaSerializer(read_only = False)
+    texto = TextoRespostaSerializer(read_only = False)
+    numero = NumeroRespostaSerializer(read_only = False)
+    arquivo = ArquivoRespostaSerializer(read_only = False)
+    imagem = ImagemRespostaSerializer(read_only = False)
     class Meta:
         model = RespostaPergunta
-        fields = ("id", "url", "resposta_questionario", "pergunta", "tipo", "coordenadas", "escolhas", "textos", "numeros", "arquivos", "imagens")
+        fields = ("id", "url", "resposta_questionario", "pergunta", "tipo", "coordenada", "escolhas", "texto", "numero", "arquivo", "imagem")
 
 class RespostaPerguntaViewSet(viewsets.ModelViewSet):
     queryset = RespostaPergunta.objects.all()
