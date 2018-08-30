@@ -9,35 +9,35 @@
             <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Gerenciar Figuras</a>
         <a class="btn btn-primary" href="#">
             <i aria-hidden="true" data-hidden="true" class="fa fa-file-text-o fa-fw" style="color:white;"></i>Visualizar PDF</a>
-            <a class="btn btn-primary" href="{% url 'relatorios:update_relatorio' object.pk %}">
-                    <i aria-hidden="true" data-hidden="true" class="fa fa-file-text-o fa-fw" style="color:white;"></i>Editar Relatório</a>
         <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
     </p>
     <p>
-        {{object.usuario}}
-    </p>
-    <p>
-        {{object.criado_em}}
+        <b>Criado em:</b> {{object.criado_em}}
     </p>
 
     <p>
-        Índice <a href="{% url 'relatorios:create_bloco' object.pk  %}"><span class="badge badge-success">Inserir subnível</span></a>
+        <a href="{% url 'relatorios:create_bloco' object.pk  %}">
+            <span class="badge badge-success">Inserir nível</span>
+        </a>
     </p>
 
-    {% comment %} aplicar dtree nos bloco {% endcomment %} 
+    {% comment %} aplicar dtree nos bloco {% endcomment %}
+    <small>
+        <a href="javascript: d.openAll();">Expandir tudo</a> |
+        <a href="javascript: d.closeAll();">Contrair tudo</a>
+    </small>
     <script type="text/javascript">
         d = new dTree('d');
-        d.add(0,-1,'Sumário');
-    
-    {% for bloco in object.blocos.all %}
-        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-success">Inserir subnível</span></a>');
-    {% empty %}
-    <p>
-        Sem itens
+        d.add(0, -1, 'Índice');
+
+        {% for bloco in object.blocos.all %}
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-success">Editar índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-success">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-success">Inserir subnível</span></a>');
+        {% empty %}
+        <p>
+            Sem itens
     </p>
-    {% endfor %}
+        {% endfor %}
         document.write(d);
-    </script>
-    {% endblock %}
+    </script> {% endblock %}
 
 </div>

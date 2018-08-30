@@ -1,5 +1,11 @@
+{% extends "base/base.html" %} {% block conteudo %}
 <form action="" method="post">
     {% csrf_token %}
-    <a class="btn btn-primary" href="{% url "relatorios:list_figura" object.relatorio.pk %}">Cancelar</a>
-    <input class="btn btn-danger" type="submit" value="Deletar"/>
+    <div class="card-body p-4">
+        <h2 style="text-align: center;">Confirmar exclusão da imagem</h2>
+        <hr>
+        <input class="btn btn-danger" type="submit" value="Deletar"/>
+        <a class="btn btn-primary" style="float:right;" href="{% url 'relatorios:list_figura' object.relatorio.pk %}">Cancelar</a>
+    </div>
 </form>
+{% endblock %}

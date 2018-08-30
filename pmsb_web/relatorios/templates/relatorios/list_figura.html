@@ -1,6 +1,7 @@
 {% extends "base/base.html" %} {% block conteudo %}
 <div class="card-body p-4">
-    <h2 style="text-align: center;">Figuras</h2>
+    <h2 style="text-align: center;">{{relatorio_object}}</h2>
+    <h5 class="text-muted" style="text-align:center;"> Lista de figuras deste relatorio </h5>
     <hr>
     <a class="btn btn-primary" href="{% url 'relatorios:create_figura' relatorio_object.pk %}">
         <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Nova Figura</a>
@@ -15,11 +16,18 @@
                 </a>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-lg">
-                            <p class="card-text">Legenda: {{figura.legenda}}</p>
+                        <div class="col-sm">
+                            <p class="card-text content text-justify text-truncate">Legenda: {{figura.legenda}} </p>
                         </div>
-                        <div class="col-lg">
-                            <a class="btn btn-danger" href="{% url 'relatorios:delete_figura' figura.pk %}">
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm">
+                            <a class="btn btn-primary" href="{% url 'relatorios:update_figura' figura.pk %}">
+                                <i aria-hidden="true" data-hidden="true" class="fa fa-edit" style="color:white;"></i>Editar</a>
+                        </div>
+                        <div class="col-sm">
+                            <a class="btn btn-danger" style="float:right;" href="{% url 'relatorios:delete_figura' figura.pk %}">
                                 <i aria-hidden="true" data-hidden="true" class="fa fa-trash" style="color:white;"></i>Excluir</a>
                         </div>
                     </div>
