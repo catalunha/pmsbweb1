@@ -69,6 +69,8 @@ class RelatorioDeleteView(RelatorioDonoQuerysetMixin, PermissionRequiredMixin, F
     template_name = "relatorios/delete_relatorio.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.delete_relatorio"]
 
+    success_url = reverse_lazy("relatorios:list_relatorio")
+
 """
 Bloco
 """
@@ -119,7 +121,6 @@ class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, Creat
         })
         return kwargs
 
-
 class BlocoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
@@ -130,7 +131,6 @@ class BlocoUpdateView(PermissionRequiredMixin, UpdateView):
         bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
         return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
 
-
 class BlocoTextoCreateView(PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
@@ -140,8 +140,6 @@ class BlocoTextoCreateView(PermissionRequiredMixin, UpdateView):
     def get_success_url(self):
         bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
         return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
-
-
 
 class BlocoDeleteView(UserPassesTestMixin, PermissionRequiredMixin, DeleteView):
     model = Bloco
