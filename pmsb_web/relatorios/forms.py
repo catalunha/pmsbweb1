@@ -1,5 +1,6 @@
 from django import forms
 from django.shortcuts import get_object_or_404
+
 from .models import (
     Relatorio,
     Bloco,
@@ -14,13 +15,13 @@ class RelatorioForm(forms.ModelForm):
 
 class BlocoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        self.relatorio = kwargs.pop("relatorio")
+        relatorio_pk = kwargs.pop("relatorio_pk")
         super(BlocoForm, self).__init__(*args, **kwargs)
-        self.fields["nivel_superior"].queryset = Bloco.objects.filter(relatorio= self.relatorio)
+        #self.fields["nivel_superior"].queryset = Bloco.objects.filter(relatorio = relatorio_pk)
 
     class Meta:
         model = Bloco
-        fields = ("titulo", "nivel_superior" ,"descricao", "texto")
+        fields = ("titulo" ,"descricao", "texto")
 
 class BlocoChangeForm(forms.ModelForm):
     class Meta:
