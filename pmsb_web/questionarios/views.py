@@ -246,3 +246,12 @@ class PossivelEscolhaDeleteView(PermissionRequiredMixin, DeleteView):
 
 class TesteTemplateView(TemplateView):
     template_name = "questionarios/teste.html"
+
+
+class PerguntaListView(PermissionRequiredMixin, ListView):
+    model = Pergunta
+    template_name = "questionarios/pergunta_list.html"
+    permission_required = ["questionarios.list_pergunta", ]
+
+    def get_queryset(self):
+        return super(PerguntaListView, self).get_queryset().filter(usuario = self.request.user)

@@ -1,0 +1,25 @@
+{% extends "questionarios/base.html" %}
+
+{% block conteudo %}
+
+{% for pergunta in object_list %}
+<div class="row">
+    <div class="col-lg-12">
+    <p><h5>pergunta: {{pergunta.variavel}}</h5></p>
+    <p>{{pergunta.texto}}</p>
+    
+    <ul class="list-group">
+        {% for questionario in pergunta.questionarios.all %}
+        <li class="list-group-item">
+            {{questionario}}
+        </li>
+        {% empty %}
+        <li class="list-group-item">Nenhuma questionario</li>
+        {% endfor %}
+    </ul>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock %}
