@@ -101,6 +101,13 @@ class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, Creat
         relatorio = get_object_or_404(Relatorio, id=self.kwargs.get('pk'))
         form.instance.relatorio = relatorio
         return super(BlocoCreateView, self).form_valid(form)
+    
+    def get_form_kwargs(self):
+        kwargs = super(BlocoCreateView, self).get_form_kwargs()
+        kwargs.update({
+            "relatorio": self.kwargs.get("pk"),
+        })
+        return kwargs
 
 
 class BlocoUpdateView(UserPassesTestMixin, PermissionRequiredMixin, UpdateView):
