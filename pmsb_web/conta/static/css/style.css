@@ -14425,4 +14425,8 @@ body {
   box-shadow:0 0 0 .2rem rgba(220,53,69,.5)
 }
 
+label {
+  font-size: 20px;
+}
+
 /*# sourceMappingURL=style.css.map */
