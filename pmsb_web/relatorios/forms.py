@@ -17,16 +17,20 @@ class BlocoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         relatorio_pk = kwargs.pop("relatorio_pk")
         super(BlocoForm, self).__init__(*args, **kwargs)
-        #self.fields["nivel_superior"].queryset = Bloco.objects.filter(relatorio = relatorio_pk)
 
     class Meta:
         model = Bloco
-        fields = ("titulo" ,"descricao", "texto")
+        fields = ("titulo", "descricao")
 
 class BlocoChangeForm(forms.ModelForm):
     class Meta:
         model = Bloco
-        fields = ("titulo", "texto", "descricao")
+        fields = ("titulo", "descricao")
+
+class BlocoTextoForm(forms.ModelForm):
+    class Meta:
+        model = Bloco
+        fields = ("texto",)
 
 class EditorForm(forms.ModelForm):
     class Meta:

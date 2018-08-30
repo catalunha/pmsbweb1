@@ -17,6 +17,7 @@ from .forms import (
     BlocoForm,
     BlocoChangeForm,
     FiguraForm,
+    BlocoTextoForm,
 )
 
 """
@@ -119,11 +120,28 @@ class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, Creat
         return kwargs
 
 
-class BlocoUpdateView(UserPassesTestMixin, PermissionRequiredMixin, UpdateView):
+class BlocoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
     form_class = BlocoChangeForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def get_success_url(self):
+        bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
+        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
+
+
+class BlocoTextoCreateView(PermissionRequiredMixin, UpdateView):
+    model = Bloco
+    template_name = "relatorios/update_bloco.html"
+    form_class = BlocoTextoForm
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def get_success_url(self):
+        bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
+        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
+
+
 
 class BlocoDeleteView(UserPassesTestMixin, PermissionRequiredMixin, DeleteView):
     model = Bloco
