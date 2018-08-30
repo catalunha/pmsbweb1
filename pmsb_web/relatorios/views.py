@@ -82,11 +82,19 @@ class BlocoDetailView(UserPassesTestMixin, PermissionRequiredMixin, DetailView):
     template_name = "relatorios/detail_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco" ]
 
-class BlocoCreateView(UserPassesTestMixin, PermissionRequiredMixin, CreateView):
+class BlocoCreateView(PermissionRequiredMixin, CreateView):
     model = Bloco
     template_name = "relatorios/create_bloco.html"
     form_class = BlocoForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.add_bloco" ]
+    
+    success_url = reverse_lazy("relatorios:detail_relatorio")
+    
+    def form_valid(self, form):
+        relatorio = get_object_or_404(Relatorio, id=self.kwargs.get('pk'))
+        form.instance.relatorio = relatorio
+        return super(BlocoCreateView, self).form_valid(form)
+
 
 class BlocoUpdateView(UserPassesTestMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco

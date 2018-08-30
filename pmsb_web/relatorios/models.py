@@ -27,7 +27,7 @@ class RelatorioManager(models.Manager):
         dono = Q(usuario = user)
         editor = Q(blocos__editores__editor = user)
 
-        return self.filter(editor | dono)
+        return self.filter(editor | dono).distinct()
 
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)

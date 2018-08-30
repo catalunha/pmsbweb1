@@ -1,10 +1,21 @@
-{% for r in object_list %}
+{% extends "base/base.html" %} {% block conteudo %}
 
-{{r}}
-dono:{{r.usuario}}
-<a href="{% url "relatorios:detail_relatorio" r.pk %}">{{r.titulo}}</a>
-<br>
-
-{% empty %}
-sem relatorios
-{% endfor %}
+<div class="card-header">
+    <i class="nav-icon icon-note"></i> Relatórios
+    <a class="btn btn-primary" style="float: right;" href="{% url 'relatorios:create_relatorio'%}">
+        <i class="fa fa-tasks"></i>
+        Novo Relatório
+    </a>
+</div>
+<div class="card-body">
+    <ul class="list-group">
+        {% for r in object_list %}{% comment %} dono:{{r.usuario}} {% endcomment %}
+        <li class="list-group-item"> Título: {{r}}
+        <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Detalhes</span></a>
+        </li>
+        {% empty %}
+        <li class="list-group-item">Nenhum relatório</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
