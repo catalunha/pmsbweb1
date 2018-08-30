@@ -15,6 +15,7 @@ urlpatterns = [
 
     #blocos
     path("<uuid:pk>/bloco", views.BlocoCreateView.as_view(), name="create_bloco"),
+    path("<uuid:pk>/bloco/<uuid:nivel_superior_pk>/", views.BlocoCreateView.as_view(), name="create_bloco_nivel_superior"),
 
     #figuras
     path("<uuid:relatorio_pk>/figuras/", views.FiguraListView.as_view(), name = "list_figura"),
