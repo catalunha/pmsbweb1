@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import (
@@ -11,7 +11,7 @@ from django.views.generic import (
     TemplateView,
     FormView,
 )
-from django.views.generic.edit import FormMixin, ProcessFormView
+from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
 
 from .models import (
@@ -100,9 +100,6 @@ class QuestionarioOrdenarSubmitAjaxView(PermissionRequiredMixin, View):
         pergunta_do_questionario.save()
         return JsonResponse({"id":uuid})
 
-
-
-        
 class PerguntaEscolherTipoTemplateView(PermissionRequiredMixin, DetailView):
     model = Questionario
     template_name = "questionarios/escolher_tipo_pergunta.html"
@@ -113,9 +110,10 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     model = Pergunta
     form_class = BasePerguntaForm
     permission_required = ["questionarios.change_questionario", "questionarios.add_pergunta"]
+    pergunta_questionario = None
     
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.object.pk, "questionario_pk":self.kwargs.get("pk")})
+        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.pergunta_questionario.pk})
 
     def get_form_class(self):
         instance = self.kwargs.get("tipo")
@@ -137,20 +135,19 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     def get_form(self):
         form = super(PerguntaCreateView, self).get_form()
         questionario = get_object_or_404(Questionario, pk = self.kwargs.get("pk"))
+        form.fields["pergunta_requisito"].queryset = Pergunta.objects.by_questionario(questionario)
         form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(questionario)
         return form
 
     def form_valid(self, form):
         form.instance.usuario = self.request.user
-        form_valid_return = super(PerguntaCreateView, self).form_valid(form)
-        
+        self.object = form.save()
         questionario = get_object_or_404(Questionario, pk = self.kwargs.get("pk"))
-        pergunta_questionario = PerguntaDoQuestionario()
-        pergunta_questionario.questionario = questionario
-        pergunta_questionario.pergunta = self.object
-        pergunta_questionario.save()
-
-        return form_valid_return
+        self.pergunta_questionario = PerguntaDoQuestionario()
+        self.pergunta_questionario.questionario = questionario
+        self.pergunta_questionario.pergunta = self.object
+        self.pergunta_questionario.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "questionarios/update_pergunta.html"
@@ -166,6 +163,7 @@ class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
     
     def get_form(self):
         form = super(PerguntaUpdateView, self).get_form()
+        form.fields["pergunta_requisito"].queryset = Pergunta.objects.by_questionario(self.pergunta_do_questionario.questionario, self.object)
         form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(self.pergunta_do_questionario.questionario, exclude_pergunta=self.object)
         return form
     
