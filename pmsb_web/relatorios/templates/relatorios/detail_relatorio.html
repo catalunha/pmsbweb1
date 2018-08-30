@@ -30,7 +30,7 @@
         d.add(0,-1,'Sumário');
     
     {% for bloco in object.blocos.all %}
-        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}}');
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-success">Inserir subnível</span></a>');
     {% empty %}
     <p>
         Sem itens

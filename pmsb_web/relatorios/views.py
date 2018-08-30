@@ -98,14 +98,23 @@ class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, Creat
         return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":self.kwargs.get("pk")})
     
     def form_valid(self, form):
-        relatorio = get_object_or_404(Relatorio, id=self.kwargs.get('pk'))
+        relatorio = get_object_or_404(Relatorio, pk=self.kwargs.get('pk'))
         form.instance.relatorio = relatorio
+
+        nivel_superior_pk = self.kwargs.get("nivel_superior_pk", None)
+        nivel_superior = None
+        
+        if nivel_superior_pk is not None:
+            nivel_superior = get_object_or_404(Bloco, pk = nivel_superior_pk)
+        
+        form.instance.nivel_superior = nivel_superior
+
         return super(BlocoCreateView, self).form_valid(form)
     
     def get_form_kwargs(self):
         kwargs = super(BlocoCreateView, self).get_form_kwargs()
         kwargs.update({
-            "relatorio": self.kwargs.get("pk"),
+            "relatorio_pk": self.kwargs.get("pk"),
         })
         return kwargs
 
