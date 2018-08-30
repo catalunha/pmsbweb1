@@ -16,10 +16,7 @@ RELATORIOS_MEDIA = "relatorios"
 User = get_user_model()
 
 class MaxLevelExcided(Exception):
-    
-    def __init__(self, expression):
-        self.expression = expression
-        self.message = "excede nivel maximo de sub-blocos"
+    pass
 
 class RelatorioManager(models.Manager):
     
@@ -68,7 +65,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
                 self.nivel = self.PART
         
         if self.nivel > self.NIVEL_MAXIMO:
-            raise MaxLevelExcided
+            raise MaxLevelExcided("excede nivel maximo de sub-blocos")
     
         super(Bloco, self).save(*args, **kwargs)
     
@@ -80,7 +77,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         if self.nivel < self.NIVEL_MAXIMO:
             return self.nivel + 1
         else:
-            raise MaxLevelExcided
+            raise MaxLevelExcided("excede nivel maximo de sub-blocos")
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")
