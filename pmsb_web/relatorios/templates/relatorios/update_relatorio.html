@@ -2,7 +2,8 @@
 <form method="post">
     {% csrf_token %}
     <div class="card-body p-4">
-        {% include "includes/form.html" with form=form %}
+        <h2 style="text-align: center;">{{object}}</h2>
+        <hr>{% include "includes/form.html" with form=form %}
         <button type="submit" class="btn btn-primary">Editar</button>
         <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
     </div>
