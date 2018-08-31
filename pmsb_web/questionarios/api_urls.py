@@ -7,6 +7,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.authtoken.models import Token
 
 from .serializers import (
+    LocalizacaoViewSet,
     UserViewSet,
     QuestionarioViewSet,
     PossivelEscolhaViewSet,
@@ -18,10 +19,21 @@ from .serializers import (
     PerguntaArquivoViewSet,
     PerguntaTextoViewSet,
     PerguntaCoordenadaViewSet,
+
+    PossivelEscolhaRespostaViewSet,
+    CoordenadaRespostaViewSet,
+    TextoRespostaViewSet,
+    NumeroRespostaViewSet,
+    ArquivoRespostaViewSet,
+    ImagemRespostaViewSet,
 )
 
 questionario_router = routers.DefaultRouter()
+
+questionario_router.register(r'localizacoes', LocalizacaoViewSet)
+
 questionario_router.register(r'usuarios', UserViewSet)
+
 questionario_router.register(r'questionarios', QuestionarioViewSet)
 questionario_router.register(r'perguntas', PerguntasViewSet)
 questionario_router.register(r'perguntas_escolha', PerguntaEscolhaViewSet)
@@ -31,8 +43,19 @@ questionario_router.register(r'perguntas_texto', PerguntaTextoViewSet)
 questionario_router.register(r'perguntas_coordenada', PerguntaCoordenadaViewSet)
 questionario_router.register(r'perguntas', PerguntasViewSet)
 questionario_router.register(r'possiveis_escolhas', PossivelEscolhaViewSet)
+
 questionario_router.register(r'respostas', RespostaQuestionarioViewSet)
 questionario_router.register(r'respostas_pergunta', RespostaPerguntaViewSet)
+
+
+questionario_router.register(r'possivel_escolhas_respostas', PossivelEscolhaRespostaViewSet)
+questionario_router.register(r'coordenada_respostas', CoordenadaRespostaViewSet)
+questionario_router.register(r'texto_respostas', TextoRespostaViewSet)
+questionario_router.register(r'numero_respostas', NumeroRespostaViewSet)
+questionario_router.register(r'arquivo_respostas', ArquivoRespostaViewSet)
+questionario_router.register(r'imagem_respostas', ImagemRespostaViewSet)
+
+
 
 urlpatterns = [
     path("get-auth-token", obtain_auth_token),

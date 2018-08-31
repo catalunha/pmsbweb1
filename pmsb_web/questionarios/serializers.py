@@ -3,7 +3,10 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers, viewsets, routers
 from rest_framework import generics
 from .models import (
+
+    Localizacao,
     Questionario,
+    
     Pergunta,
     PerguntaEscolha,
     PossivelEscolha,
@@ -13,14 +16,32 @@ from .models import (
     PerguntaImagem,
     PerguntaNumero,
     PerguntaTexto,
+    
     RespostaQuestionario,
     RespostaPergunta,
-    PossivelEscolhaResposta,
+
     UnidadeMedida,
+
+    PossivelEscolhaResposta,
+    CoordenadaResposta,
+    TextoResposta,
+    NumeroResposta,
+    ArquivoResposta,
+    ImagemResposta,
+
 )
 
 
 User = get_user_model()
+
+class LocalizacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Localizacao
+        fields = ("id", "latitude", "longitude", "altitude")
+
+class LocalizacaoViewSet(viewsets.ModelViewSet):
+    serializer_class = LocalizacaoSerializer
+    queryset = Localizacao.objects.all()
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -54,6 +75,7 @@ class PerguntaSerializerMixin(serializers.HyperlinkedModelSerializer):
             "variavel",
             "texto",
             "tipo",
+            "pergunta_requisito",
             "possivel_escolha_requisito",
         )
     
@@ -166,21 +188,92 @@ class QuestionarioViewSet(viewsets.ModelViewSet):
     queryset = Questionario.objects.all()
     serializer_class = QuestionarioSerializer
 
+
+""" Respotas """
+
+
+""" Respostas dos tipos """
+
+class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PossivelEscolhaResposta
+        fields = "__all__"
+
+class PossivelEscolhaRespostaViewSet(viewsets.ModelViewSet):
+    serializer_class = PossivelEscolhaRespostaSerializer
+    queryset = PossivelEscolhaResposta.objects.all()
+
+class CoordenadaRespostaSerializer(serializers.ModelSerializer):
+    coordenada = LocalizacaoSerializer()
+    class Meta:
+        model = CoordenadaResposta
+        fields = "__all__"
+    
+class CoordenadaRespostaViewSet(viewsets.ModelViewSet):
+    serializer_class = CoordenadaRespostaSerializer
+    queryset = CoordenadaResposta.objects.all()
+
+class TextoRespostaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TextoResposta
+        fields = "__all__"
+
+class TextoRespostaViewSet(viewsets.ModelViewSet):
+    serializer_class = TextoRespostaSerializer
+    queryset = TextoResposta.objects.all()
+
+class NumeroRespostaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NumeroResposta
+        fields = "__all__"
+
+class NumeroRespostaViewSet(viewsets.ModelViewSet):
+    serializer_class = NumeroRespostaSerializer
+    queryset = NumeroResposta.objects.all()
+
+class ArquivoRespostaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArquivoResposta
+        fields = "__all__"
+
+class ArquivoRespostaViewSet(viewsets.ModelViewSet):
+    serializer_class = ArquivoRespostaSerializer
+    queryset = ArquivoResposta.objects.all()
+
+class ImagemRespostaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImagemResposta
+        fields = "__all__"
+
+class ImagemRespostaViewSet(viewsets.ModelViewSet):
+    serializer_class = ImagemRespostaSerializer
+    queryset = ImagemResposta.objects.all()
+
+""" Resposta Pergunta """
+
 class RespostaPerguntaSerializer(serializers.ModelSerializer):
     pergunta = PerguntaSerializer
-    conteudo = serializers.PrimaryKeyRelatedField(many = True, read_only = True)
+    escolhas = PossivelEscolhaRespostaSerializer(many = True, read_only = False)
+    coordenada = CoordenadaRespostaSerializer(read_only = False)
+    texto = TextoRespostaSerializer(read_only = False)
+    numero = NumeroRespostaSerializer(read_only = False)
+    arquivo = ArquivoRespostaSerializer(read_only = False)
+    imagem = ImagemRespostaSerializer(read_only = False)
     class Meta:
         model = RespostaPergunta
-        fields = ("id", "url", "resposta_questionario", "pergunta", "tipo", "conteudo")
+        fields = ("id", "url", "resposta_questionario", "pergunta", "tipo", "coordenada", "escolhas", "texto", "numero", "arquivo", "imagem")
 
 class RespostaPerguntaViewSet(viewsets.ModelViewSet):
     queryset = RespostaPergunta.objects.all()
     serializer_class = RespostaPerguntaSerializer
 
-class RespostaQuestionarioSerializer(serializers.HyperlinkedModelSerializer):
+""" Resposta Questionario """
+
+class RespostaQuestionarioSerializer(serializers.ModelSerializer):
     usuario = UserSerializer
     questionario = QuestionarioSerializer
-    perguntas = RespostaPerguntaSerializer(many = True, read_only = True)
+    perguntas = RespostaPerguntaSerializer(many = True, read_only = False)
+
     class Meta:
         model = RespostaQuestionario
         fields = ("id", "url", "usuario", "questionario", "perguntas")
@@ -191,7 +284,3 @@ class RespostaQuestionarioViewSet(viewsets.ModelViewSet):
     serializer_class = RespostaQuestionarioSerializer
 
 
-class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PossivelEscolhaResposta
-        fields = "__all__"

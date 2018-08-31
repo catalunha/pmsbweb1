@@ -1,0 +1,17 @@
+{% extends "base/base.html" %} {% block conteudo %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="card-body p-4">
+        <div class="col-sm-6 col-md-4">
+            <div class="card">
+                <a target="_blank" href="{{figura.imagem.url}}">
+                    <img class="card-img-top" src="{{figura.imagem.url}}" alt="">
+                </a>
+            </div>
+        </div>
+        {% include "includes/form.html" with form=form %}
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a class="btn btn-primary" href="{% url 'relatorios:list_figura' object.relatorio.pk %}">Voltar</a>
+    </div>
+</form>
+{% endblock %}

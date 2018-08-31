@@ -21,12 +21,24 @@ class UUIDModelMixin(models.Model):
     class Meta:
         abstract = True
 
+class FakeDeleteQuerysetMixin(models.QuerySet):
+    def fake_delete_all(self):
+        return self.filter(fake_deletado = False)
+
+class FakeDeleteManagerMixin(models.Manager):
+
+    def get_queryset(self):
+        return FakeDeleteQuerysetMixin(self.model, using=self._db)
+    
+    def fake_delete_all(self):
+        return self.get_queryset().fake_delete_all()
+
 class FakeDeleteModelMixin(models.Model):
     """
     Mixin para 'deletar' objetos sem removelos do banco de dados
     """    
     fake_deletado = models.BooleanField(default = False)
-    fake_deletado_em = models.DateTimeField(null = True)
+    fake_deletado_em = models.DateTimeField(null = True, blank = True)
 
     class Meta:
         abstract = True
@@ -35,6 +47,6 @@ class FakeDeleteModelMixin(models.Model):
     def fake_delete(self):
         """
         """
-        self.fake_deletado = False
+        self.fake_deletado = True
         self.fake_deletado_em = now()
         self.save()

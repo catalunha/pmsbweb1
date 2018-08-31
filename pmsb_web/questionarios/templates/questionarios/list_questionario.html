@@ -21,7 +21,7 @@
         {% for pergunta_do_questionario in questionario.perguntas_ordenadas %}
         <li class="list-group-item">
             {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}
-            <a href="{% url "questionarios:update_pergunta" questionario.pk  pergunta_do_questionario.pergunta.id %}"><span class="badge badge-secondary">Editar</span></a> 
+            <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Editar</span></a> 
             <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Remover</span></a>
         </li>
         {% empty %}

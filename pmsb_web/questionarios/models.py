@@ -40,10 +40,6 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     class Meta:
         verbose_name = "Questionario"
         verbose_name_plural = "Questionarios"
-        permissions = (
-            ("list_questionario", "Can list questionario"),
-            ("view_questionario", "Can view questionario"),
-        )
 
     def __str__(self):
         return "Questionario {}".format(self.nome)
@@ -52,6 +48,13 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def perguntas_ordenadas(self):
         return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
 
+class PerguntaManger(models.Manager):
+    def by_questionario(self, questionario, exclude_obj = None):
+        queryset = self.get_queryset().filter(questionarios = questionario)
+        if exclude_obj is not None:
+            queryset = queryset.exclude(pk = exclude_obj.pk)
+        return queryset
+
 class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
     TIPO = None
@@ -59,9 +62,10 @@ class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     variavel = models.CharField(max_length = 255)
     texto = models.TextField()
     tipo = models.PositiveSmallIntegerField(editable = False)
+    pergunta_requisito = models.ForeignKey("Pergunta", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     
-    objects = models.Manager()
+    objects = PerguntaManger()
     inherited_objects = InheritanceManager()
 
     class Meta:
@@ -249,37 +253,6 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
     @property
     def tipo(self):
         return self.pergunta.tipo
-    
-    @property
-    def conteudo(self):
-        if self.tipo == PerguntaEscolha.TIPO:
-            return self.escolhas.all()
-
-        elif self.tipo == PerguntaTexto.TIPO:
-            return None
-            return self.textos.all()
-        
-        elif self.tipo == PerguntaArquivo.TIPO:
-            return None
-            return self.arquivos.all()
-        
-        elif self.tipo == PerguntaImagem.TIPO:
-            return None
-            return self.imagens.all()
-        
-        elif self.tipo == PerguntaCoordenada.TIPO:
-            return None
-            return self.coordenadas.all()
-        
-        elif self.tipo == PerguntaNumero.TIPO:
-            n = self.numeros.all()
-            return n
-            if n.count() <= 0:
-                return None
-            else:
-                return n[0].numero
-        
-        return "Uma resposta ai sem tipo heuheu"
 
 class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="escolhas")
@@ -293,7 +266,7 @@ class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
         unique_together = ("resposta_pergunta", "possivel_escolha")
 
 class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="coordenadas")
+    resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="coordenada")
     coordenada = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True)
 
     objects = models.Manager()
@@ -304,7 +277,7 @@ class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
         unique_together = ("resposta_pergunta", "coordenada")
 
 class TextoResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="textos")
+    resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="texto")
     texto = models.TextField()
 
     objects = models.Manager()
@@ -314,7 +287,7 @@ class TextoResposta(UUIDModelMixin, TimedModelMixin):
         verbose_name_plural = "Textos Resposta"
 
 class NumeroResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="numeros")
+    resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="numero")
     unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
     numero = models.FloatField()
 
@@ -335,7 +308,7 @@ def caminho_para_arquivos(instance, filename):
     return "questionarios/arquivos/{}/{}/{}/{}".format( hoje.year, hoje.month, hoje.day, nome_arquivo)
 
 class ArquivoResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivos")
+    resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivo")
     arquivo = models.FileField(upload_to=caminho_para_arquivos)
 
     objects = models.Manager()
@@ -355,7 +328,7 @@ def caminho_para_imagens(instance, filename):
     return "questionarios/imagens/{}/{}/{}/{}".format( hoje.year, hoje.month, hoje.day, nome_arquivo)
 
 class ImagemResposta(UUIDModelMixin, TimedModelMixin):
-    resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="imagens")
+    resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="imagem")
     imagem = models.ImageField(upload_to=caminho_para_imagens)
 
     objects = models.Manager()

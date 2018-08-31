@@ -9,12 +9,11 @@
                             <a href="javascript: d.openAll();">Expandir tudo</a> |
                             <a href="javascript: d.closeAll();">Contrair tudo</a>
                         </small>
-                        
-                        {% if tree %}
+                        {% if tree_list %}
                         <script type="text/javascript">
                             d = new dTree('d');
                             d.add(0,-1,'Organograma: Árvore Hierárquica');
-                            {% for user in tree %}
+                            {% for user in tree_list %}
                             console.log('{{user.id}}')
                             console.log('{{user.first_name}}')
                             console.log('{{user.superior.id}}')

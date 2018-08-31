@@ -1,0 +1,48 @@
+{% extends "base/base.html" %} {% block conteudo %}
+<div class="card-body p-4">
+    <h2 style="text-align: center;">
+        {{object.titulo}}
+    </h2>
+    <hr>
+    <p>
+        <a class="btn btn-primary" href="{% url 'relatorios:list_figura' object.pk %}">
+            <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-image" style="color:white;"></i>Gerenciar Figuras</a>
+        <a class="btn btn-primary" href="#">
+            <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-file-text-o" style="color:white;"></i>Visualizar PDF</a>
+        <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
+    </p>
+    <p>
+        <b>Criado em:</b> {{object.criado_em}}
+    </p>
+
+    <p>
+        <a class="btn btn-primary" href="{% url 'relatorios:create_bloco' object.pk  %}">
+            <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-plus" style="color:white;"></i>Inserir nível
+        </a>
+    </p>
+
+    {% comment %} aplicar dtree nos bloco {% endcomment %}
+    <small>
+        <a href="javascript: d.openAll();">Expandir tudo</a> |
+        <a href="javascript: d.closeAll();">Contrair tudo</a>
+    </small>
+    
+    <script type="text/javascript">
+
+        d = new dTree('d');
+        d.add(0, -1, 'Índice');
+
+        {% for bloco in object.blocos.all %}
+        {% comment %}
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary ">Editar Índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-secondary">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger">X</span></a>');
+        {% endcomment %}    
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="#"><span class="badge badge-secondary">Editor: um_nome_aqui </span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary">Editar Índice</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
+        {% empty %}
+        <p>
+            Sem itens
+        </p>
+        {% endfor %}
+        document.write(d);
+    </script> {% endblock %}
+
+</div>
