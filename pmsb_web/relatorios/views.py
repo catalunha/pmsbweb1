@@ -3,7 +3,10 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
-from core.views import FakeDeleteView
+from core.views import (
+    FakeDeleteView,
+    AjaxableFormResponseMixin,
+)
 
 from .models import (
     Relatorio,
@@ -18,6 +21,7 @@ from .forms import (
     BlocoChangeForm,
     FiguraForm,
     BlocoTextoForm,
+    BlocoOrdemAjaxForm,
 )
 
 """
@@ -142,6 +146,12 @@ class BlocoDeleteView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, De
     template_name = "relatorios/delete_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.delete_bloco" ]
 
+
+class BlocoOrdemAjaxUpdateView(AjaxableFormResponseMixin, PermissionRequiredMixin, UpdateView):
+    """Modifica atributo ordem do bloco via requisição ajax."""
+    model = Bloco
+    form_class = BlocoOrdemAjaxForm
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
 """
 Figura
