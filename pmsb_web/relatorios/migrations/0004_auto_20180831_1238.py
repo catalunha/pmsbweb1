@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='bloco',
-            options={'ordering': ['-ordem', 'criado_em']},
+            options={'ordering': ['ordem', 'criado_em']},
         ),
         migrations.AddField(
             model_name='bloco',
