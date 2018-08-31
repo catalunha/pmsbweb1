@@ -88,6 +88,9 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         else:
             raise MaxLevelExcided("excede nivel maximo de sub-blocos")
 
+    class Meta:
+        ordering = ["criado_em"]
+
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")
     editor = models.ForeignKey(User, on_delete = models.CASCADE, related_name="editor_blocos")
