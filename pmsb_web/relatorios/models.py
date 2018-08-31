@@ -7,6 +7,8 @@ from django.conf import settings
 from core.mixins import (
     UUIDModelMixin,
     FakeDeleteModelMixin,
+    FakeDeleteManagerMixin,
+    FakeDeleteQuerysetMixin,
     UserOwnedModelMixin,
     TimedModelMixin,
 )
@@ -18,13 +20,20 @@ User = get_user_model()
 class MaxLevelExcided(Exception):
     pass
 
-class RelatorioManager(models.Manager):
-    
+class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
     def by_dono_ou_editor(self, user):
         dono = Q(usuario = user)
         editor = Q(blocos__editores__editor = user)
 
         return self.filter(editor | dono).distinct()
+
+class RelatorioManager(FakeDeleteManagerMixin, models.Manager):
+    
+    def get_queryset(self):
+        return RelatorioQueryset(self.model, using=self._db)
+    
+    def by_dono_ou_editor(self, user):
+        return self.get_queryset().by_dono_ou_editor(user)
 
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
