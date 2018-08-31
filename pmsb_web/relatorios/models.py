@@ -66,7 +66,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     objects = models.Manager()
 
     class Meta:
-        ordering = ["-ordem", "criado_em"]
+        ordering = ["ordem", "criado_em"]
 
     def __str__(self):
         return "{} - {}".format(self.relatorio, self.titulo)
@@ -98,17 +98,18 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     
     def proxima_ordem(self):
 
-        queryset = Bloco.objetcs.filter(relatorio = self.relatorio)
+        queryset = Bloco.objects.filter(relatorio = self.relatorio)
 
         if self.nivel_superior is None:
             queryset = queryset.filter(nivel_superior = None)
         else:
             queryset = queryset.filter(nivel_superior = self.nivel_superior)
 
-        try:
-            return queryset.order_by("-ordem").first().ordem + 1
-        except models.exceptions.ObjectDoesNotExist:
+        b = queryset.order_by("-ordem").first()
+        if b is None:
             return 0
+        else:
+            return b.ordem + 1
 
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
