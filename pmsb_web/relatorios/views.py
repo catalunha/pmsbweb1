@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from core.views import FakeDeleteView
 
@@ -81,12 +81,18 @@ class BlocoRelatorioContextMixin(object):
         context["relatorio_object"] = get_object_or_404(Relatorio, pk = self.kwargs.get("pk"))
         return context
 
-class BlocoListView(UserPassesTestMixin, PermissionRequiredMixin, ListView):
+class BlocoRelatorioSuccessUrlMixin(object):
+    def get_success_url(self):
+        bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
+        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
+
+
+class BlocoListView(PermissionRequiredMixin, ListView):
     model = Bloco
     template_name = "relatorios/list_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco" ]
 
-class BlocoDetailView(UserPassesTestMixin, PermissionRequiredMixin, DetailView):
+class BlocoDetailView(PermissionRequiredMixin, DetailView):
     model = Bloco
     template_name = "relatorios/detail_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco" ]
@@ -103,15 +109,11 @@ class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, Creat
     def form_valid(self, form):
         relatorio = get_object_or_404(Relatorio, pk=self.kwargs.get('pk'))
         form.instance.relatorio = relatorio
-
         nivel_superior_pk = self.kwargs.get("nivel_superior_pk", None)
         nivel_superior = None
-        
         if nivel_superior_pk is not None:
             nivel_superior = get_object_or_404(Bloco, pk = nivel_superior_pk)
-        
         form.instance.nivel_superior = nivel_superior
-
         return super(BlocoCreateView, self).form_valid(form)
     
     def get_form_kwargs(self):
@@ -121,31 +123,24 @@ class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, Creat
         })
         return kwargs
 
-class BlocoUpdateView(PermissionRequiredMixin, UpdateView):
+class BlocoUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
     form_class = BlocoChangeForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
-    def get_success_url(self):
-        bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
-        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
 
-class BlocoTextoCreateView(PermissionRequiredMixin, UpdateView):
+class BlocoTextoCreateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
     form_class = BlocoTextoForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
-    def get_success_url(self):
-        bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
-        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
 
-class BlocoDeleteView(UserPassesTestMixin, PermissionRequiredMixin, DeleteView):
+class BlocoDeleteView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, DeleteView):
     model = Bloco
     template_name = "relatorios/delete_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.delete_bloco" ]
-
 
 
 """
@@ -202,7 +197,6 @@ class FiguraUpdateView(FiguraDonoQuerysetMixin, PermissionRequiredMixin, UpdateV
 
     def get_success_url(self):
         return reverse_lazy("relatorios:list_figura", kwargs = {"relatorio_pk":self.object.relatorio.pk})
-
 
 class FiguraDeleteView(FiguraDonoQuerysetMixin, PermissionRequiredMixin, DeleteView):
     model = Figura
