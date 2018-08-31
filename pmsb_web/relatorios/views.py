@@ -27,11 +27,11 @@ Relatorio
 class RelatorioDonoOuEditorQuerysetMixin(object):
     def get_queryset(self, queryset = None):
         queryset = Relatorio.objetcs.by_dono_ou_editor(self.request.user)
-        return queryset
+        return queryset.fake_delete_all()
 
 class RelatorioDonoQuerysetMixin(object):
     def get_queryset(self, queryset = None):
-        queryset = Relatorio.objetcs.filter(usuario = self.request.user)
+        queryset = Relatorio.objetcs.fake_delete_all().filter(usuario = self.request.user)
         return queryset
 
 class RelatorioListView(RelatorioDonoOuEditorQuerysetMixin, PermissionRequiredMixin, ListView):
