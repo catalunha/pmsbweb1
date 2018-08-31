@@ -188,31 +188,11 @@ class QuestionarioViewSet(viewsets.ModelViewSet):
     queryset = Questionario.objects.all()
     serializer_class = QuestionarioSerializer
 
-class RespostaPerguntaSerializer(serializers.ModelSerializer):
-    pergunta = PerguntaSerializer
-    conteudo = serializers.PrimaryKeyRelatedField(many = True, read_only = True)
-    class Meta:
-        model = RespostaPergunta
-        fields = ("id", "url", "resposta_questionario", "pergunta", "tipo", "conteudo")
 
-class RespostaPerguntaViewSet(viewsets.ModelViewSet):
-    queryset = RespostaPergunta.objects.all()
-    serializer_class = RespostaPerguntaSerializer
-
-class RespostaQuestionarioSerializer(serializers.ModelSerializer):
-    usuario = UserSerializer
-    questionario = QuestionarioSerializer
-    perguntas = RespostaPerguntaSerializer(many = True, read_only = False)
-
-    class Meta:
-        model = RespostaQuestionario
-        fields = ("id", "url", "usuario", "questionario", "perguntas")
+""" Respotas """
 
 
-class RespostaQuestionarioViewSet(viewsets.ModelViewSet):
-    queryset = RespostaQuestionario.objects.all()
-    serializer_class = RespostaQuestionarioSerializer
-
+""" Respostas dos tipos """
 
 class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -224,6 +204,7 @@ class PossivelEscolhaRespostaViewSet(viewsets.ModelViewSet):
     queryset = PossivelEscolhaResposta.objects.all()
 
 class CoordenadaRespostaSerializer(serializers.ModelSerializer):
+    coordenada = LocalizacaoSerializer()
     class Meta:
         model = CoordenadaResposta
         fields = "__all__"
@@ -267,4 +248,39 @@ class ImagemRespostaSerializer(serializers.ModelSerializer):
 class ImagemRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = ImagemRespostaSerializer
     queryset = ImagemResposta.objects.all()
+
+""" Resposta Pergunta """
+
+class RespostaPerguntaSerializer(serializers.ModelSerializer):
+    pergunta = PerguntaSerializer
+    escolhas = PossivelEscolhaRespostaSerializer(many = True, read_only = False)
+    coordenada = CoordenadaRespostaSerializer(read_only = False)
+    texto = TextoRespostaSerializer(read_only = False)
+    numero = NumeroRespostaSerializer(read_only = False)
+    arquivo = ArquivoRespostaSerializer(read_only = False)
+    imagem = ImagemRespostaSerializer(read_only = False)
+    class Meta:
+        model = RespostaPergunta
+        fields = ("id", "url", "resposta_questionario", "pergunta", "tipo", "coordenada", "escolhas", "texto", "numero", "arquivo", "imagem")
+
+class RespostaPerguntaViewSet(viewsets.ModelViewSet):
+    queryset = RespostaPergunta.objects.all()
+    serializer_class = RespostaPerguntaSerializer
+
+""" Resposta Questionario """
+
+class RespostaQuestionarioSerializer(serializers.ModelSerializer):
+    usuario = UserSerializer
+    questionario = QuestionarioSerializer
+    perguntas = RespostaPerguntaSerializer(many = True, read_only = False)
+
+    class Meta:
+        model = RespostaQuestionario
+        fields = ("id", "url", "usuario", "questionario", "perguntas")
+
+
+class RespostaQuestionarioViewSet(viewsets.ModelViewSet):
+    queryset = RespostaQuestionario.objects.all()
+    serializer_class = RespostaQuestionarioSerializer
+
 

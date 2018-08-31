@@ -110,7 +110,6 @@ class RespostaPerguntaAdmin(admin.ModelAdmin):
     inlines = []
     
     def get_inline_instances(self, request, obj=None):
-        #                                    ^^^ this is new
         inline_instances = []
         if obj is None:
             pass
