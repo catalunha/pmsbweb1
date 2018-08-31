@@ -19,6 +19,7 @@ urlpatterns = [
     path("bloco/<uuid:pk>/editar/", views.BlocoUpdateView.as_view(), name="update_bloco"),
     path("bloco/<uuid:pk>/texto/", views.BlocoTextoCreateView.as_view(), name="update_text_bloco"),
     path("bloco/<uuid:pk>/deletar/", views.BlocoDeleteView.as_view(), name="delete_bloco"),
+    
     #blocos ajax
     path("ajax/bloco/<uuid:pk>/editar/", views.BlocoOrdemAjaxUpdateView.as_view(), name="ajax_update_bloco"),
 
