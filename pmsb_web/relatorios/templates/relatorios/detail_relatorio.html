@@ -34,14 +34,13 @@
 
         {% for bloco in object.blocos.all %}
         {% comment %}
-        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary">Editar Índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-secondary">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger">Excluir nível</span></a>');
-        {% endcomment %}
-    
-        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary">Editar Índice</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger">Excluir nível</span></a>');
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary ">Editar Índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-secondary">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger">X</span></a>');
+        {% endcomment %}    
+        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="#"><span class="badge badge-secondary">Editor: um_nome_aqui </span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary">Editar Índice</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
         {% empty %}
         <p>
             Sem itens
-    </p>
+        </p>
         {% endfor %}
         document.write(d);
     </script> {% endblock %}
