@@ -1,6 +1,5 @@
 from django.utils import timezone
 from django.db import models
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.conf import settings
 
@@ -22,8 +21,8 @@ class MaxLevelExcided(Exception):
 
 class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
     def by_dono_ou_editor(self, user):
-        dono = Q(usuario = user)
-        editor = Q(blocos__editores__editor = user)
+        dono = models.Q(usuario = user)
+        editor = models.Q(blocos__editores__editor = user)
 
         return self.filter(editor | dono).distinct()
 
@@ -60,8 +59,14 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     descricao = models.TextField()
     texto = models.TextField()
 
+    ordem = models.PositiveSmallIntegerField(blank = True)
     nivel_superior = models.ForeignKey("Bloco", null = True, blank = True, on_delete = models.CASCADE, related_name="subblocos")
     nivel = models.PositiveSmallIntegerField(editable = False)
+
+    objects = models.Manager()
+
+    class Meta:
+        ordering = ["-ordem", "criado_em"]
 
     def __str__(self):
         return "{} - {}".format(self.relatorio, self.titulo)
@@ -75,6 +80,9 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         
         if self.nivel > self.NIVEL_MAXIMO:
             raise MaxLevelExcided("excede nivel maximo de sub-blocos")
+        
+        if self.ordem is None:
+            self.ordem = self.proxima_ordem()
     
         super(Bloco, self).save(*args, **kwargs)
     
@@ -87,9 +95,21 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             return self.nivel + 1
         else:
             raise MaxLevelExcided("excede nivel maximo de sub-blocos")
+    
+    def proxima_ordem(self):
 
-    class Meta:
-        ordering = ["criado_em"]
+        queryset = Bloco.objetcs.filter(relatorio = self.relatorio)
+
+        if self.nivel_superior is None:
+            queryset = queryset.filter(nivel_superior = None)
+        else:
+            queryset = queryset.filter(nivel_superior = self.nivel_superior)
+
+        try:
+            return queryset.order_by("-ordem").first().ordem + 1
+        except models.exceptions.ObjectDoesNotExist:
+            return 0
+
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")
