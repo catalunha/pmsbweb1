@@ -32,6 +32,12 @@ class BlocoTextoForm(forms.ModelForm):
         model = Bloco
         fields = ("texto",)
 
+
+class BlocoOrdemAjaxForm(forms.ModelForm):
+    class Meta:
+        model = Bloco
+        fields = ("ordem",)
+
 class EditorForm(forms.ModelForm):
     class Meta:
         model = Editor
