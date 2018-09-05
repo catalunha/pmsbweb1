@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
+from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 from core.views import (
@@ -22,6 +23,7 @@ from .forms import (
     FiguraForm,
     BlocoTextoForm,
     BlocoOrdemAjaxForm,
+    BlocoSuperiorForm
 )
 
 """
@@ -79,16 +81,31 @@ class RelatorioDeleteView(RelatorioDonoQuerysetMixin, PermissionRequiredMixin, F
 Bloco
 """
 
+class RedirectActionView(SingleObjectMixin, RedirectView):
+    
+    def action(self):
+        pass
+
+    def get(self, request, *args, **kwargs):
+        self.get_object()
+        self.action()
+        return super().get(request, *args, **kwargs)
+
+
 class BlocoRelatorioContextMixin(object):
+
     def get_context_data(self, **kwargs):
         context = super(BlocoRelatorioContextMixin, self).get_context_data(**kwargs)
         context["relatorio_object"] = get_object_or_404(Relatorio, pk = self.kwargs.get("pk"))
         return context
 
 class BlocoRelatorioSuccessUrlMixin(object):
+    
+    
     def get_success_url(self):
         bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
         return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
+
 
 
 class BlocoListView(PermissionRequiredMixin, ListView):
@@ -136,7 +153,7 @@ class BlocoUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, Up
 class BlocoNivelSuperiorUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
-    fields = ("nivel_superior", )
+    form_class = BlocoSuperiorForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
     def form_valid(self, form):

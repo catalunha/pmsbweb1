@@ -22,6 +22,12 @@ class MaxLevelExceeded(Exception):
 class NivelErrado(Exception):
     pass 
 
+class UpOrdemException(Exception):
+    pass
+
+class DownOrdemException(Exception):
+    pass
+
 class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
     def by_dono_ou_editor(self, user):
         dono = models.Q(usuario = user)
@@ -127,7 +133,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         else:
             raise MaxLevelExceeded("excede nivel maximo de sub-blocos ao mudar de nivel superior")
 
-    
+
     def muda_nivel(self, nivel):
         if self.nivel_superior is None and nivel != 0:
             raise NivelErrado("Não pode ter nivel diferente de 0 quando não tem superior")
@@ -161,6 +167,24 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         
         return maior
         
+    def sobe_ordem(self):
+        if self.ordem == 0:
+            raise UpOrdemException("Bloco nao pode subir")
+        irmao = self.subblocos.all()
+        irmao.filter(ordem=self.ordem-1)
+        self.ordem = self.ordem+1
+        irmao.ordem = irmao.ordem-1
+        self.save()
+        irmao.save()
+        
+    def desce_ordem(self):
+        if self.ordem == self.subblocos.last():
+            raise DownOrdemException("Bloco nao pode descer")
+        irmao = self.subblocos.filter(ordem=self.ordem+1)
+        self.ordem = self.ordem - 1
+        irmao.ordem = irmao.ordem + 1
+        self.save()
+        irmao.save()
 
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
