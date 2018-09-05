@@ -133,6 +133,17 @@ class BlocoUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, Up
     form_class = BlocoChangeForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
+class BlocoNivelSuperiorUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
+    model = Bloco
+    template_name = "relatorios/update_bloco.html"
+    fields = ("nivel_superior", )
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def form_valid(self, form):
+        form.instance.nivel_superior = self.object.nivel_superior
+        form.instance.muda_nivel_superior(form.instance.nivel_superior)
+        return super().form_valid(form)
+
 
 class BlocoTextoCreateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco

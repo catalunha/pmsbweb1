@@ -17,6 +17,7 @@ urlpatterns = [
     path("<uuid:pk>/bloco/", views.BlocoCreateView.as_view(), name="create_bloco"),
     path("<uuid:pk>/bloco/<uuid:nivel_superior_pk>/", views.BlocoCreateView.as_view(), name="create_bloco_nivel_superior"),
     path("bloco/<uuid:pk>/editar/", views.BlocoUpdateView.as_view(), name="update_bloco"),
+    path("bloco/<uuid:pk>/nivel_superior/editar/", views.BlocoNivelSuperiorUpdateView.as_view(), name="update_bloco_nivel_superior"),
     path("bloco/<uuid:pk>/texto/", views.BlocoTextoCreateView.as_view(), name="update_text_bloco"),
     path("bloco/<uuid:pk>/deletar/", views.BlocoDeleteView.as_view(), name="delete_bloco"),
     

@@ -16,8 +16,11 @@ RELATORIOS_MEDIA = "relatorios"
 
 User = get_user_model()
 
-class MaxLevelExcided(Exception):
+class MaxLevelExceeded(Exception):
     pass
+
+class NivelErrado(Exception):
+    pass 
 
 class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
     def by_dono_ou_editor(self, user):
@@ -67,7 +70,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
     class Meta:
         ordering = ["ordem", "criado_em"]
-
+    
     def __str__(self):
         return "{} - {}".format(self.relatorio, self.titulo)
 
@@ -79,7 +82,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
                 self.nivel = self.PART
         
         if self.nivel > self.NIVEL_MAXIMO:
-            raise MaxLevelExcided("excede nivel maximo de sub-blocos")
+            raise MaxLevelExceeded("excede nivel maximo de sub-blocos")
         
         if self.ordem is None:
             self.ordem = self.proxima_ordem()
@@ -94,7 +97,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         if self.nivel < self.NIVEL_MAXIMO:
             return self.nivel + 1
         else:
-            raise MaxLevelExcided("excede nivel maximo de sub-blocos")
+            raise MaxLevelExceeded("excede nivel maximo de sub-blocos")
     
     def proxima_ordem(self):
 
@@ -110,6 +113,54 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             return 0
         else:
             return b.ordem + 1
+    
+    def muda_nivel_superior(self, novo_superior = None):
+
+        if novo_superior is None:
+            novo_nivel = 0
+        else:
+            novo_nivel = novo_superior.nivel + 1
+
+        if self.delta_nivel_permitido(novo_nivel):
+            self.nivel_superior = novo_superior
+            self.muda_nivel(novo_nivel)
+        else:
+            raise MaxLevelExceeded("excede nivel maximo de sub-blocos ao mudar de nivel superior")
+
+    
+    def muda_nivel(self, nivel):
+        if self.nivel_superior is None and nivel != 0:
+            raise NivelErrado("Não pode ter nivel diferente de 0 quando não tem superior")
+        elif self.nivel_superior is not None and nivel != self.nivel_superior.nivel+1:
+            raise NivelErrado("Não pode ter nivel diferente ao nivel superior + 1")
+
+        self.nivel = nivel
+        self.save()
+
+        for s in self.subblocos.all():
+            s.muda_nivel(nivel + 1)
+            s.save()
+    
+    def delta_nivel_permitido(self, novo_nivel):
+        p = self.profundidade()
+        altura = p - self.nivel
+        return novo_nivel + altura <= self.NIVEL_MAXIMO
+
+    def profundidade(self):
+        if self.nivel >= self.NIVEL_MAXIMO:
+            return self.nivel
+        
+        maior = self.nivel
+        
+        for a in self.subblocos.all():
+            ap = a.profundidade()
+            if ap >= self.NIVEL_MAXIMO:
+                return ap
+            if ap > maior:
+                maior = ap
+        
+        return maior
+        
 
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
