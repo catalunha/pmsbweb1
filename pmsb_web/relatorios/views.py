@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
@@ -167,9 +168,8 @@ class BlocoUpOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, R
     def get(self, request, *args ,**kwargs):
         print(self.kwargs)
         bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
-        bloco.sobe_ordem()        
-        url = self.get_success_url(bloco)
-        return HttpResponseRedirect(url)
+        bloco.ordenacao(1)        
+        return HttpResponseRedirect(self.get_success_url(bloco))
 
 class BlocoDownOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, RedirectView):
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
@@ -177,7 +177,7 @@ class BlocoDownOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin,
     def get(self, request, *args ,**kwargs):
         print(self.kwargs)
         bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
-        bloco.desce_ordem()        
+        bloco.ordenacao(-1)   
         url = self.get_success_url(bloco)
         return HttpResponseRedirect(url)
 

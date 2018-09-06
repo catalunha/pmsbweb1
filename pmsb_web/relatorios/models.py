@@ -167,31 +167,28 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         
         return maior
         
-    def sobe_ordem(self):
-        if self.ordem == 0:
-            raise UpOrdemException("Bloco nao pode subir")
-        if self.nivel_superior is None:
-            irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-1)[0]
+    def ordenacao(self, ordem):
+        if ordem > 0:
+            if self.ordem == 0:
+                #raise UpOrdemException("Bloco nao pode subir")
+                return 0
+            if self.nivel_superior is None:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-ordem)[0]
+            else:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, ordem=self.ordem-ordem)[0]
         else:
-            irmao = self.nivel_superior.subblocos.filter(ordem=self.ordem-1)[0]
-        self.ordem = self.ordem - 1
-        irmao.ordem = irmao.ordem + 1
+            if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None).last() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior).last():
+                #raise DownOrdemException("Bloco nao pode descer")
+                return 0
+            if self.nivel_superior is None:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-ordem)[0]
+            else:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, ordem=self.ordem-ordem)[0]
+        self.ordem = self.ordem - ordem
+        irmao.ordem = irmao.ordem + ordem
         self.save()
         irmao.save()
         
-    def desce_ordem(self):
-        if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None).last() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior).last():
-            raise DownOrdemException("Bloco nao pode descer")
-        if self.nivel_superior is None:
-            irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem+1)[0]
-            print(irmao)
-        else:
-            irmao = self.nivel_superior.subblocos.filter(ordem=self.ordem+1)[0]
-        self.ordem = self.ordem + 1
-        irmao.ordem = irmao.ordem - 1
-        self.save()
-        irmao.save()
-
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")
