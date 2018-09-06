@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
@@ -82,7 +83,8 @@ Bloco
 """
 
 class RedirectActionView(SingleObjectMixin, RedirectView):
-    
+    model = Bloco
+
     def action(self):
         pass
 
@@ -90,7 +92,6 @@ class RedirectActionView(SingleObjectMixin, RedirectView):
         self.get_object()
         self.action()
         return super().get(request, *args, **kwargs)
-
 
 class BlocoRelatorioContextMixin(object):
 
@@ -102,11 +103,10 @@ class BlocoRelatorioContextMixin(object):
 class BlocoRelatorioSuccessUrlMixin(object):
     
     
-    def get_success_url(self):
-        bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
+    def get_success_url(self, bloco=None):
+        if bloco is None:
+            bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
         return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
-
-
 
 class BlocoListView(PermissionRequiredMixin, ListView):
     model = Bloco
@@ -161,6 +161,25 @@ class BlocoNivelSuperiorUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequ
         form.instance.muda_nivel_superior(form.instance.nivel_superior)
         return super().form_valid(form)
 
+class BlocoUpOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def get(self, request, *args ,**kwargs):
+        print(self.kwargs)
+        bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
+        bloco.sobe_ordem()        
+        url = self.get_success_url(bloco)
+        return HttpResponseRedirect(url)
+
+class BlocoDownOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def get(self, request, *args ,**kwargs):
+        print(self.kwargs)
+        bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
+        bloco.desce_ordem()        
+        url = self.get_success_url(bloco)
+        return HttpResponseRedirect(url)
 
 class BlocoTextoCreateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco
