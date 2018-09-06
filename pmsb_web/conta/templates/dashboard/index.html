@@ -93,10 +93,10 @@
           </li>
           {% endif %}
           {% if 'relatorios' in perms %}
-          <li class="nav-item nav-dropdown ">
-            <a class="nav-link nav-dropdown-toggle" href="#">
+          <li class="nav-item ">
+            <a {% if request.resolver_match.app_names.0 == 'relatorios' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'relatorios:list_relatorio' %} " href="#">
               <i class="nav-icon icon-note"></i>Produtos</a>
-              <ul class="nav-dropdown-items">                
+              <!--<ul class="nav-dropdown-items">                
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'relatorios:list_relatorio' %}">
                   <i class="nav-icon icon-layers"></i>Lista</a>
