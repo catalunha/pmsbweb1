@@ -63,7 +63,11 @@
           </li>
           <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
+<<<<<<< HEAD
                 <i class="nav-icon fa fa-sitemap"></i>Organograma</a>
+=======
+              <i class="nav-icon fa fa-sitemap"></i>Organograma</a>
+>>>>>>> contas
             <ul class="nav-dropdown-items">
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:departamento_tree' %}">
@@ -80,29 +84,35 @@
             </ul>
           </li>
           {% if 'questionarios' in perms %}
-          <li class="nav-item nav-dropdown ">
-            <a class="nav-link nav-dropdown-toggle" href="#">
-              <i class="nav-icon icon-list"></i>Questionarios</a>
-              <ul class="nav-dropdown-items">                
+          <li class="nav-item ">
+            <a {% if request.resolver_match.app_names.0 == 'questionarios' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'questionarios:list' %} ">
+              <i class="nav-icon icon-list "></i>Questionarios</a>
+              <!--<ul class="nav-dropdown-items ">                
                 
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'questionarios:list' %}">
-                  <i class="nav-icon icon-layers"></i>Lista</a>
+                <li class="nav-item ">
+                  <a class="nav-link " href="{% url 'questionarios:list' %} ">
+                  <i class="nav-icon icon-layers "></i>Visualizar</a>
                 </li>
-                  
-              </ul>
+              </ul>-->
           </li>
           {% endif %}
           {% if 'relatorios' in perms %}
+<<<<<<< HEAD
           <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
               <i class="nav-icon icon-note"></i>Produtos</a>
               <ul class="nav-dropdown-items">                
+=======
+          <li class="nav-item " >
+            <a {% if request.resolver_match.app_names.0 == 'relatorios' %} class="nav-link active " {% else %} class="nav-link" {% endif %}" href="{% url 'relatorios:list_relatorio' %}">
+              <i class="nav-icon icon-note"></i>Produtos</a>
+            <!--<ul class="nav-dropdown-items">                
+>>>>>>> contas
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'relatorios:list_relatorio' %}">
                   <i class="nav-icon icon-layers"></i>Lista</a>
                 </li>
-              </ul>
+              </ul>-->
           </li>
           {% endif %}
         </ul>
