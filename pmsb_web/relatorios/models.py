@@ -172,25 +172,21 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             raise UpOrdemException("Bloco nao pode subir")
         if self.nivel_superior is None:
             irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-1)[0]
-            print(irmao)
         else:
             irmao = self.nivel_superior.subblocos.filter(ordem=self.ordem-1)[0]
-        print("irmao filtrado", irmao)
         self.ordem = self.ordem - 1
         irmao.ordem = irmao.ordem + 1
         self.save()
         irmao.save()
         
     def desce_ordem(self):
-        if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None).last():
+        if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None).last() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior).last():
             raise DownOrdemException("Bloco nao pode descer")
         if self.nivel_superior is None:
             irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem+1)[0]
             print(irmao)
         else:
             irmao = self.nivel_superior.subblocos.filter(ordem=self.ordem+1)[0]
-        
-        print("irmao filtrado", irmao)
         self.ordem = self.ordem + 1
         irmao.ordem = irmao.ordem - 1
         self.save()
