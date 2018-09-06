@@ -1,12 +1,12 @@
 {% extends "base/base.html" %} {% block conteudo %}
 <div class="card-body p-4">
     <h2 style="text-align: center;">{{relatorio_object}}</h2>
-    <h5 class="text-muted" style="text-align:center;"> Lista de figuras deste relatorio </h5>
+    <h5 class="text-muted" style="text-align:center;"> Lista de figuras deste produto </h5>
     <hr>
     <a class="btn btn-primary" href="{% url 'relatorios:create_figura' relatorio_object.pk %}">
         <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Nova Figura</a>
     <a class="btn btn-primary" href="{% url 'relatorios:detail_relatorio' relatorio_object.pk %}" style="float:right;">
-        <i aria-hidden="true" data-hidden="true" class="fa icon-note" style="color:white;"></i>Voltar ao Relatório</a>
+        <i aria-hidden="true" data-hidden="true" class="fa icon-note" style="color:white;"></i>Voltar ao Produto</a>
     <div class="row" style="padding-top: 10px;">
         {% for figura in object_list %} {{figura.url}}
         <div class="col-sm-6 col-md-4">
@@ -17,10 +17,13 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm">
-                            <p class="card-text content text-justify text-truncate">Legenda: {{figura.legenda}} </p>
+                            <p class="card-text content"> <b>Legenda: </b>{{figura.legenda}} </p>
                         </div>
+                    </div>
+                    <br>
+                    <div class="row">
                         <div class="col-sm">
-                            <p class="card-text content text-justify text-truncate">Referência: {{figura.pk}} </p>
+                            <button class="btn btn-warning" onclick="copyStringToClipboard(this.value)" value="{{figura.imagem.url}}">Copiar Referência</button>
                         </div>
                     </div>
                     <br>
@@ -40,4 +43,22 @@
         {% empty %} Sem figuras {% endfor %}
     </div>
 </div>
-{% endblock %}
+<script>
+    function copyStringToClipboard(str) {
+        // Create new element
+        var el = document.createElement('textarea');
+        // Set value (string to be copied)
+        el.value = str;
+        // Set non-editable to avoid focus and move outside of view
+        el.setAttribute('readonly', '');
+        el.style = { position: 'absolute', left: '-9999px' };
+        document.body.appendChild(el);
+        // Select text inside element
+        el.select();
+        // Copy text to clipboard
+        document.execCommand('copy');
+        // Remove temporary element
+        document.body.removeChild(el);
+        alert("Copiado com Sucesso!")
+    }
+</script> {% endblock %}
