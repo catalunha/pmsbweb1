@@ -1,21 +1,46 @@
 {% extends "base/base.html" %} {% block conteudo %}
 
 <div class="card-header">
-    <i class="nav-icon icon-note"></i> Relatórios
+    <i class="nav-icon icon-note"></i> Produtos
     <a class="btn btn-primary" style="float: right;" href="{% url 'relatorios:create_relatorio'%}">
         <i class="fa fa-tasks"></i>
-        Novo Relatório
+        Novo Produto
     </a>
 </div>
 <div class="card-body">
+    <h2 style="text-align: center;">Lista de seus Produtos</h2>
+    <hr>
     <ul class="list-group">
         {% for r in object_list %}{% comment %} dono:{{r.usuario}} {% endcomment %}
-        <li class="list-group-item"> Título: {{r}}
-        <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Detalhes</span></a>
+        <li class="list-group-item" style="font-size: 16px;">
+            <div class="row">
+                <div class="col-sm-6">
+                    <b>Título:</b> {{r}}
+                </div>
+                <div class="col-sm-6" style="text-align:right;">
+                    <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Gerênciar
+                            índices</span></a>
+                    <a href="{% url 'relatorios:update_relatorio' r.pk %}"><span class="badge badge-secondary">Editar título
+                            e descrição</span></a>
+                    <a href="{% url 'relatorios:delete_relatorio' r.pk %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash"
+                                style="color:white; margin-right:1px;"></i>Excluir produto</span></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <b>Descrição:</b> {{r.descricao}}
+                </div>
+                <div class="col-sm" style="text-align:right;">
+                    <b>Data de criação:</b> {{r.criado_em}}
+                </div>
+            </div>
         </li>
+
+
         {% empty %}
         <li class="list-group-item">Nenhum relatório</li>
         {% endfor %}
-    </ul>
+</div>
+</ul>
 </div>
 {% endblock %}

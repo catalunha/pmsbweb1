@@ -1,12 +1,13 @@
 from django.utils import timezone
 from django.db import models
-from django.db.models import Q
 from django.contrib.auth import get_user_model
 from django.conf import settings
 
 from core.mixins import (
     UUIDModelMixin,
     FakeDeleteModelMixin,
+    FakeDeleteManagerMixin,
+    FakeDeleteQuerysetMixin,
     UserOwnedModelMixin,
     TimedModelMixin,
 )
@@ -15,19 +16,32 @@ RELATORIOS_MEDIA = "relatorios"
 
 User = get_user_model()
 
-class MaxLevelExcided(Exception):
-    
-    def __init__(self, expression):
-        self.expression = expression
-        self.message = "excede nivel maximo de sub-blocos"
+class MaxLevelExceeded(Exception):
+    pass
 
-class RelatorioManager(models.Manager):
-    
+class NivelErrado(Exception):
+    pass 
+
+class UpOrdemException(Exception):
+    pass
+
+class DownOrdemException(Exception):
+    pass
+
+class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
     def by_dono_ou_editor(self, user):
-        dono = Q(usuario = user)
-        editor = Q(blocos__editores__editor = user)
+        dono = models.Q(usuario = user)
+        editor = models.Q(blocos__editores__editor = user)
 
         return self.filter(editor | dono).distinct()
+
+class RelatorioManager(FakeDeleteManagerMixin, models.Manager):
+    
+    def get_queryset(self):
+        return RelatorioQueryset(self.model, using=self._db)
+    
+    def by_dono_ou_editor(self, user):
+        return self.get_queryset().by_dono_ou_editor(user)
 
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
@@ -54,9 +68,15 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     descricao = models.TextField()
     texto = models.TextField()
 
+    ordem = models.PositiveSmallIntegerField(blank = True)
     nivel_superior = models.ForeignKey("Bloco", null = True, blank = True, on_delete = models.CASCADE, related_name="subblocos")
     nivel = models.PositiveSmallIntegerField(editable = False)
 
+    objects = models.Manager()
+
+    class Meta:
+        ordering = ["ordem", "criado_em"]
+    
     def __str__(self):
         return "{} - {}".format(self.relatorio, self.titulo)
 
@@ -68,7 +88,10 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
                 self.nivel = self.PART
         
         if self.nivel > self.NIVEL_MAXIMO:
-            raise MaxLevelExcided
+            raise MaxLevelExceeded("excede nivel maximo de sub-blocos")
+        
+        if self.ordem is None:
+            self.ordem = self.proxima_ordem()
     
         super(Bloco, self).save(*args, **kwargs)
     
@@ -80,7 +103,92 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         if self.nivel < self.NIVEL_MAXIMO:
             return self.nivel + 1
         else:
-            raise MaxLevelExcided
+            raise MaxLevelExceeded("excede nivel maximo de sub-blocos")
+    
+    def proxima_ordem(self):
+
+        queryset = Bloco.objects.filter(relatorio = self.relatorio)
+
+        if self.nivel_superior is None:
+            queryset = queryset.filter(nivel_superior = None)
+        else:
+            queryset = queryset.filter(nivel_superior = self.nivel_superior)
+
+        b = queryset.order_by("-ordem").first()
+        if b is None:
+            return 0
+        else:
+            return b.ordem + 1
+    
+    def muda_nivel_superior(self, novo_superior = None):
+
+        if novo_superior is None:
+            novo_nivel = 0
+        else:
+            novo_nivel = novo_superior.nivel + 1
+
+        if self.delta_nivel_permitido(novo_nivel):
+            self.nivel_superior = novo_superior
+            self.muda_nivel(novo_nivel)
+        else:
+            raise MaxLevelExceeded("excede nivel maximo de sub-blocos ao mudar de nivel superior")
+
+
+    def muda_nivel(self, nivel):
+        if self.nivel_superior is None and nivel != 0:
+            raise NivelErrado("Não pode ter nivel diferente de 0 quando não tem superior")
+        elif self.nivel_superior is not None and nivel != self.nivel_superior.nivel+1:
+            raise NivelErrado("Não pode ter nivel diferente ao nivel superior + 1")
+
+        self.nivel = nivel
+        self.save()
+
+        for s in self.subblocos.all():
+            s.muda_nivel(nivel + 1)
+            s.save()
+    
+    def delta_nivel_permitido(self, novo_nivel):
+        p = self.profundidade()
+        altura = p - self.nivel
+        return novo_nivel + altura <= self.NIVEL_MAXIMO
+
+    def profundidade(self):
+        if self.nivel >= self.NIVEL_MAXIMO:
+            return self.nivel
+        
+        maior = self.nivel
+        
+        for a in self.subblocos.all():
+            ap = a.profundidade()
+            if ap >= self.NIVEL_MAXIMO:
+                return ap
+            if ap > maior:
+                maior = ap
+        
+        return maior
+        
+    def ordenacao(self, ordem):
+        if ordem > 0:
+            if self.ordem == 0:
+                #raise UpOrdemException("Bloco nao pode subir")
+                return 0
+            if self.nivel_superior is None:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-ordem)[0]
+            else:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, ordem=self.ordem-ordem)[0]
+        else:
+            if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None).last() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior).last():
+                #raise DownOrdemException("Bloco nao pode descer")
+                return 0
+            if self.nivel_superior is None:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-ordem)[0]
+            else:
+                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, ordem=self.ordem-ordem)[0]
+        self.ordem = self.ordem - ordem
+        irmao.ordem = irmao.ordem + ordem
+        self.save()
+        irmao.save()
+        
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")

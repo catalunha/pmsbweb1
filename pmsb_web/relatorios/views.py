@@ -1,9 +1,15 @@
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
+from django.views.generic.detail import SingleObjectMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
-from core.views import FakeDeleteView
+from core.views import (
+    FakeDeleteView,
+    AjaxableFormResponseMixin,
+)
 
 from .models import (
     Relatorio,
@@ -17,6 +23,9 @@ from .forms import (
     BlocoForm,
     BlocoChangeForm,
     FiguraForm,
+    BlocoTextoForm,
+    BlocoOrdemAjaxForm,
+    BlocoSuperiorForm
 )
 
 """
@@ -26,11 +35,11 @@ Relatorio
 class RelatorioDonoOuEditorQuerysetMixin(object):
     def get_queryset(self, queryset = None):
         queryset = Relatorio.objetcs.by_dono_ou_editor(self.request.user)
-        return queryset
+        return queryset.fake_delete_all()
 
 class RelatorioDonoQuerysetMixin(object):
     def get_queryset(self, queryset = None):
-        queryset = Relatorio.objetcs.filter(usuario = self.request.user)
+        queryset = Relatorio.objetcs.fake_delete_all().filter(usuario = self.request.user)
         return queryset
 
 class RelatorioListView(RelatorioDonoOuEditorQuerysetMixin, PermissionRequiredMixin, ListView):
@@ -68,46 +77,128 @@ class RelatorioDeleteView(RelatorioDonoQuerysetMixin, PermissionRequiredMixin, F
     template_name = "relatorios/delete_relatorio.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.delete_relatorio"]
 
+    success_url = reverse_lazy("relatorios:list_relatorio")
+
 """
 Bloco
 """
 
-class BlocoListView(UserPassesTestMixin, PermissionRequiredMixin, ListView):
+class RedirectActionView(SingleObjectMixin, RedirectView):
+    model = Bloco
+
+    def action(self):
+        pass
+
+    def get(self, request, *args, **kwargs):
+        self.get_object()
+        self.action()
+        return super().get(request, *args, **kwargs)
+
+class BlocoRelatorioContextMixin(object):
+
+    def get_context_data(self, **kwargs):
+        context = super(BlocoRelatorioContextMixin, self).get_context_data(**kwargs)
+        context["relatorio_object"] = get_object_or_404(Relatorio, pk = self.kwargs.get("pk"))
+        return context
+
+class BlocoRelatorioSuccessUrlMixin(object):
+    
+    
+    def get_success_url(self, bloco=None):
+        if bloco is None:
+            bloco = Bloco.objects.get(id=self.kwargs.get("pk"))
+        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
+
+class BlocoListView(PermissionRequiredMixin, ListView):
     model = Bloco
     template_name = "relatorios/list_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco" ]
 
-class BlocoDetailView(UserPassesTestMixin, PermissionRequiredMixin, DetailView):
+class BlocoDetailView(PermissionRequiredMixin, DetailView):
     model = Bloco
     template_name = "relatorios/detail_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco" ]
 
-class BlocoCreateView(PermissionRequiredMixin, CreateView):
+class BlocoCreateView(BlocoRelatorioContextMixin, PermissionRequiredMixin, CreateView):
     model = Bloco
     template_name = "relatorios/create_bloco.html"
     form_class = BlocoForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.add_bloco" ]
     
-    success_url = reverse_lazy("relatorios:detail_relatorio")
+    def get_success_url(self):
+        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":self.kwargs.get("pk")})
     
     def form_valid(self, form):
-        relatorio = get_object_or_404(Relatorio, id=self.kwargs.get('pk'))
+        relatorio = get_object_or_404(Relatorio, pk=self.kwargs.get('pk'))
         form.instance.relatorio = relatorio
+        nivel_superior_pk = self.kwargs.get("nivel_superior_pk", None)
+        nivel_superior = None
+        if nivel_superior_pk is not None:
+            nivel_superior = get_object_or_404(Bloco, pk = nivel_superior_pk)
+        form.instance.nivel_superior = nivel_superior
         return super(BlocoCreateView, self).form_valid(form)
+    
+    def get_form_kwargs(self):
+        kwargs = super(BlocoCreateView, self).get_form_kwargs()
+        kwargs.update({
+            "relatorio_pk": self.kwargs.get("pk"),
+        })
+        return kwargs
 
-
-class BlocoUpdateView(UserPassesTestMixin, PermissionRequiredMixin, UpdateView):
+class BlocoUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Bloco
     template_name = "relatorios/update_bloco.html"
     form_class = BlocoChangeForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
-class BlocoDeleteView(UserPassesTestMixin, PermissionRequiredMixin, DeleteView):
+class BlocoNivelSuperiorUpdateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
+    model = Bloco
+    template_name = "relatorios/update_bloco.html"
+    form_class = BlocoSuperiorForm
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def form_valid(self, form):
+        form.instance.nivel_superior = self.object.nivel_superior
+        form.instance.muda_nivel_superior(form.instance.nivel_superior)
+        return super().form_valid(form)
+
+class BlocoUpOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def get(self, request, *args ,**kwargs):
+        print(self.kwargs)
+        bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
+        bloco.ordenacao(1)        
+        return HttpResponseRedirect(self.get_success_url(bloco))
+
+class BlocoDownOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, RedirectView):
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+    def get(self, request, *args ,**kwargs):
+        print(self.kwargs)
+        bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
+        bloco.ordenacao(-1)   
+        url = self.get_success_url(bloco)
+        return HttpResponseRedirect(url)
+
+class BlocoTextoCreateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
+    model = Bloco
+    template_name = "relatorios/update_bloco.html"
+    form_class = BlocoTextoForm
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
+
+
+class BlocoDeleteView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, DeleteView):
     model = Bloco
     template_name = "relatorios/delete_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.delete_bloco" ]
 
 
+class BlocoOrdemAjaxUpdateView(AjaxableFormResponseMixin, PermissionRequiredMixin, UpdateView):
+    """Modifica atributo ordem do bloco via requisição ajax."""
+    model = Bloco
+    form_class = BlocoOrdemAjaxForm
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
 """
 Figura
@@ -121,8 +212,7 @@ class FiguraDonoQuerysetMixin(object):
 
 class FiguraDonoOuEditorQuerysetMixin(object):
     def get_queryset(self, queryset = None):
-        queryset = Figura.objetcs.by_dono_ou_editor(self.request.user)
-        queryset.filter(relatorio = self.kwargs.get("relatorio_pk"))
+        queryset = Figura.objetcs.filter(usuario = self.request.user, relatorio= self.kwargs.get("relatorio_pk"))
         return queryset
 
 class FiguraRelatorioContextMixin(object):
@@ -164,7 +254,6 @@ class FiguraUpdateView(FiguraDonoQuerysetMixin, PermissionRequiredMixin, UpdateV
 
     def get_success_url(self):
         return reverse_lazy("relatorios:list_figura", kwargs = {"relatorio_pk":self.object.relatorio.pk})
-
 
 class FiguraDeleteView(FiguraDonoQuerysetMixin, PermissionRequiredMixin, DeleteView):
     model = Figura

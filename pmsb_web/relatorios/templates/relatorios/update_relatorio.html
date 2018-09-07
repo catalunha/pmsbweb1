@@ -1,6 +1,11 @@
+{% extends "base/base.html" %} {% block conteudo %}
 <form method="post">
     {% csrf_token %}
-    {% include "includes/form.html" with form=form %}
-    <a class="btn btn-primary" href="{% url "relatorios:list_relatorio" %}">Voltar</a>
-    <button type="submit" class="btn btn-primary">Criar</button>
+    <div class="card-body p-4">
+        <h2 style="text-align: center;">{{object}}</h2>
+        <hr>{% include "includes/form.html" with form=form %}
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
+    </div>
 </form>
+{% endblock %}

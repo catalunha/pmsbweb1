@@ -2,10 +2,10 @@
 <form action="" method="post">
     {% csrf_token %}
     <div class="card-body p-4">
-        <h2 style="text-align: center;">Confirmar exclusão da imagem</h2>
+        <h2 style="text-align: center;">Confirmar exclusão do índice {{object.titulo}}</h2>
         <hr>
         <input class="btn btn-danger" type="submit" value="Confirmar exclusão"/>
-        <a class="btn btn-primary" style="float:right;" href="{% url 'relatorios:list_figura' object.relatorio.pk %}">Cancelar</a>
+        <a class="btn btn-primary" style="float:right;" href="{% url 'relatorios:detail_relatorio' object.relatorio.pk %}">Cancelar</a>
     </div>
 </form>
 {% endblock %}
