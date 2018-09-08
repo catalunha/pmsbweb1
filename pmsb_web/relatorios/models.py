@@ -94,6 +94,8 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         super(Bloco, self).save(*args, **kwargs)
     
     def fake_delete(self):
+        for filhos in self.subblocos.all():
+            filhos.fake_delete()
         super().fake_delete()
 
     @property
