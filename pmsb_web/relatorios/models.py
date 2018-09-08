@@ -146,11 +146,11 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         #pegar meus irmãos e jogar na ultima ordem dele
         irmaos = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False)
         self.nivel = nivel
-        try:
+        print(irmaos)
+        if not irmaos:
+            self.ordem =0
+        else:
             self.ordem = list(Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False))[-1].ordem + 1
-        except IndexError:
-            self.ordem = 0
-
         self.save()
         for s in self.subblocos.all():
             s.muda_nivel(nivel + 1)
