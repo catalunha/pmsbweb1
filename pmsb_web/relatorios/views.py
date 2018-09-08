@@ -192,12 +192,10 @@ class BlocoTextoCreateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixi
     form_class = BlocoTextoForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
-
 class BlocoDeleteView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, FakeDeleteView):
     model = Bloco
     template_name = "relatorios/delete_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.delete_bloco" ]
-
 
 class BlocoOrdemAjaxUpdateView(AjaxableFormResponseMixin, PermissionRequiredMixin, UpdateView):
     """Modifica atributo ordem do bloco via requisição ajax."""
