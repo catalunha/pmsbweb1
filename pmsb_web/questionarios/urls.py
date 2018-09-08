@@ -24,8 +24,8 @@ urlpatterns = [
 
     #possivel escolha
     path("editar/pergunta/<uuid:pk>/criar_escolha", views.PossivelEscolhaCreateView.as_view(), name = "create_possivelescolha"),
-    path("editar/pergunta/<uuid:pergunta_pk>/editar_escolha/<uuid:pk>", views.PossivelEscolhaUpdateView.as_view(), name = "update_possivelescolha"),
-    path("editar/pergunta/<uuid:pergunta_pk>/delete_escolha/<uuid:pk>", views.PossivelEscolhaDeleteView.as_view(), name = "delete_possivelescolha"),
+    path("editar/pergunta/<uuid:pergunta_questionario_pk>/editar_escolha/<uuid:pk>", views.PossivelEscolhaUpdateView.as_view(), name = "update_possivelescolha"),
+    path("editar/pergunta/<uuid:pergunta_questionario_pk>/delete_escolha/<uuid:pk>", views.PossivelEscolhaDeleteView.as_view(), name = "delete_possivelescolha"),
 
     path("teste/", views.TesteTemplateView.as_view(), name = "teste"),
 ]
