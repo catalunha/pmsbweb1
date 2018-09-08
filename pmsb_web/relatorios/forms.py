@@ -26,7 +26,7 @@ class BlocoSuperiorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super (BlocoSuperiorForm,self ).__init__(*args,**kwargs) 
         bloco = kwargs.pop("instance")
-        self.fields["nivel_superior"].queryset = Bloco.objects.filter(relatorio=bloco.relatorio).exclude(pk=bloco.pk)
+        self.fields["nivel_superior"].queryset = Bloco.objects.filter(fake_deletado=False, relatorio=bloco.relatorio).exclude(pk=bloco.pk)
     
     class Meta:
         model = Bloco
