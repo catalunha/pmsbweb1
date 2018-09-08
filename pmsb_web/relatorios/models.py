@@ -171,7 +171,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         
     def ordenacao(self, ordem):
         if ordem > 0:
-            if self.ordem == 0:
+            if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, fake_deletado=False).first() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).first():
                 #raise OrdemException("Bloco nao pode subir")
                 return 0
             if self.nivel_superior is None:
@@ -190,6 +190,8 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
                 irmaos = Bloco.objects.filter(relatorio=self.relatorio, fake_deletado=False, nivel_superior=self.nivel_superior)
             irmaos = list(irmaos)
             irmao = irmaos[irmaos.index(self)+1]
+        print(irmaos)
+        print(irmao)
         swap = self.ordem
         self.ordem = irmao.ordem
         irmao.ordem = swap
