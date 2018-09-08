@@ -194,7 +194,7 @@ class PerguntaDoQuestionarioDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = "questionarios/delete_pergunta_do_questionario.html"
     model = PerguntaDoQuestionario
     success_url = reverse_lazy("questionarios:list")
-    permission_required = ["questionarios.change_questionario", "questionarios.delete_pergunta", "questionarios.delete_perguntadoquestionario"]
+    permission_required = ["questionarios.change_questionario", "questionarios.delete_perguntadoquestionario"]
 
 """PossivelEscolha"""
 
@@ -215,7 +215,7 @@ class PossivelEscolhaCreateView(PerguntaQuestionarioMixin, PermissionRequiredMix
     template_name = "questionarios/create_possivelescolha.html"
     model = PossivelEscolha
     form_class = PossivelEscolhaForm
-    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta", "questionarios.add_possivelescolha"]
     pergunta_do_questionario_pk_field = "pk"
 
     def form_valid(self, form):
@@ -230,7 +230,7 @@ class PossivelEscolhaUpdateView(PerguntaQuestionarioMixin, PermissionRequiredMix
     template_name = "questionarios/update_possivelescolha.html"
     model = PossivelEscolha
     form_class = PossivelEscolhaForm
-    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta", "questionarios.change_possivelescolha"]
     pergunta_do_questionario_pk_field = "pergunta_questionario_pk"
 
     def get_success_url(self):
@@ -239,7 +239,7 @@ class PossivelEscolhaUpdateView(PerguntaQuestionarioMixin, PermissionRequiredMix
 class PossivelEscolhaDeleteView(PerguntaQuestionarioMixin, PermissionRequiredMixin, DeleteView):
     template_name = "questionarios/delete_possivelescolha.html"
     model = PossivelEscolha
-    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta", "questionarios.delete_possivelescolha"]
     pergunta_do_questionario_pk_field = "pergunta_questionario_pk"
 
     def get_success_url(self):
@@ -253,7 +253,7 @@ class TesteTemplateView(TemplateView):
 class PerguntaListView(PermissionRequiredMixin, ListView):
     model = Pergunta
     template_name = "questionarios/pergunta_list.html"
-    permission_required = ["questionarios.list_pergunta", ]
+    permission_required = ["questionarios.view_pergunta", ]
 
     def get_queryset(self):
         return super(PerguntaListView, self).get_queryset().filter(usuario = self.request.user)
