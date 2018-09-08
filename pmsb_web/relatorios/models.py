@@ -118,6 +118,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             queryset = queryset.filter(nivel_superior = self.nivel_superior)
 
         b = queryset.order_by("-ordem").first()
+        print(b)
         if b is None:
             return 0
         else:
@@ -136,15 +137,17 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         else:
             raise MaxLevelExceeded("excede nivel maximo de sub-blocos ao mudar de nivel superior")
 
+
     def muda_nivel(self, nivel):
         if self.nivel_superior is None and nivel != 0:
             raise NivelErrado("Não pode ter nivel diferente de 0 quando não tem superior")
         elif self.nivel_superior is not None and nivel != self.nivel_superior.nivel+1:
             raise NivelErrado("Não pode ter nivel diferente ao nivel superior + 1")
-
+        #pegar meus irmãos e jogar na ultima ordem dele
+        irmaos = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False)
         self.nivel = nivel
+        self.ordem = list(Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False))[-1].ordem + 1
         self.save()
-
         for s in self.subblocos.all():
             s.muda_nivel(nivel + 1)
             s.save()
