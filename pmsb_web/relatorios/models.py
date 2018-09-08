@@ -200,7 +200,15 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         self.ordem, irmao.ordem = irmao.ordem, self.ordem
         self.save()
         irmao.save()
-        
+    
+    def __concat_str__(self):
+        if self.nivel_superior is None:
+            return self.titulo
+        else:
+            return self.nivel_superior.__concat_str__() + ' -> ' + self.titulo
+
+    def __str__(self):
+        return self.__concat_str__()
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")
