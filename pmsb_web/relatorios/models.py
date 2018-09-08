@@ -193,11 +193,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
                 irmaos = Bloco.objects.filter(relatorio=self.relatorio, fake_deletado=False, nivel_superior=self.nivel_superior)
             irmaos = list(irmaos)
             irmao = irmaos[irmaos.index(self)+1]
-        print(irmaos)
-        print(irmao)
-        swap = self.ordem
-        self.ordem = irmao.ordem
-        irmao.ordem = swap
+        self.ordem, irmao.ordem = irmao.ordem, self.ordem
         self.save()
         irmao.save()
         
