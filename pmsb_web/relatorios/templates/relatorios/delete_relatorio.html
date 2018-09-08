@@ -2,7 +2,7 @@
 <form action="" method="post">
     {% csrf_token %}
     <div class="card-body p-4">
-        <h2 style="text-align: center;">Confirmar exclusão do relatório</h2>
+        <h2 style="text-align: center;">Confirmar exclusão do produto</h2>
         <hr>
         <input class="btn btn-danger" type="submit" value="Confirmar exclusão"/>
         <a class="btn btn-primary" style="float:right;" href="{% url 'relatorios:list_relatorio' %}">Cancelar</a>

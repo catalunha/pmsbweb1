@@ -22,11 +22,9 @@ class MaxLevelExceeded(Exception):
 class NivelErrado(Exception):
     pass 
 
-class UpOrdemException(Exception):
+class OrdemException(Exception):
     pass
 
-class DownOrdemException(Exception):
-    pass
 
 class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
     def by_dono_ou_editor(self, user):
@@ -95,6 +93,11 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     
         super(Bloco, self).save(*args, **kwargs)
     
+    def fake_delete(self):
+        for filhos in self.subblocos.all():
+            filhos.fake_delete()
+        super().fake_delete()
+
     @property
     def usuario(self):
         return self.relatorio.usuario
@@ -115,6 +118,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             queryset = queryset.filter(nivel_superior = self.nivel_superior)
 
         b = queryset.order_by("-ordem").first()
+        print(b)
         if b is None:
             return 0
         else:
@@ -139,10 +143,15 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             raise NivelErrado("Não pode ter nivel diferente de 0 quando não tem superior")
         elif self.nivel_superior is not None and nivel != self.nivel_superior.nivel+1:
             raise NivelErrado("Não pode ter nivel diferente ao nivel superior + 1")
-
+        #pegar meus irmãos e jogar na ultima ordem dele
+        irmaos = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False)
         self.nivel = nivel
+        print(irmaos)
+        if not irmaos:
+            self.ordem =0
+        else:
+            self.ordem = list(Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False))[-1].ordem + 1
         self.save()
-
         for s in self.subblocos.all():
             s.muda_nivel(nivel + 1)
             s.save()
@@ -169,26 +178,37 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         
     def ordenacao(self, ordem):
         if ordem > 0:
-            if self.ordem == 0:
-                #raise UpOrdemException("Bloco nao pode subir")
+            if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, fake_deletado=False).first() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).first():
+                #raise OrdemException("Bloco nao pode subir")
                 return 0
             if self.nivel_superior is None:
-                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-ordem)[0]
+                irmaos = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, fake_deletado=False)
             else:
-                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, ordem=self.ordem-ordem)[0]
+                irmaos = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False)
+            irmaos = list(irmaos)
+            irmao = irmaos[irmaos.index(self)-1]
         else:
-            if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None).last() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior).last():
-                #raise DownOrdemException("Bloco nao pode descer")
+            if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, fake_deletado=False).last() or self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).last():
+                #raise OrdemException("Bloco nao pode descer")
                 return 0
             if self.nivel_superior is None:
-                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None, ordem=self.ordem-ordem)[0]
+                irmaos = Bloco.objects.filter(relatorio=self.relatorio, fake_deletado=False, nivel_superior=None)
             else:
-                irmao = Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=self.nivel_superior, ordem=self.ordem-ordem)[0]
-        self.ordem = self.ordem - ordem
-        irmao.ordem = irmao.ordem + ordem
+                irmaos = Bloco.objects.filter(relatorio=self.relatorio, fake_deletado=False, nivel_superior=self.nivel_superior)
+            irmaos = list(irmaos)
+            irmao = irmaos[irmaos.index(self)+1]
+        self.ordem, irmao.ordem = irmao.ordem, self.ordem
         self.save()
         irmao.save()
-        
+    
+    def __concat_str__(self):
+        if self.nivel_superior is None:
+            return self.titulo
+        else:
+            return self.nivel_superior.__concat_str__() + ' -> ' + self.titulo
+
+    def __str__(self):
+        return self.__concat_str__()
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")

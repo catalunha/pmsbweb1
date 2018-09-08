@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
@@ -52,6 +53,13 @@ class RelatorioDetailView(RelatorioDonoOuEditorQuerysetMixin, PermissionRequired
     template_name = "relatorios/detail_relatorio.html"
     permission_required = ["relatorios.view_relatorio", ]
 
+    def get_context_data(self, **kwargs):
+        context = super(RelatorioDetailView, self).get_context_data(**kwargs)
+        relatorio = get_object_or_404(Relatorio, pk = self.kwargs.get("pk"))
+        blocos = Bloco.objects.filter(relatorio=relatorio, fake_deletado=False)
+        context["blocos_nfd"] = blocos
+        return context
+
 class RelatorioCreateView(PermissionRequiredMixin, CreateView):
     model = Relatorio
     form_class = RelatorioForm
@@ -102,7 +110,6 @@ class BlocoRelatorioContextMixin(object):
         return context
 
 class BlocoRelatorioSuccessUrlMixin(object):
-    
     
     def get_success_url(self, bloco=None):
         if bloco is None:
@@ -166,7 +173,6 @@ class BlocoUpOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, R
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
     def get(self, request, *args ,**kwargs):
-        print(self.kwargs)
         bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
         bloco.ordenacao(1)        
         return HttpResponseRedirect(self.get_success_url(bloco))
@@ -175,7 +181,6 @@ class BlocoDownOrdemView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin,
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
     def get(self, request, *args ,**kwargs):
-        print(self.kwargs)
         bloco = Bloco.objects.get(pk=self.kwargs.pop("pk"))
         bloco.ordenacao(-1)   
         url = self.get_success_url(bloco)
@@ -187,12 +192,10 @@ class BlocoTextoCreateView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixi
     form_class = BlocoTextoForm
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.change_bloco" ]
 
-
-class BlocoDeleteView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, DeleteView):
+class BlocoDeleteView(BlocoRelatorioSuccessUrlMixin, PermissionRequiredMixin, FakeDeleteView):
     model = Bloco
     template_name = "relatorios/delete_bloco.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.delete_bloco" ]
-
 
 class BlocoOrdemAjaxUpdateView(AjaxableFormResponseMixin, PermissionRequiredMixin, UpdateView):
     """Modifica atributo ordem do bloco via requisição ajax."""
