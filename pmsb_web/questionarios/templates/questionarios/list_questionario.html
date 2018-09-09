@@ -12,9 +12,9 @@
     <p><h5>Questionario: {{questionario.nome}}</h5></p>
     <p>
         <a class="btn btn-primary" href="{% url "questionarios:update" questionario.id %}">Editar</a>
-        <a class="btn btn-primary" href="{% url "questionarios:delete" questionario.id %}">Deletar</a>
         <a class="btn btn-primary" href="{% url "questionarios:create_pergunta_tipo" questionario.id %}">Adicionar Pergunta</a>
         <a class="btn btn-primary" href="{% url "questionarios:ordenar" questionario.id %}">Ordenar</a>
+        <a class="btn btn-danger" href="{% url "questionarios:delete" questionario.id %}">Deletar</a>
     </p>
     
     <ul class="list-group">

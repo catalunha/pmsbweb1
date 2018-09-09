@@ -30,8 +30,8 @@
         <ul class="list-group">
         {% for a in object.possiveis_escolhas.all %}
             <li class="list-group-item">{{a.texto}}
-                <a href="{% url "questionarios:update_possivelescolha" object.pk a.pk %}"><span class="badge badge-secondary">Editar</span></a>
-                <a href="{% url "questionarios:delete_possivelescolha" object.pk a.pk %}"><span class="badge badge-secondary">Remover</span></a>
+                <a href="{% url "questionarios:update_possivelescolha" pergunta_do_questionario_pk a.pk %}"><span class="badge badge-secondary">Editar</span></a>
+                <a href="{% url "questionarios:delete_possivelescolha" pergunta_do_questionario_pk a.pk %}"><span class="badge badge-secondary">Remover</span></a>
             </li>
         {% empty %}
             <li class="list-group-item">Não existem escolhas</li>
