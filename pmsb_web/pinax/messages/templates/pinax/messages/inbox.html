@@ -67,12 +67,10 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{
-                                                thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong> {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{
-                                                thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong> {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -91,8 +89,8 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{
-                                                thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong>
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
@@ -131,12 +129,10 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -155,8 +151,8 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{
-                                                thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong>
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
@@ -195,12 +191,12 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{
-                                                thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong>
+                                                {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{
-                                                thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong>
+                                                {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -219,8 +215,8 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{
-                                                thread.latest_message.sender.first_name }}
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name }}
                                             </p>
                                             {% endif %}
                                         </div>
@@ -259,12 +255,12 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -283,8 +279,8 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{
-                                                thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
@@ -324,12 +320,12 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -338,7 +334,7 @@
                                         </div>
                                         <div class="col-sm">
                                             <p class="content" style="text-align: right;">
-                                                <strong>Finaliza em:</strong> {{ thread.data_de_entrega }}</p>
+                                                <strong>Finaliza em:</strong> {{thread.data_de_entrega}}</p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -348,8 +344,8 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{
-                                                thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
@@ -362,7 +358,7 @@
                                     <div class="row">
                                         <div class="col-sm">
                                             <p class="content text-justify text-truncate">
-                                                <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                                <strong>Última Mensagem:</strong> {{thread.latest_message.content}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -379,7 +375,7 @@
                                 <div class="container-fluid">
                                     <div class="row">
                                         <div class="col latest-message">
-                                            <p class="subject" style="text-align: center;">{{ thread.subject }}
+                                            <p class="subject" style="text-align: center;">{{thread.subject}}
                                             </p>
                                             <hr>
                                         </div>
@@ -388,12 +384,12 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{
-                                                thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -402,7 +398,7 @@
                                         </div>
                                         <div class="col-sm">
                                             <p class="content" style="text-align: right;">
-                                                <strong>Finalizada em:</strong> {{ thread.data_finalizada }}</p>
+                                                <strong>Finalizada em:</strong> {{thread.data_finalizada}}</p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -412,8 +408,8 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{
-                                                thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
