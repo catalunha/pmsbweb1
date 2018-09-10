@@ -17,6 +17,7 @@ from .serializers import (
     PerguntaEscolhaViewSet,
     PerguntaNumeroViewSet,
     PerguntaArquivoViewSet,
+    PerguntaImagemViewSet,
     PerguntaTextoViewSet,
     PerguntaCoordenadaViewSet,
 
@@ -39,6 +40,7 @@ questionario_router.register(r'perguntas', PerguntasViewSet)
 questionario_router.register(r'perguntas_escolha', PerguntaEscolhaViewSet)
 questionario_router.register(r'perguntas_numero', PerguntaNumeroViewSet)
 questionario_router.register(r'perguntas_arquivo', PerguntaArquivoViewSet)
+questionario_router.register(r'perguntas_imagem', PerguntaImagemViewSet)
 questionario_router.register(r'perguntas_texto', PerguntaTextoViewSet)
 questionario_router.register(r'perguntas_coordenada', PerguntaCoordenadaViewSet)
 questionario_router.register(r'perguntas', PerguntasViewSet)

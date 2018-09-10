@@ -12,11 +12,15 @@ urlpatterns = [
     path("<uuid:pk>/ver/", views.RelatorioDetailView.as_view(), name = "detail_relatorio"),
     path("<uuid:pk>/editar/", views.RelatorioUpdateView.as_view(), name = "update_relatorio"),
     path("<uuid:pk>/deletar/", views.RelatorioDeleteView.as_view(), name = "delete_relatorio"),
+    
 
     #blocos
     path("<uuid:pk>/bloco/", views.BlocoCreateView.as_view(), name="create_bloco"),
     path("<uuid:pk>/bloco/<uuid:nivel_superior_pk>/", views.BlocoCreateView.as_view(), name="create_bloco_nivel_superior"),
     path("bloco/<uuid:pk>/editar/", views.BlocoUpdateView.as_view(), name="update_bloco"),
+    path("bloco/<uuid:pk>/nivel_superior/editar/", views.BlocoNivelSuperiorUpdateView.as_view(), name="update_bloco_nivel_superior"),
+    path("bloco/<uuid:pk>/subir", views.BlocoUpOrdemView.as_view(), name="subir_bloco"),
+    path("bloco/<uuid:pk>/descer", views.BlocoDownOrdemView.as_view(), name="descer_bloco"),
     path("bloco/<uuid:pk>/texto/", views.BlocoTextoCreateView.as_view(), name="update_text_bloco"),
     path("bloco/<uuid:pk>/deletar/", views.BlocoDeleteView.as_view(), name="delete_bloco"),
     
