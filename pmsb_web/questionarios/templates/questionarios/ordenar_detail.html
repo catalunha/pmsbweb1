@@ -25,13 +25,20 @@
             </p>
             {% if pergunta_do_questionario.pergunta.tipo == 0 %}
             <p>Escolhas:</p>
-            {% for escolha in pergunta_do_questionario.pergunta.escolhas %}
-            <p>
-                {{escolha.texto}}
+            <ul>
+            {% for escolha in pergunta_do_questionario.pergunta.perguntaescolha.possiveis_escolhas.all %}
+            <li>
+                <p>
+                    {{escolha.texto}}
+                </p>
+            </li>
             {% empty%}
+            <p>
                 Sem escolhas
-            {% endfor%}
             </p>
+            {% endfor%}
+            </ul>
+            
             {% endif %}
         </li>
         {% empty %}
