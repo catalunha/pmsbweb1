@@ -47,10 +47,11 @@
     <div class="sidebar">
       <nav class="sidebar-nav ps ps--active-y">
         <ul class="nav">
+          {% if 'pinax_messages' in perms %}
           <li class="nav-item nav-dropdown ">
-            <a class="nav-link nav-dropdown-toggle" href="#">
+            <a {% if request.resolver_match.app_names.0 == 'pinax_messages' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'pinax_messages:inbox' %} ">
               <i class="nav-icon icon-list"></i>Tarefas</a>
-            <ul class="nav-dropdown-items">
+            <!--<ul class="nav-dropdown-items">
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'pinax_messages:inbox' %}">
                   <i class="nav-icon icon-layers"></i>Visualizar Tarefas</a>
@@ -59,28 +60,33 @@
                 <a class="nav-link" href="{% url 'pinax_messages:message_create' %}">
                   <i class="nav-icon icon-note"></i>Nova Tarefa</a>
               </li>
-            </ul>
+            </ul>-->
           </li>
-          {% if 'conta' in perms %}
+          {% endif %}
           <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
                 <i class="nav-icon fa fa-sitemap"></i>Organograma</a>
             <ul class="nav-dropdown-items">
+              {% if 'conta.view_departamento' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:departamento_tree' %}">
                   <i class="nav-icon fa fa-building-o"></i>Departamentos</a>
               </li>
+              {% endif %}
+              {% if 'conta.view_cargo' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:cargo_tree' %}">
                   <i class="nav-icon fa fa-address-card"></i>Cargos</a>
               </li>
+              {% endif %}
+              {% if 'conta.view_user' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:hierarquia_tree' %}">
                   <i class="nav-icon icon-people"></i>Hierárquia</a>
               </li>
+              {% endif %}
             </ul>
           </li>
-          {% endif %}
           {% if 'questionarios' in perms %}
           <li class="nav-item ">
             <a {% if request.resolver_match.app_names.0 == 'questionarios' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'questionarios:list' %} ">
