@@ -200,7 +200,17 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         self.ordem, irmao.ordem = irmao.ordem, self.ordem
         self.save()
         irmao.save()
-    
+
+    def get_arvore_genealogica(self, include_self=True):
+        r = []
+        if include_self:
+            r.append(self)
+        for c in self.subblocos.all():
+            _r = c.get_arvore_genealogica(include_self=True)
+            if 0 < len(_r):
+                r.extend(_r)
+        return r
+
     def __concat_str__(self):
         if self.nivel_superior is None:
             return self.titulo

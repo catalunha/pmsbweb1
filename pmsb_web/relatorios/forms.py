@@ -26,7 +26,9 @@ class BlocoSuperiorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super (BlocoSuperiorForm,self ).__init__(*args,**kwargs) 
         bloco = kwargs.pop("instance")
-        self.fields["nivel_superior"].queryset = Bloco.objects.filter(fake_deletado=False, relatorio=bloco.relatorio).exclude(pk=bloco.pk)
+        filhos = bloco.get_arvore_genealogica()
+        queryset = Bloco.objects.filter(fake_deletado=False, relatorio=bloco.relatorio).exclude(pk__in = [filho.pk for filho in filhos])
+        self.fields["nivel_superior"].queryset = queryset
     
     class Meta:
         model = Bloco
