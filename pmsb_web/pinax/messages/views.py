@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
-import datetime
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils.decorators import method_decorator
 from django.views.generic import (
     CreateView,
@@ -8,9 +8,10 @@ from django.views.generic import (
     TemplateView,
     UpdateView
 )
-
+from core.views import FakeDeleteView
 from .forms import MessageReplyForm, NewMessageForm, NewMessageFormMultiple
 from .models import Thread, UserThread
+import datetime
 
 try:
     from account.decorators import login_required
@@ -23,6 +24,8 @@ class InboxView(TemplateView):
     View inbox thread list.
     """
     template_name = "pinax/messages/inbox.html"
+
+    permission_required = ["pinax.messages.view_threads", "pinax.messages.view_userthread"]
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -56,6 +59,7 @@ class ThreadView(UpdateView):
     context_object_name = "thread"
     template_name = "pinax/messages/thread_detail.html"
     #success_url = reverse_lazy("pinax_messages:inbox")
+    permission_required = ["pinax.messages.view_thread", "pinax.messages.change_thread"]
 
     @method_decorator(login_required)
     def dispatch(self, request,*args, **kwargs):
@@ -88,12 +92,19 @@ class ThreadView(UpdateView):
         self.object.userthread_set.filter(user=request.user).update(unread=False)
         return response
 
+class ThreadFakeDelete(PermissionRequiredMixin, FakeDeleteView):
+    model = Thread
+    template_name = "pinax/messages/thread_delete.html"
+    success_url = reverse_lazy("pinax_messages:inbox")
+    permission_required = ["relatorios.view_thread", "relatorios.delete_thread"]
 
 class MessageCreateView(CreateView):
     """
     Create a new thread message.
     """
     template_name = "pinax/messages/message_create.html"
+
+    permission_required = ["pinax.messages.view_threads", "pinax.messages.add_threads"]
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -123,13 +134,16 @@ class MessageCreateView(CreateView):
         return kwargs
 
 
-class ThreadDeleteView(DeleteView):
+class ThreadDeleteView(PermissionRequiredMixin, DeleteView):
     """
     Delete a thread.
     """
     model = Thread
     success_url = reverse_lazy("pinax_messages:inbox")
     template_name = "pinax/messages/thread_confirm_delete.html"
+    
+    permission_required = ["pinax.messages.view_thread", "pinax.messages.delete_thread"]
+    
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
