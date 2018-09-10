@@ -90,7 +90,7 @@
           {% if 'questionarios' in perms %}
           <li class="nav-item ">
             <a {% if request.resolver_match.app_names.0 == 'questionarios' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'questionarios:list' %} ">
-              <i class="nav-icon icon-list "></i>Questionarios</a>
+              <i class="nav-icon fa fa-question"></i>Questionarios</a>
               <!--<ul class="nav-dropdown-items ">                
                 
                 <li class="nav-item ">
