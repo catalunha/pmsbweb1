@@ -13,11 +13,14 @@ class RelatorioAdmin(admin.ModelAdmin):
 admin.site.register(Relatorio, RelatorioAdmin)
 
 class BlocoAdmin(admin.ModelAdmin):
-    list_display = ("id", "relatorio", "titulo", "nivel", "criado_em")
+    list_display = ("id", "relatorio", "titulo", "nivel", "editor","criado_em")
     readonly_fields = ("nivel",)
 
 admin.site.register(Bloco, BlocoAdmin)
 
-admin.site.register(Editor)
+class EditorAdmin(admin.ModelAdmin):
+    list_display = ("id", "bloco", "editor", "criado_em")
+
+admin.site.register(Editor, EditorAdmin)
 
 admin.site.register(Figura)
