@@ -290,7 +290,7 @@ class EditorFormKwargs(object):
         kwargs.update({ 
             "user": self.request.user,
         })
-        return kwargs
+        return kwargs   
 
 class EditorCreateView(EditorFormKwargs, EditorBlocoContextMixin, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, CreateView):
     model = Editor
@@ -300,12 +300,20 @@ class EditorCreateView(EditorFormKwargs, EditorBlocoContextMixin, EditorBlocoSuc
 
     def form_valid(self, form):
         bloco = get_object_or_404(Bloco, pk=self.kwargs.get("bloco_pk"))
-        print(bloco)
-        form.instance.bloco = bloco
-        form.instance.usuario = self.request.user
-        bloco.editor = form.instance.editor
-        bloco.save()
-        return super(EditorCreateView, self).form_valid(form)
+        if Editor.objects.get(bloco= bloco, usuario = self.request.user):
+            editor = Editor.objects.get(bloco=bloco, usuario=self.request.user)
+            bloco.editor = form.instance.editor
+            editor.editor = bloco.editor
+            bloco.save()
+            editor.save()
+        else:
+            form.instance.bloco = bloco
+            form.instance.usuario = self.request.user
+            bloco.editor = form.instance.editor
+            #bloco.save()
+            #form.save()
+        url = self.get_success_url(bloco)
+        return HttpResponseRedirect(url)
 
 class EditorUpdateView(EditorFormKwargs, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Editor
@@ -321,11 +329,12 @@ class EditorUpdateView(EditorFormKwargs, EditorBlocoSuccessUrlMixin, PermissionR
         return self.object
     
     def form_valid(self, form):
+        print("UPDATE")
         bloco = get_object_or_404(Bloco, pk=self.kwargs.get("bloco_pk"))
-        form.instance.bloco = bloco
-        form.instance.usuario = self.request.user
+        editor = Editor.objects.get(bloco=bloco, usuario=self.request.user)
         bloco.editor = form.instance.editor
+        editor.editor = bloco.editor
         bloco.save()
-        form.save()
+        editor.save()
         url = self.get_success_url(bloco)
         return HttpResponseRedirect(url)
