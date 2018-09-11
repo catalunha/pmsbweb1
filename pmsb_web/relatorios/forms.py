@@ -53,8 +53,9 @@ class BlocoOrdemAjaxForm(forms.ModelForm):
 
 class EditorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user")
         super(EditorForm, self).__init__(*args, **kwargs)
-        self.fields["editor"].queryset = User.objects.filter(is_superuser=False).exclude(is_active=False)
+        self.fields["editor"].queryset = User.objects.filter(is_superuser=False).exclude(is_active=False).exclude(pk= user.pk)
     
     class Meta:
         model = Editor

@@ -284,7 +284,15 @@ class EditorBlocoSuccessUrlMixin(object):
             bloco = Bloco.objects.get(id=self.kwargs.get("bloco_pk"))
         return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
 
-class EditorCreateView(EditorBlocoContextMixin, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, CreateView):
+class EditorFormKwargs(object):
+    def get_form_kwargs(self):
+        kwargs = super(EditorFormKwargs, self).get_form_kwargs()
+        kwargs.update({ 
+            "user": self.request.user,
+        })
+        return kwargs
+
+class EditorCreateView(EditorFormKwargs, EditorBlocoContextMixin, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, CreateView):
     model = Editor
     form_class = EditorForm
     template_name = 'relatorios/create_editor.html'
@@ -299,7 +307,7 @@ class EditorCreateView(EditorBlocoContextMixin, EditorBlocoSuccessUrlMixin, Perm
         bloco.save()
         return super(EditorCreateView, self).form_valid(form)
 
-class EditorUpdateView(EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
+class EditorUpdateView(EditorFormKwargs, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
     model = Editor
     form_class = EditorForm
     template_name = "relatorios/update_editor.html"
