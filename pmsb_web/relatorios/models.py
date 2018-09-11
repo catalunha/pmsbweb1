@@ -65,7 +65,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
     descricao = models.TextField()
     texto = models.TextField()
-
+    editor = models.OneToOneField(User, blank=True, null=True, on_delete = models.CASCADE)
     ordem = models.PositiveSmallIntegerField(blank = True)
     nivel_superior = models.ForeignKey("Bloco", null = True, blank = True, on_delete = models.CASCADE, related_name="subblocos")
     nivel = models.PositiveSmallIntegerField(editable = False)
@@ -221,11 +221,9 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         return self.__concat_str__()
 
 class Editor(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    bloco = models.ForeignKey(Bloco, on_delete = models.CASCADE, related_name="editores")
-    editor = models.ForeignKey(User, on_delete = models.CASCADE, related_name="editor_blocos")
-
-    class Meta:
-        unique_together = ("bloco", "editor")
+    bloco = models.OneToOneField(Bloco, on_delete = models.CASCADE, related_name="editores")
+    editor = models.ForeignKey(User, on_delete = models.CASCADE, related_name="editor_blocos", blank=True, null=True)
+    
 
 def upload_figura(instance, filename):
     hoje = timezone.now()

@@ -1,12 +1,14 @@
 from django import forms
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth import get_user_model
 from .models import (
     Relatorio,
     Bloco,
     Editor,
     Figura,
 )
+
+User = get_user_model()
 
 class RelatorioForm(forms.ModelForm):
     class Meta:
@@ -44,13 +46,16 @@ class BlocoTextoForm(forms.ModelForm):
         model = Bloco
         fields = ("texto",)
 
-
 class BlocoOrdemAjaxForm(forms.ModelForm):
     class Meta:
         model = Bloco
         fields = ("ordem",)
 
 class EditorForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EditorForm, self).__init__(*args, **kwargs)
+        self.fields["editor"].queryset = User.objects.filter(is_superuser=False).exclude(is_active=False)
+    
     class Meta:
         model = Editor
         fields = ("editor", )

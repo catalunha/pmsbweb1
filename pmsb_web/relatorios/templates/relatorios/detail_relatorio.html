@@ -19,7 +19,6 @@
             <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-plus" style="color:white;"></i>Inserir nível
         </a>
     </p>
-
     {% comment %} aplicar dtree nos bloco {% endcomment %}
     <small>
         <a href="javascript: d.openAll();">Expandir tudo</a> |
@@ -29,18 +28,40 @@
 
         d = new dTree('d');
         d.add(0, -1, 'Índices');
-
+        {% if object.usuario == request.user %}
+        // sou o dono da porra toda
         {% for bloco in blocos_nfd %}
-        {% comment %}
-        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary ">Editar Índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-secondary">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-warning">X</span></a>');
-        {% endcomment %}
-        var seta = "";
-        d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="#"><span class="badge badge-primary"><i class="nav-icon fa fa-user" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-primary"><i class="nav-icon fa fa-plus" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:subir_bloco' bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-up" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url 'relatorios:descer_bloco' bloco.pk  %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-down" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url "relatorios:update_bloco_nivel_superior" bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-right" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
-        {% empty %}
-        <p>
-            Sem itens
-        </p>
+            {% comment %}
+            d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary ">Editar Índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-secondary">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-warning">X</span></a>');
+            {% endcomment %}
+            var seta = "";
+            {% if bloco.editor%}
+            d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - {{bloco.editor}} <a href="{% url 'relatorios:update_editor_bloco' bloco.editor.pk bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-user" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-primary"><i class="nav-icon fa fa-plus" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:subir_bloco' bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-up" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url 'relatorios:descer_bloco' bloco.pk  %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-down" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url "relatorios:update_bloco_nivel_superior" bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-right" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
+            {% else %}
+            d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:create_editor_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-user" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-primary"><i class="nav-icon fa fa-plus" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:subir_bloco' bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-up" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url 'relatorios:descer_bloco' bloco.pk  %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-down" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url "relatorios:update_bloco_nivel_superior" bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-right" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
+            {% endif %}
+            {% empty %}
+            <p>
+                Sem itens
+            </p>
         {% endfor %}
+        {% else %}
+            {% for bloco in blocos_nfd %}
+                {% comment %}
+                d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-secondary ">Editar Índice</span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-secondary">Inserir Texto</span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-secondary">Inserir Subnível</span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-warning">X</span></a>');
+                {% endcomment %}
+                var seta = "";
+                {% if bloco.editor == request.user %}
+                    d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a>');
+                {% else %}
+                    d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}}');
+                {% endif %}
+                {% empty %}
+                <p>
+                    Sem itens
+                </p>
+            {% endfor %}
+        {% endif %}
         document.write(d);
     </script> 
     {% endblock %}
