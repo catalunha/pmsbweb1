@@ -300,7 +300,7 @@ class EditorCreateView(EditorFormKwargs, EditorBlocoContextMixin, EditorBlocoSuc
 
     def form_valid(self, form):
         bloco = get_object_or_404(Bloco, pk=self.kwargs.get("bloco_pk"))
-        if Editor.objects.get(bloco= bloco, usuario = self.request.user):
+        if Editor.objects.filter(bloco= bloco, usuario = self.request.user):
             editor = Editor.objects.get(bloco=bloco, usuario=self.request.user)
             bloco.editor = form.instance.editor
             editor.editor = bloco.editor
@@ -310,8 +310,8 @@ class EditorCreateView(EditorFormKwargs, EditorBlocoContextMixin, EditorBlocoSuc
             form.instance.bloco = bloco
             form.instance.usuario = self.request.user
             bloco.editor = form.instance.editor
-            #bloco.save()
-            #form.save()
+            bloco.save()
+            form.save()
         url = self.get_success_url(bloco)
         return HttpResponseRedirect(url)
 
