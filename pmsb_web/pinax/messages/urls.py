@@ -14,6 +14,8 @@ urlpatterns = [
         name="message_user_create"),
     url(r"^thread/(?P<pk>[\w-]+)/$", views.ThreadView.as_view(),
         name="thread_detail"),
-    url(r"^thread/(?P<pk>[\w-]+)/delete/$", views.ThreadDeleteView.as_view(),
+    url(r"^thread/(?P<pk>[\w-]+)/concluir/$", views.ThreadDeleteView.as_view(),
         name="thread_delete"),
+    url(r"^thread/(?P<pk>[\w-]+)/deletar/$", views.ThreadFakeDelete.as_view(),
+        name="thread_fake_delete"),
 ]

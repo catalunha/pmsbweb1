@@ -3,17 +3,25 @@
 <div class="justify-content-center pinax-messages-inbox-container" style="margin-top: 10px;">
     <div class="card">
         <div class="card-header">
-            <i class="fa fa-tasks"></i> Tarefas
-            <a class="btn btn-primary" style="float: right;" href="{% url 'pinax_messages:message_create' %}">
-                <i class="fa fa-tasks"></i>
-                Designar Tarefa
-            </a>
+            <div class="row">
+                <div class="col-sm">
+                    <div class="btn-align"><i class="nav-icon fa icon-list"></i> Tarefas</div>
+                </div>
+                <div class="col-sm">
+                    {% if 'pinax_messages.add_thread' in perms %}
+                    <a class="btn btn-primary" style="float: right;" href="{% url 'pinax_messages:message_create' %}">
+                        <i class="nav-icon fa icon-list" style="color:white;"></i>
+                        Designar Tarefa
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
         <div class="card-body">
-            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Procurar pelo nome..." title="Escreva um nome">
             <div class="col">
-
+                <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Procurar pelo nome..." title="Escreva um nome">
                 <ul class="nav nav-tabs" role="tablist">
+                    {% if 'pinax_messages.add_thread' in perms %}
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#enviadas" role="tab" aria-controls="home">Enviadas</a>
                     </li>
@@ -21,14 +29,26 @@
                         <a class="nav-link" data-toggle="tab" href="#recebidas" role="tab" aria-controls="profile">Recebidas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#concluidasEnviadas" role="tab" aria-controls="messages">Concluídas enviadas</a>
+                        <a class="nav-link" data-toggle="tab" href="#concluidasEnviadas" role="tab" aria-controls="messages">Concluídas
+                            enviadas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#concluidasRecebidas" role="tab" aria-controls="messages">Concluídas recebidas</a>
+                        <a class="nav-link" data-toggle="tab" href="#concluidasRecebidas" role="tab" aria-controls="messages">Concluídas
+                            recebidas</a>
                     </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#recebidas" role="tab" aria-controls="profile">Recebidas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#concluidasRecebidas" role="tab" aria-controls="messages">Concluídas
+                            recebidas</a>
+                    </li>
+                    {% endif %}
                 </ul>
 
                 <div class="tab-content">
+                    {% if 'pinax_messages.add_thread' in perms %}
                     <div class="tab-pane mailbox active" id="enviadas" role="tabpanel">
                         {% for thread in threads %}
                         <!-- primeira msg for o user = ele enviou tarefa -->
@@ -47,10 +67,10 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong> {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong> {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -69,13 +89,15 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{ thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong>
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
                                             <p class="content" style="text-align: right;">
-                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                                <strong>Horário da última mensagem:</strong>
+                                                {{thread.latest_message.sent_at}} </p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -107,10 +129,10 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{ thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{ thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -129,13 +151,15 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{ thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong>
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
                                             <p class="content" style="text-align: right;">
-                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                                <strong>Horário da última mensagem:</strong>
+                                                {{thread.latest_message.sent_at}} </p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -167,10 +191,12 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong>
+                                                {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa enviada para:</strong> {{ thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa enviada para:</strong>
+                                                {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -189,13 +215,15 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{ thread.latest_message.sender.first_name }}
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name }}
                                             </p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
                                             <p class="content" style="text-align: right;">
-                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                                <strong>Horário da última mensagem:</strong>
+                                                {{thread.latest_message.sent_at}} </p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -227,10 +255,12 @@
                                         <div class="col-sm">
                                             {% if thread.users.all.1 == user %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{ thread.users.all.0.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.0.first_name}}</p>
                                             {% else %}
                                             <p class="participants">
-                                                <strong>Tarefa recebida por:</strong> {{ thread.users.all.1.first_name}}</p>
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.1.first_name}}</p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
@@ -249,13 +279,15 @@
                                                 <strong>Mensagem enviada por:</strong> Você</p>
                                             {% else %}
                                             <p class="content">
-                                                <strong>Mensagem enviada por:</strong> {{ thread.latest_message.sender.first_name}}
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name}}
                                             </p>
                                             {% endif %}
                                         </div>
                                         <div class="col-sm">
                                             <p class="content" style="text-align: right;">
-                                                <strong>Horário da última mensagem:</strong> {{thread.latest_message.sent_at}} </p>
+                                                <strong>Horário da última mensagem:</strong>
+                                                {{thread.latest_message.sent_at}} </p>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -269,7 +301,139 @@
                         </div>
                         {% endif %} {% endfor %}
                     </div>
+                    {% else %}
+                    <div class="tab-pane mailbox active" id="recebidas" role="tabpanel">
+                        {% for thread in threads %}
+                        <!-- primeira mensagem não for o user = ele recebeu tarefa -->
+                        {% if thread.first_message.sender != user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col latest-message">
+                                            <p class="subject" style="text-align: center;">{{ thread.subject }}
+                                            </p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            {% if thread.users.all.1 == user %}
+                                            <p class="participants">
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.0.first_name}}</p>
+                                            {% else %}
+                                            <p class="participants">
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.1.first_name}}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm">
+                                            <p class="content">
+                                                <strong>Iniciada em:</strong> {{thread.first_message.sent_at}}</p>
+                                        </div>
+                                        <div class="col-sm">
+                                            <p class="content" style="text-align: right;">
+                                                <strong>Finaliza em:</strong> {{thread.data_de_entrega}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            {% if thread.latest_message.sender == user %}
+                                            <p class="content">
+                                                <strong>Mensagem enviada por:</strong> Você</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name}}
+                                            </p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm">
+                                            <p class="content" style="text-align: right;">
+                                                <strong>Horário da última mensagem:</strong>
+                                                {{thread.latest_message.sent_at}} </p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <p class="content text-justify text-truncate">
+                                                <strong>Última Mensagem:</strong> {{thread.latest_message.content}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% endfor %}
+                    </div>
+                    <div class="tab-pane mailbox" id="concluidasRecebidas" role="tabpanel">
+                        {% for thread in completed_threads %}
+                        <!-- tarefas concluidas que eu recebi -->
+                        {% if thread.first_message.sender != user %}
+                        <div class="thread">
+                            <a href="{{thread.get_absolute_url}}">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col latest-message">
+                                            <p class="subject" style="text-align: center;">{{thread.subject}}
+                                            </p>
+                                            <hr>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            {% if thread.users.all.1 == user %}
+                                            <p class="participants">
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.0.first_name}}</p>
+                                            {% else %}
+                                            <p class="participants">
+                                                <strong>Tarefa recebida por:</strong> 
+                                                {{thread.users.all.1.first_name}}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm">
+                                            <p class="content">
+                                                <strong>Iniciada em:</strong> {{thread.first_message.sent_at}}</p>
+                                        </div>
+                                        <div class="col-sm">
+                                            <p class="content" style="text-align: right;">
+                                                <strong>Finalizada em:</strong> {{thread.data_finalizada}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            {% if thread.latest_message.sender == user %}
+                                            <p class="content">
+                                                <strong>Mensagem enviada por:</strong> Você</p>
+                                            {% else %}
+                                            <p class="content">
+                                                <strong>Mensagem enviada por:</strong> 
+                                                {{thread.latest_message.sender.first_name}}
+                                            </p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-sm">
+                                            <p class="content" style="text-align: right;">
+                                                <strong>Horário da última mensagem:</strong>
+                                                {{thread.latest_message.sent_at}} </p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm">
+                                            <p class="content text-justify text-truncate">
+                                                <strong>Última Mensagem:</strong> {{ thread.latest_message.content }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endif %} {% endfor %}
+                    </div>
+                    {% endif %}
+
                 </div>
+
             </div>
         </div>
     </div>

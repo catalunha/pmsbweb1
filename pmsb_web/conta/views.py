@@ -183,7 +183,7 @@ class CargoListView(PermissionRequiredMixin, ListView):
     context_object_name = 'departamentos'
     model = Departamento
     
-    permission_required = ["conta.view_user", "conta.view_departamento"]
+    permission_required = ["conta.view_departamento"]
 
     def get_context_data(self, **kwargs):
         context = super(CargoListView, self).get_context_data(**kwargs)

@@ -2,10 +2,10 @@
 <form method="post">
     {% csrf_token %}
     <div class="card-body p-4">
-        <h2 style="text-align: center;">Criar relatório</h2>
+        <h2 style="text-align: center;">Criar produto</h2>
         <hr> {% include "includes/form.html" with form=form %}
-        <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}">Voltar</a>
         <button type="submit" class="btn btn-primary">Criar</button>
+        <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
     </div>
 </form>
 {% endblock %}

@@ -1,33 +1,32 @@
 {% extends "dashboard/index.html" %}
-
 {% block main %}
 <style>
-#questionarios .row{
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
+    #questionarios .row {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
 </style>
+<div class="justify-content-center pinax-messages-inbox-container" style="margin-top: 10px;">
+    <div class="card">
+        <div id="questionarios" class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% block ul_menu %}
 
-<div id = "questionarios" class="row">
-    <div class="col-lg-6 offset-lg-3">
-
-    <div class="row">
-        <div class="col-lg-12">
-        {% block ul_menu %}
-        
-        {% endblock ul_menu%}
-        </div>
-    </div>       
-
-    <div class="row">
-        <div class="col-lg-12">
-        {% block conteudo%}
-            super   
-        {% endblock %}
-        </div>
+                        {% endblock ul_menu%}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        {% block conteudo%}
+                        super
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+            <!--col-lg-12-->
+        </div><!-- row -->
     </div>
-
-    </div><!--col-lg-12-->
-</div><!-- row -->
-
+</div>
 {% endblock %}
