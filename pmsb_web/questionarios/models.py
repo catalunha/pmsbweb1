@@ -121,7 +121,7 @@ class UnidadeMedida(UUIDModelMixin):
     Tabela - Unidade de Medida
     """
     nome = models.CharField(max_length = 255, unique = True)
-    sigla = models.CharField(max_length = 5, unique = True)
+    sigla = models.CharField(max_length = 25, unique = True)
 
     objects = models.Manager()
 
