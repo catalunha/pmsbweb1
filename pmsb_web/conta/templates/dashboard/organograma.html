@@ -36,7 +36,7 @@
                     {% elif departamentos %}
                     <script type="text/javascript">
                         d = new dTree('d');
-                        d.add(0, -1, 'Organograma: Departamentos e Cargos');
+                        d.add(0, -1, 'Organograma: Áreas e Cargos');
                         {% for dep in departamentos %}
                         d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
                         {% endfor %}
@@ -49,7 +49,7 @@
                     <!-- SETORES -->
                     <script type="text/javascript">
                         d = new dTree('d');
-                        d.add(0, -1, 'Organograma: Departamentos');
+                        d.add(0, -1, 'Organograma: Áreas');
                         {% for departamentos in dep %}
                         d.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
                         {% endfor %}
