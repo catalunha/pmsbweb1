@@ -1,64 +1,120 @@
 {% extends "dashboard/index.html" %} {% block main %}
 <div class="container" style="margin-top: 10px;">
-        <div class="card">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-sm">
-                        {% if dep %}
-                        <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma das Áreas</div>
-                        {% elif tree_list %}
-                        <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma Hierárquico</div>
-                        {% elif departamentos %}
-                        <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma dos Departamentos e Cargos</div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="dtree">
-                    <small>
-                        <a href="javascript: d.openAll();">Expandir tudo</a> |
-                        <a href="javascript: d.closeAll();">Contrair tudo</a>
-                    </small>
-                    {% if tree_list %}
-                    <script type="text/javascript">
-                        d = new dTree('d');
-                        d.add(0, -1, 'Organograma: Árvore Hierárquica');
-                        {% for user in tree_list %}
-                        console.log('{{user.id}}')
-                        console.log('{{user.first_name}}')
-                        console.log('{{user.superior.id}}')
-                        d.add('{{user.id}}', '{{user.superior.id}}', '{{user.first_name}}');
-                        {% endfor %}
-                        document.write(d);
-                    </script>
-                    <!-- SETORES+CARGOS -->
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm">
+                    {% if dep %}
+                    <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma das Áreas</div>
+                    {% elif tree_list %}
+                    <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma Hierárquico</div>
                     {% elif departamentos %}
-                    <script type="text/javascript">
-                        d = new dTree('d');
-                        d.add(0, -1, 'Organograma: Áreas e Cargos');
-                        {% for dep in departamentos %}
-                        d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
-                        {% endfor %}
-                        {% for users in all_user %}
-                        d.add('{{users.id}}', '{{users.departamento.id}}', '{{users.cargo}}: {{users.first_name}}');
-                        {% endfor %}
-                        document.write(d);
-                    </script>
-                    {% elif dep %}
-                    <!-- SETORES -->
-                    <script type="text/javascript">
-                        d = new dTree('d');
-                        d.add(0, -1, 'Organograma: Áreas');
-                        {% for departamentos in dep %}
-                        d.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
-                        {% endfor %}
-                        document.write(d);
-                    </script>
+                    <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma dos Departamentos e Cargos</div>
                     {% endif %}
                 </div>
-                <a href="{% url 'conta:dashboard' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+                {% if not dep %}
+                <div class="col-sm">
+                    <select id="selecao" class="form-control-sm" style="float:right;">
+                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true">Ações<span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                            <option value="1">Ativos</option>
+                            <option value="2">Todos</option>
+                        </ul>
+                    </select>
+                </div>
+                {% endif %}
             </div>
         </div>
+        <div class="card-body">
+            <div id="ativos" class="dtree">
+                <small>
+                    <a href="javascript: d.openAll();">Expandir tudo</a> |
+                    <a href="javascript: d.closeAll();">Contrair tudo</a>
+                </small>
+                {% if tree_list %}
+                <script type="text/javascript">
+                    d = new dTree('d');
+                    d.add(0, -1, 'Organograma: Árvore Hierárquica');
+                    {% for user in tree_list %}
+                    d.add('{{user.id}}', '{{user.superior.id}}', '{{user.first_name}}');
+                    {% endfor %}
+                    document.write(d);
+                </script>
+                <!-- SETORES+CARGOS -->
+                {% elif departamentos %}
+                <script type="text/javascript">
+                    d = new dTree('d');
+                    d.add(0, -1, 'Organograma: Áreas e Cargos');
+                    {% for dep in departamentos %}
+                    d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
+                    {% endfor %}
+                    {% for users in all_user_active %}
+                    d.add('{{users.id}}', '{{users.departamento.id}}', '{{users.cargo}}: {{users.first_name}}');
+                    {% endfor %}
+                    document.write(d);
+                </script>
+                <!-- USUARIOS N ATIVOS -->
+
+                {% elif dep %}
+                <!-- SETORES -->
+                <script type="text/javascript">
+                    d = new dTree('d');
+                    d.add(0, -1, 'Organograma: Áreas');
+                    {% for departamentos in dep %}
+                    d.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
+                    {% endfor %}
+                    document.write(d);
+                </script>
+                {% endif %}
+            
+            </div>
+            <div id="n_ativos" class="dtree" style="display: none;" >
+                <small>
+                    <a href="javascript: d.openAll();">Expandir tudo</a> |
+                    <a href="javascript: d.closeAll();">Contrair tudo</a>
+                </small>
+                {% if tree_list %}
+                <script type="text/javascript">
+                    d = new dTree('d');
+                    d.add(0, -1, 'Organograma: Árvore Hierárquica');
+                    {% for user in all_user_not_active %}
+                    d.add('{{user.id}}', '{{user.superior.id}}', '{{user.first_name}}');
+                    {% endfor %}
+                    document.write(d);
+                </script>
+                <!-- SETORES+CARGOS -->
+                {% elif departamentos %}
+                <script type="text/javascript">
+                    d = new dTree('d');
+                    d.add(0, -1, 'Organograma: Áreas e Cargos');
+                    {% for dep in departamentos %}
+                    d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
+                    {% endfor %}
+                    {% for users in all_user_not_active %}
+                    d.add('{{users.id}}', '{{users.departamento.id}}', '{{users.cargo}}: {{users.first_name}}');
+                    {% endfor %}
+                    
+                    document.write(d);
+                </script>
+                <!-- USUARIOS N ATIVOS -->
+
+                {% elif dep %}
+                <!-- SETORES -->
+                <script type="text/javascript">
+                    d = new dTree('d');
+                    d.add(0, -1, 'Organograma: Áreas');
+                    {% for departamentos in dep %}
+                    d.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
+                    {% endfor %}
+                    document.write(d);
+                </script>
+                {% endif %}
+            </div>
+            <a href="{% url 'conta:dashboard' %}" class="btn btn-primary " style="float: right;">Voltar</a>
+        </div>
     </div>
+</div>
+
 {% endblock %}

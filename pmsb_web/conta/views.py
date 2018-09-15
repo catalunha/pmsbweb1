@@ -163,34 +163,36 @@ class Dashboard(PermissionRequiredMixin, View):
 """
     List view dos Organogramas
 """
-class HierarquiaListView(PermissionRequiredMixin, ListView):
+class UserFilteringQuerySet(object):
+    def get_queryset(self):
+        return User.objects.filter(is_active=True)
+    
+class UserContextData(object):
+    def get_context_data(self, **kwargs):
+        context = super(UserContextData, self).get_context_data(**kwargs)
+        context.update({
+            'all_user_active': User.objects.filter(is_active=True),
+            'all_user_not_active': User.objects.all(),
+        })
+        return context
+
+class HierarquiaListView(UserContextData, UserFilteringQuerySet, PermissionRequiredMixin, ListView):
     template_name = 'dashboard/organograma.html'
     context_object_name = 'tree_list'
     model = User    
-
     permission_required = ["conta.view_user"]
-    
+
 class DepartamentoListView(PermissionRequiredMixin, ListView):
     template_name = 'dashboard/organograma.html'
     context_object_name = 'dep'
     model = Departamento
-
     permission_required = ["conta.view_departamento"]
 
-
-class CargoListView(PermissionRequiredMixin, ListView):
+class CargoListView(UserContextData, PermissionRequiredMixin, ListView):
     template_name = 'dashboard/organograma.html'
     context_object_name = 'departamentos'
     model = Departamento
-    
     permission_required = ["conta.view_departamento"]
-
-    def get_context_data(self, **kwargs):
-        context = super(CargoListView, self).get_context_data(**kwargs)
-        context.update({
-            'all_user': User.objects.all(),
-        })
-        return context
 
 class AtributoListView(ListView):
     template_name = 'dashboard/perfil_list.html'

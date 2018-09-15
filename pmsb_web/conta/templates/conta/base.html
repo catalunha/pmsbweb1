@@ -23,7 +23,6 @@
 </head>
 
 {% block body %} {% endblock %}
-
 <script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
 <script src="{% static 'node_modules/popper.js/dist/umd/popper.min.js' %}"></script>
 <script src="{% static 'node_modules/bootstrap/dist/js/bootstrap.min.js' %}"></script>
@@ -31,30 +30,8 @@
 <script src="{% static 'js/jquery.mask.js' %}"></script>
 <script src="{% static 'node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js' %}"></script>
 <script src="{% static 'node_modules/coreui/coreui/dist/js/coreui.min.js' %}"></script>
-<script>
-    function remover_mascaras(form) {
-        $(form).find(':input[class*="-mask"]').unmask();
-    }
-    // fazer uma versão em jquery
-    function myFunction() {
-            var input, filter, ul, li, a, i;
-            input = document.getElementById("myInput");
-            filter = input.value.toUpperCase();
-            div = document.getElementsByClassName("thread");
-            user = document.getElementsByClassName("participants")
-            console.log(ul);
-            for (i = 0; i < div.length; i++) {
-                a = user[i].innerText;
-                console.log(a);
-                if (a.toUpperCase().indexOf(filter) > -1) {
-                    div[i].style.display = "";
-                } else {
-                    div[i].style.display = "none";
-                }
-            }
-        }
-</script>
-
+<script src="{% static 'js/actions.js' %}"></script>
+<script src="{% static 'js/filter.js.js' %}"></script>
 {% block js %}
 {% endblock js %}
 </body>
