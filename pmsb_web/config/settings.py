@@ -188,9 +188,6 @@ DEFAULT_FROM_EMAIL = 'PMSB <pmsb@gmail.com>'
 EMAIL_SUBJECT_PREFIX = '[PMSB] '
 SERVER_EMAIL = 'pmsb@gmail.com'
 
-if DEBUG:
-    """
-    Confirgurações do modo DEBUG
-    """
-    CORS_ORIGIN_WHITELIST = ('localhost:8100', )
-    pass
+#Cross Origin Resource Sharing para cordova
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = ('localhost:8100', )
