@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, RedirectView
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
-
+from django.contrib.auth import get_user_model
 from core.views import (
     FakeDeleteView,
     AjaxableFormResponseMixin,
@@ -26,8 +26,11 @@ from .forms import (
     FiguraForm,
     BlocoTextoForm,
     BlocoOrdemAjaxForm,
-    BlocoSuperiorForm
+    BlocoSuperiorForm,
+    EditorForm,
 )
+
+User = get_user_model()
 
 """
 Relatorio
@@ -266,3 +269,72 @@ class FiguraDeleteView(FiguraDonoQuerysetMixin, PermissionRequiredMixin, DeleteV
     def get_success_url(self):
         return reverse_lazy("relatorios:list_figura", kwargs = {"relatorio_pk":self.object.relatorio.pk})
 
+"""
+Editor
+"""
+class EditorBlocoContextMixin(object):
+    def get_context_data(self, **kwargs):
+        context = super(EditorBlocoContextMixin, self).get_context_data(**kwargs)
+        context["bloco_object"] = get_object_or_404(Bloco, pk = self.kwargs.get("bloco_pk"))
+        return context
+
+class EditorBlocoSuccessUrlMixin(object):
+    def get_success_url(self, bloco=None):
+        if bloco is None:
+            bloco = Bloco.objects.get(id=self.kwargs.get("bloco_pk"))
+        return reverse_lazy("relatorios:detail_relatorio", kwargs = {"pk":bloco.relatorio.pk})
+
+class EditorFormKwargs(object):
+    def get_form_kwargs(self):
+        kwargs = super(EditorFormKwargs, self).get_form_kwargs()
+        kwargs.update({ 
+            "user": self.request.user,
+        })
+        return kwargs   
+
+class EditorCreateView(EditorFormKwargs, EditorBlocoContextMixin, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, CreateView):
+    model = Editor
+    form_class = EditorForm
+    template_name = 'relatorios/create_editor.html'
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.add_editor"]
+
+    def form_valid(self, form):
+        bloco = get_object_or_404(Bloco, pk=self.kwargs.get("bloco_pk"))
+        if Editor.objects.filter(bloco= bloco, usuario = self.request.user):
+            editor = Editor.objects.get(bloco=bloco, usuario=self.request.user)
+            bloco.editor = form.instance.editor
+            editor.editor = bloco.editor
+            bloco.save()
+            editor.save()
+        else:
+            form.instance.bloco = bloco
+            form.instance.usuario = self.request.user
+            bloco.editor = form.instance.editor
+            bloco.save()
+            form.save()
+        url = self.get_success_url(bloco)
+        return HttpResponseRedirect(url)
+
+class EditorUpdateView(EditorFormKwargs, EditorBlocoSuccessUrlMixin, PermissionRequiredMixin, UpdateView):
+    model = Editor
+    form_class = EditorForm
+    template_name = "relatorios/update_editor.html"
+    permission_required = ["relatorios.view_relatorio", "relatorios.view_bloco", "relatorios.add_editor", "relatorios.change_editor"]
+
+    def get_object(self, queryset=None):
+        print(self.kwargs)
+        bloco = Bloco.objects.get(pk=self.kwargs.get("bloco_pk"))
+        editor_bloco = User.objects.get(pk=self.kwargs.get("pk")) 
+        self.object = Editor.objects.get(bloco_id=bloco, editor_id=editor_bloco)
+        return self.object
+    
+    def form_valid(self, form):
+        print("UPDATE")
+        bloco = get_object_or_404(Bloco, pk=self.kwargs.get("bloco_pk"))
+        editor = Editor.objects.get(bloco=bloco, usuario=self.request.user)
+        bloco.editor = form.instance.editor
+        editor.editor = bloco.editor
+        bloco.save()
+        editor.save()
+        url = self.get_success_url(bloco)
+        return HttpResponseRedirect(url)

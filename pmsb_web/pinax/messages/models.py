@@ -9,10 +9,10 @@ from django.utils.encoding import python_2_unicode_compatible
 from .signals import message_sent
 from .utils import cached_attribute
 
-from core.mixins import TimedModelMixin, UUIDModelMixin, UserOwnedModelMixin
+from core.mixins import TimedModelMixin, UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin
 
 @python_2_unicode_compatible
-class Thread(UUIDModelMixin, TimedModelMixin):
+class Thread(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
 
     subject = models.CharField("Título da Tarefa", max_length=150)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through="UserThread")
@@ -21,15 +21,15 @@ class Thread(UUIDModelMixin, TimedModelMixin):
 
     @classmethod
     def inbox(cls, user):
-        return cls.objects.filter(userthread__user=user, userthread__deleted=False)
+        return cls.objects.filter(userthread__user=user, userthread__deleted=False, fake_deletado=False)
 
     @classmethod
     def deleted(cls, user):
-        return cls.objects.filter(userthread__user=user, userthread__deleted=True)
+        return cls.objects.filter(userthread__user=user, userthread__deleted=True, fake_deletado=False)
 
     @classmethod
     def unread(cls, user):
-        return cls.objects.filter(userthread__user=user, userthread__deleted=False)
+        return cls.objects.filter(userthread__user=user, userthread__deleted=False, fake_deletado=False)
 
     def __str__(self):
         return "{}: {} Prazo: {}".format(

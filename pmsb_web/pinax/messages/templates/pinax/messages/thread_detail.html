@@ -30,7 +30,8 @@
                                     <button type="submit" href="{% url 'pinax_messages:thread_detail' thread.pk %}" class="btn btn-warning ">Enviar</button>
                                     <a href="{% url 'pinax_messages:inbox' %}" class="btn btn-primary " style="float: right;">Voltar</a>
                                     {% if thread.first_message.sender == user %}
-                                    <a class="btn btn-danger" style="float: right; margin-right: 10px;" href="{% url 'pinax_messages:thread_delete' thread.pk %}">Marcar como concluída</a>
+                                    <a class="btn btn-danger" style="float: right; margin-right: 10px;" href="{% url 'pinax_messages:thread_delete' thread.pk %}"><i class="nav-icon fa fa-check" style="color:white;"></i>Marcar como concluída</a>
+                                    <a class="btn btn-danger" style="float: right; margin-right: 10px;" href="{% url 'pinax_messages:thread_fake_delete' thread.pk %}"><i class="nav-icon fa fa-trash" style="color:white;"></i>Excluir tarefa</a>
                                     {% endif %}
                                 </div>
                             </form>

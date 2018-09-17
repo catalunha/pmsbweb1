@@ -18,10 +18,9 @@
             <p>
                 <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span>
                 -
-                {{pergunta_do_questionario.pergunta.variavel}}:{{pergunta_do_questionario.pergunta.verbose_name_tipo}}
-            </p>
-            <p> 
+                {{pergunta_do_questionario.pergunta.variavel}}:
                 {{pergunta_do_questionario.pergunta.texto}}
+                
             </p>
             {% if pergunta_do_questionario.pergunta.tipo == 0 %}
             <p>Escolhas:</p>

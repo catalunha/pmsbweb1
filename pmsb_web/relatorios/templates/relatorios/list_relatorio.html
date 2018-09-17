@@ -1,11 +1,15 @@
 {% extends "base/base.html" %} {% block conteudo %}
 
 <div class="card-header">
-    <i class="nav-icon icon-note"></i> Produtos
-    <a class="btn btn-primary" style="float: right;" href="{% url 'relatorios:create_relatorio'%}">
-        <i class="fa fa-tasks"></i>
-        Novo Produto
-    </a>
+    <div class="row">
+        <div class="col-sm">
+            <div class="btn-align"><i class="nav-icon fa icon-note"></i>Produtos</div>
+        </div>
+        <div class="col-sm">
+            <a class="btn btn-primary" style="float: right;" href="{% url 'relatorios:create_relatorio'%}">
+                <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Produto</a>
+        </div>
+    </div>
 </div>
 <div class="card-body">
     <h2 style="text-align: center;">Lista de seus Produtos</h2>
@@ -20,7 +24,8 @@
                 <div class="col-sm-6" style="text-align:right;">
                     <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Gerênciar
                             índices</span></a>
-                    <a href="{% url 'relatorios:update_relatorio' r.pk %}"><span class="badge badge-secondary">Editar título
+                    <a href="{% url 'relatorios:update_relatorio' r.pk %}"><span class="badge badge-secondary">Editar
+                            título
                             e descrição</span></a>
                     <a href="{% url 'relatorios:delete_relatorio' r.pk %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash"
                                 style="color:white; margin-right:1px;"></i>Excluir produto</span></a>

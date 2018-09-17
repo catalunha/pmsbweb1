@@ -19,7 +19,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = UserAdmin.add_fieldsets + ADDITIONAL_USER_FIELDS
     fieldsets = UserAdmin.fieldsets + ADDITIONAL_USER_FIELDS
 
-    list_display = ('id', 'username', 'first_name', 'last_name', 'email', 'departamento', 'cargo', 'superior')
+    list_display = ('id', 'username', 'first_name', 'last_name', 'email', 'departamento', 'cargo', 'superior', 'is_active')
 
 admin.site.register(User, CustomUserAdmin)
 
