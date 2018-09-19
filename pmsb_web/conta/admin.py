@@ -15,35 +15,38 @@ ADDITIONAL_USER_FIELDS = (
 
 class CustomUserAdmin(UserAdmin):
     model = User
-
     add_fieldsets = UserAdmin.add_fieldsets + ADDITIONAL_USER_FIELDS
     fieldsets = UserAdmin.fieldsets + ADDITIONAL_USER_FIELDS
-
     list_display = ('id', 'username', 'first_name', 'last_name', 'email', 'departamento', 'cargo', 'superior', 'is_active')
 
 admin.site.register(User, CustomUserAdmin)
 
 class DepartamentoAdmin(admin.ModelAdmin):
-    list_display = ("id", "nome", "descricao", "superior")
+    list_display = ("id", "nome", "descricao", "superior", "criado_em", "editado_em")
+    list_filter = ('superior', 'criado_em', 'editado_em')
 
 admin.site.register(Departamento, DepartamentoAdmin)
 
 class CargoAdmin(admin.ModelAdmin):
-    list_display = ("id", "nome", "descricao")
+    list_display = ("id", "nome", "descricao", "criado_em", "editado_em")
+    list_filter = ('criado_em', 'editado_em')
 
 admin.site.register(Cargo, CargoAdmin)
 
 class AtributoAdmin(admin.ModelAdmin):
-    list_display = ("id", "nome", "descricao", "valor", "documento")
+    list_display = ("id", "nome", "descricao", "valor", "documento", "criado_em", "editado_em")
+    list_filter = ('criado_em', 'editado_em')
 
 admin.site.register(Atributo, AtributoAdmin)
 
 class ValorAtributoAdmin(admin.ModelAdmin):
-    list_display = ("id", "usuario", "tipo", "valor")
+    list_display = ("id", "usuario", "tipo", "valor", "criado_em", "editado_em")
+    list_filter = ('criado_em', 'editado_em')
 
 admin.site.register(ValorAtributo, ValorAtributoAdmin)
 
 class DocumentoAtributoAdmin(admin.ModelAdmin):
-    list_display = ("id", "usuario", "tipo")
+    list_display = ("id", "usuario", "tipo", "criado_em", "editado_em")
+    list_filter = ('criado_em', 'editado_em')
 
 admin.site.register(DocumentoAtributo, DocumentoAtributoAdmin)

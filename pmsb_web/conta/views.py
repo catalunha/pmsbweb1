@@ -2,7 +2,7 @@
 # django imports
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse_lazy
-from django.shortcuts import render, redirect 
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import (
     ListView,
     CreateView,
@@ -29,6 +29,7 @@ from .models import (
     DocumentoAtributo,
 )
 import collections
+from django.utils import timezone
 
 def login_view(request):
     '''
@@ -194,6 +195,9 @@ class CargoListView(UserContextData, PermissionRequiredMixin, ListView):
     model = Departamento
     permission_required = ["conta.view_departamento"]
 
+"""
+    Views dos Atributos/ValorAtriutos do Perfil
+"""
 class AtributoListView(ListView):
     template_name = 'dashboard/perfil_list.html'
     context_object_name = 'atributos'
@@ -244,20 +248,15 @@ class ValorAtributoCreateView(CreateView):
 
     def post(self, request, *args, **kwargs):
         atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
-        print(atributo.id)
         if atributo.valor == atributo.documento:
             formValor = BaseValorAtributoForm(request.POST)
             formDocumento = BaseDocumentoAtributoForm(request.POST, request.FILES)
             if formValor.is_valid() and formDocumento.is_valid():
                 try:
-                    ValorAtributo.objects.get(tipo=atributo,usuario=self.request.user)
-                    ValorAtributo.objects.filter(tipo=atributo, usuario=self.request.user).update(valor=formValor.data['valor'])
-                    instance = DocumentoAtributo.objects.get(tipo=atributo, usuario=self.request.user)
-                    instance.delete()
-                    documento = formDocumento.save(commit=False)
-                    documento.tipo_id = atributo.id
-                    documento.usuario_id = self.request.user.id
-                    documento.save()
+                    ValorAtributo.objects.filter(tipo=atributo, usuario=self.request.user).update(valor=formValor.data['valor'],editado_em=timezone.now())
+                    documento = DocumentoAtributo.objects.filter(tipo=atributo, usuario=self.request.user)
+                    a = BaseDocumentoAtributoForm(request.POST, request.FILES, instance=documento[0])
+                    a.save()
                     return redirect('conta:perfil_list')
                 except ObjectDoesNotExist:
                     valor = formValor.save(commit=False)
@@ -272,7 +271,6 @@ class ValorAtributoCreateView(CreateView):
         elif atributo.valor == True:
             print("atributo valor = True")
             formValor = BaseValorAtributoForm(request.POST)
-            #formValor = BaseValorAtributoForm(request.POST)
             if formValor.is_valid():
                 try:
                     ValorAtributo.objects.get(tipo=atributo,usuario=self.request.user)
@@ -290,10 +288,7 @@ class ValorAtributoCreateView(CreateView):
             if formDocumento.is_valid():
                 try:
                     instance = DocumentoAtributo.objects.get(tipo=atributo, usuario=self.request.user)
-                    instance.delete()
-                    documento = formDocumento.save(commit=False)
-                    documento.tipo_id = atributo.id
-                    documento.usuario_id = self.request.user.id
+                    documento = BaseDocumentoAtributoForm(request.POST, request.FILES, instance=instance)
                     documento.save()
                     return redirect('conta:perfil_list')
                 except ObjectDoesNotExist:
@@ -302,4 +297,3 @@ class ValorAtributoCreateView(CreateView):
                     documento.usuario_id = self.request.user.id
                     documento.save()
                     return redirect('conta:perfil_list')    
-                
