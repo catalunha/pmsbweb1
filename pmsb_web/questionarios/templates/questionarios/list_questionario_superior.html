@@ -1,0 +1,50 @@
+a{% extends "questionarios/base.html" %}
+
+{% block conteudo %}
+
+<h3>
+    Questionarios de Seus Subordinados
+</h3>
+
+{% for questionario in object_list %}
+<div class="row">
+    <div class="col-lg-12">
+    <p><h5>Questionario: {{questionario.nome}}</h5></p>
+    <p>{{questionario.usuario}}</p>
+
+    <ul id="sortable" class="list-group">
+        {% for pergunta_do_questionario in questionario.perguntas_ordenadas %}
+        <li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
+            <p>
+                <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span>
+                -
+                {{pergunta_do_questionario.pergunta.variavel}}:
+                {{pergunta_do_questionario.pergunta.texto}}
+            </p>
+            {% if pergunta_do_questionario.pergunta.tipo == 0 %}
+            <p>Escolhas:</p>
+            <ul>
+            {% for escolha in pergunta_do_questionario.pergunta.perguntaescolha.possiveis_escolhas.all %}
+            <li>
+                <p>
+                    {{escolha.texto}}
+                </p>
+            </li>
+            {% empty%}
+            <p>
+                Sem escolhas
+            </p>
+            {% endfor%}
+            </ul>
+            
+            {% endif %}
+        </li>
+        {% empty %}
+        <li class="list-group-item">Nenhuma pergunta</li>
+        {% endfor %}
+    </ul>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
