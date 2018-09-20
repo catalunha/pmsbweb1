@@ -47,4 +47,13 @@ a{% extends "questionarios/base.html" %}
 </div>
 {% endfor %}
 
+
+
+<div style="margin-top:50px;" class="row">
+    <div class="col-lg-12">
+        <a  class="btn btn-primary" href=" {% url "questionarios:list"%}">
+            Voltar
+        </a>
+    </div>
+</div>
 {% endblock %}
