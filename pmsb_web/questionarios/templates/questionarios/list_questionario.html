@@ -1,9 +1,15 @@
 {% extends "questionarios/base.html" %}
 
 {% block ul_menu %}
-<a style="float:right;" class="btn btn-success" href=" {% url "questionarios:create"%}">
+<div class="pull-right">
+<a class="btn btn-primary" href=" {% url "questionarios:questionario_list_equipe"%}">
+    Questionarios de sua equipe
+</a>
+
+<a  class="btn btn-success" href=" {% url "questionarios:create"%}">
     <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Questionario
 </a>
+</div>
 {% endblock ul_menu%}
 
 {% block conteudo %}
@@ -34,13 +40,5 @@
     </div>
 </div>
 {% endfor %}
-
-<div style="margin-top:50px;" class="row">
-    <div class="col-lg-12">
-        <a  class="btn btn-primary" href=" {% url "questionarios:subordinados"%}">
-            Questionarios de Subordinados
-        </a>
-    </div>
-</div>
 
 {% endblock %}

@@ -50,9 +50,9 @@ class QuestionarioListView(PermissionRequiredMixin, ListView):
         return queryset.filter(usuario = self.request.user)
 
 
-class QuestionarioSuperiorListView(PermissionRequiredMixin, ListView):
+class QuestionarioEquipeListView(PermissionRequiredMixin, ListView):
     model = Questionario
-    template_name = "questionarios/list_questionario_superior.html"
+    template_name = "questionarios/list_questionario_equipe.html"
     permission_required = ["questionarios.view_questionario"]
 
     def get_queryset(self):
