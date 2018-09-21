@@ -1,0 +1,47 @@
+{% extends "questionarios/base.html" %}
+
+{% block conteudo %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Escolher pergunta requisito para: {{object.pergunta.variavel}}</h2>
+        
+        {% if pergunta_questionario %}
+        <form method="post">
+            {% csrf_token %}
+            {% include "includes/form.html" with form=form %}
+            <a class="btn btn-primary" href="{% url "questionarios:list" %}">Voltar</a>
+            <button type="submit" class="btn btn-success">Salvar</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Questionarios -->
+{% if questionarios %}
+
+    {% for questionario in questionarios %}
+    <p><a href="{% url "questionarios:update_pergunta_requisito_questionario" object.pk questionario.pk %}">{{questionario}}</a></p>
+    {% empty %}
+    <p>Nenhum questionario</p>
+    {% endfor %}
+
+{% endif %}
+
+<!-- Perguntas -->
+{% if perguntas %}
+
+    {% for pergunta_questionario in perguntas %}
+    <p>
+        <h3>{{pergunta_questionario.pergunta.variavel}}</h3>
+        {{pergunta_questionario.pergunta.texto}}
+        <a class="btn btn-primary" href="{% url "questionarios:update_pergunta_requisito_pergunta" object.pk pergunta_questionario.pk %}">Selecionar</a>
+    </p>
+        
+    {% empty %}
+        Nenhum pergunta
+    {% endfor %}
+
+{% endif %}
+
+{% endblock %}

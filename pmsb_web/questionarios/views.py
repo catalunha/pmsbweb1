@@ -37,6 +37,7 @@ from .forms import (
     PerguntaNumeroForm,
     PerguntaTextoForm,
     PossivelEscolhaForm,
+    PerguntaRequisitoHiddenChangeForm,
 )
 
 """Questionario"""
@@ -189,6 +190,36 @@ class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
             return PerguntaImagemForm
         else:
             return None
+
+
+class PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView(UpdateView):
+    model = PerguntaDoQuestionario
+    form_class = PerguntaRequisitoHiddenChangeForm
+    template_name = "questionarios/update_pergunta_requisito.html"
+
+    def get_context_data(self, **kwargs):
+        
+        context = super().get_context_data(**kwargs)
+
+        questionario_pk = self.kwargs.get("questionario_pk", None)
+        pergunta_questionario_pk = self.kwargs.get("pergunta_questionario_pk", None)
+
+        if pergunta_questionario_pk is not None:
+            pergunta_questionario = get_object_or_404(PerguntaDoQuestionario, pk = pergunta_questionario_pk)
+            context["pergunta_questionario"] = pergunta_questionario
+
+        elif questionario_pk is not None:
+            questionario = get_object_or_404(Questionario, pk = questionario_pk)
+            perguntas = PerguntaDoQuestionario.objects.filter(questionario = questionario).order_by("ordem")
+            context["perguntas"] = perguntas
+
+        else:
+            questionarios = Questionario.objects.all().exclude(pk = self.object.questionario.pk)
+            context["questionarios"] = questionarios
+        
+        return context
+    
+
 
 class PerguntaDoQuestionarioDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = "questionarios/delete_pergunta_do_questionario.html"
