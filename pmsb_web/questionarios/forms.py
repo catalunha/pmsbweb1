@@ -64,3 +64,11 @@ class PossivelEscolhaForm(forms.ModelForm):
         widgets = {
           'texto': forms.Textarea(attrs={'rows':2, 'cols':15}),
         }
+
+class PerguntaRequisitoHiddenChangeForm(forms.ModelForm):
+    class Meta:
+        model = Pergunta
+        fields = ("pergunta_requisito", )
+        widgets = {
+            "pergunta_requisito": forms.HiddenInput(),
+        }
