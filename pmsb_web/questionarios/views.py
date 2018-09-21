@@ -49,6 +49,15 @@ class QuestionarioListView(PermissionRequiredMixin, ListView):
         queryset = super(QuestionarioListView, self).get_queryset()
         return queryset.filter(usuario = self.request.user)
 
+
+class QuestionarioEquipeListView(PermissionRequiredMixin, ListView):
+    model = Questionario
+    template_name = "questionarios/list_questionario_equipe.html"
+    permission_required = ["questionarios.view_questionario"]
+
+    def get_queryset(self):
+        return Questionario.objects.get_by_superior(self.request.user)
+
 class QuestionarioCreateView(PermissionRequiredMixin, CreateView):
     model = Questionario
     form_class = QuestionarioForm
