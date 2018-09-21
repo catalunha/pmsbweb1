@@ -74,7 +74,7 @@ class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         verbose_name_plural = "Perguntas"
 
     def __str__(self):
-        return "{}: {}".format(self.variavel, self.texto)
+        return "{}".format(self.variavel)
     
     def save(self, *args, **kwargs):
         if not self.tipo:
