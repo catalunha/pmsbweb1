@@ -88,6 +88,7 @@ class RespostaPerguntaStackedInline(admin.StackedInline):
 
 class RespostaQuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "questionario")
+    list_filter = ("questionario", )
     inlines = (RespostaPerguntaStackedInline, )
 
 admin.site.register(RespostaQuestionario, RespostaQuestionarioAdmin)
