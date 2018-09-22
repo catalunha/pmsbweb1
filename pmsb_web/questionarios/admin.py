@@ -121,6 +121,7 @@ class PossivelEscolhaRespostaStackedInline(admin.StackedInline):
 
 class RespostaPerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "resposta_questionario", "pergunta", "tipo")
+    list_filter = ("resposta_questionario", "pergunta", "tipo")
     inlines = []
     
     def get_inline_instances(self, request, obj=None):
