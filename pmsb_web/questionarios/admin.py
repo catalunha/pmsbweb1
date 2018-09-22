@@ -5,7 +5,11 @@ from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelE
 from .models import Localizacao, UnidadeMedida
 from .models import PerguntaArquivo, PerguntaCoordenada, PerguntaImagem, PerguntaEscolha, PerguntaTexto, PerguntaNumero
 
-admin.site.register(Localizacao)
+class LocalizacaoAdmin(admin.ModelAdmin):
+    list_display = ("id", "latitude", "longitude", "altitude")
+
+admin.site.register(Localizacao, LocalizacaoAdmin)
+
 admin.site.register(UnidadeMedida)
 
 #questionario
