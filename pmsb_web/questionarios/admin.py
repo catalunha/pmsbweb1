@@ -27,6 +27,8 @@ class PerguntaDoQuestionarioInlineAdmin(admin.StackedInline):
 
 class QuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "publicado", "criado_em", "editado_em")
+    list_filter = ("publicado", "usuario")
+    search_fields = ("nome", )
     inlines = (PerguntaDoQuestionarioInlineAdmin, RespostaStackedInlineAdmin)
 
 admin.site.register(Questionario, QuestionarioAdmin)
