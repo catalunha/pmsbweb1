@@ -276,6 +276,9 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
         verbose_name = "Resposta da Pergunta"
         verbose_name_plural = "Respostas das Perguntas"
     
+    def __str__(self):
+        return "{} - {}".format(self.resposta_questionario, self.pergunta)
+    
     @property
     def tipo(self):
         return self.pergunta.tipo
