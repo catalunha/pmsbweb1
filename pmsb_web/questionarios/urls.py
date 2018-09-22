@@ -9,6 +9,7 @@ urlpatterns = [
 
     # questionarios
     path("", views.QuestionarioListView.as_view(), name = "list"),
+    path("equipe", views.QuestionarioEquipeListView.as_view(), name = "questionario_list_equipe"),
     path("criar/", views.QuestionarioCreateView.as_view(), name = "create"),
     path("editar/<uuid:pk>/", views.QuestioanrioUpdateView.as_view(), name = "update"),
     path("ordenar/<uuid:pk>",views.QuestionarioOrdenarDetailView.as_view(), name = "ordenar"),
