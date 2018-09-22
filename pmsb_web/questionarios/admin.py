@@ -10,6 +10,10 @@ class LocalizacaoAdmin(admin.ModelAdmin):
 
 admin.site.register(Localizacao, LocalizacaoAdmin)
 
+
+class UnidadeMedidaAdmin(admin.ModelAdmin):
+    list_display = ("id", "nome", "sigla")
+
 admin.site.register(UnidadeMedida)
 
 #questionario
