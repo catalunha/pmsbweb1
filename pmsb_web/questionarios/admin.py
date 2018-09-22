@@ -149,12 +149,27 @@ admin.site.register(RespostaPergunta, RespostaPerguntaAdmin)
 
 class ArquivoRespostaAdmin(admin.ModelAdmin):
     list_display = ("id", "arquivo", "resposta_pergunta", "criado_em")
+    list_filter = ("resposta_pergunta", )
 
 admin.site.register(ArquivoResposta, ArquivoRespostaAdmin)
 
-admin.site.register(PossivelEscolhaResposta)
 
-admin.site.register(TextoResposta)
+class PossivelEscolhaRespostaAdmin(admin.ModelAdmin):
+    list_display = ("id", "possivel_escolha", "resposta_pergunta", "criado_em")
+    list_filter = ("resposta_pergunta", )
 
-admin.site.register(CoordenadaResposta)
+admin.site.register(PossivelEscolhaResposta, PossivelEscolhaRespostaAdmin)
+
+
+class TextoRespostaAdmin(admin.ModelAdmin):
+    list_display = ("id", "texto", "resposta_pergunta", "criado_em")
+    list_filter = ("resposta_pergunta", )
+
+admin.site.register(TextoResposta, TextoRespostaAdmin)
+
+class CoordenadaRespostaAdmin(admin.ModelAdmin):
+    list_display = ("id", "coordenada", "resposta_pergunta", "criado_em")
+    list_filter = ("resposta_pergunta", )
+
+admin.site.register(CoordenadaResposta, CoordenadaRespostaAdmin)
 
