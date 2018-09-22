@@ -1,11 +1,45 @@
 from django.contrib import admin
 
-from .models import Questionario, Pergunta, PerguntaDoQuestionario, RespostaQuestionario, PossivelEscolha
-from .models import RespostaPergunta, ArquivoResposta, ImagemResposta, PossivelEscolhaResposta, TextoResposta, CoordenadaResposta, NumeroResposta
-from .models import Localizacao, UnidadeMedida
-from .models import PerguntaArquivo, PerguntaCoordenada, PerguntaImagem, PerguntaEscolha, PerguntaTexto, PerguntaNumero
+from .models import (
+    Localizacao,
+    UnidadeMedida,
+)
 
-admin.site.register(Localizacao)
+#perguntas 
+from .models import (
+    Questionario,
+    Pergunta,
+    PerguntaEscolha,
+    PossivelEscolha,
+    PerguntaArquivo,
+    PerguntaCoordenada,
+    PerguntaImagem,
+    PerguntaTexto,
+    PerguntaNumero,
+    PerguntaDoQuestionario,
+)
+
+#respostas 
+from .models import (
+    RespostaQuestionario,
+    RespostaPergunta,
+    PossivelEscolhaResposta,
+    CoordenadaResposta,
+    TextoResposta,
+    NumeroResposta,
+    ArquivoResposta,
+    ImagemResposta,
+)
+
+class LocalizacaoAdmin(admin.ModelAdmin):
+    list_display = ("id", "latitude", "longitude", "altitude")
+
+admin.site.register(Localizacao, LocalizacaoAdmin)
+
+
+class UnidadeMedidaAdmin(admin.ModelAdmin):
+    list_display = ("id", "nome", "sigla")
+
 admin.site.register(UnidadeMedida)
 
 #questionario
@@ -19,6 +53,8 @@ class PerguntaDoQuestionarioInlineAdmin(admin.StackedInline):
 
 class QuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "publicado", "criado_em", "editado_em")
+    list_filter = ("publicado", "usuario")
+    search_fields = ("nome", )
     inlines = (PerguntaDoQuestionarioInlineAdmin, RespostaStackedInlineAdmin)
 
 admin.site.register(Questionario, QuestionarioAdmin)
@@ -33,6 +69,9 @@ class PossivelEscolhaStackedInline(admin.StackedInline):
 class PerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
     readonly_fields = ("tipo", )
+    list_filter = ("usuario", )
+    search_fields = ("variavel", "texto")
+    readonly_fields = ("criado_em", "editado_em")
 
 class PerguntaEscolhaAdmin(admin.ModelAdmin):
     fields = ("id", "variavel", "texto", "possivel_escolha_requisito", "tipo", "multipla","criado_em", "editado_em")
@@ -75,6 +114,7 @@ class RespostaPerguntaStackedInline(admin.StackedInline):
 
 class RespostaQuestionarioAdmin(admin.ModelAdmin):
     list_display = ("id", "questionario")
+    list_filter = ("questionario", )
     inlines = (RespostaPerguntaStackedInline, )
 
 admin.site.register(RespostaQuestionario, RespostaQuestionarioAdmin)
@@ -107,6 +147,7 @@ class PossivelEscolhaRespostaStackedInline(admin.StackedInline):
 
 class RespostaPerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "resposta_questionario", "pergunta", "tipo")
+    list_filter = ("resposta_questionario", "pergunta")
     inlines = []
     
     def get_inline_instances(self, request, obj=None):
@@ -132,14 +173,40 @@ class RespostaPerguntaAdmin(admin.ModelAdmin):
 
 admin.site.register(RespostaPergunta, RespostaPerguntaAdmin)
 
-class ArquivoRespostaAdmin(admin.ModelAdmin):
+class PossivelEscolhaRespostaAdmin(admin.ModelAdmin):
+    list_display = ("id", "possivel_escolha", "resposta_pergunta", "criado_em")
+    list_filter = ("resposta_pergunta", )
+
+admin.site.register(PossivelEscolhaResposta, PossivelEscolhaRespostaAdmin)
+
+
+class BaseRespostaAdmin(admin.ModelAdmin):
+    list_filter = ("resposta_pergunta__resposta_questionario__questionario", "resposta_pergunta")
+
+
+class CoordenadaRespostaAdmin(BaseRespostaAdmin):
+    list_display = ("id", "coordenada", "resposta_pergunta", "criado_em")
+    
+
+admin.site.register(CoordenadaResposta, CoordenadaRespostaAdmin)
+
+class TextoRespostaAdmin(BaseRespostaAdmin):
+    list_display = ("id", "texto", "resposta_pergunta", "criado_em")
+
+admin.site.register(TextoResposta, TextoRespostaAdmin)
+
+class NumeroRespostaAdmin(BaseRespostaAdmin):
+    list_display = ("id", "numero", "resposta_pergunta", "criado_em")
+
+admin.site.register(NumeroResposta, NumeroRespostaAdmin)
+
+
+class ArquivoRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "arquivo", "resposta_pergunta", "criado_em")
 
 admin.site.register(ArquivoResposta, ArquivoRespostaAdmin)
 
-admin.site.register(PossivelEscolhaResposta)
+class ImagemRespostaAdmin(BaseRespostaAdmin):
+    list_display = ("id", "imagem", "resposta_pergunta", "criado_em")
 
-admin.site.register(TextoResposta)
-
-admin.site.register(CoordenadaResposta)
-
+admin.site.register(ImagemResposta, ImagemRespostaAdmin)

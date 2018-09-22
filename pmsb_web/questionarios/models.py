@@ -1,9 +1,12 @@
 import uuid
 from django.db import models
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils import timezone
 from model_utils.managers import InheritanceManager
 from core.mixins import UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin
+
+User = get_user_model()
 
 class Localizacao(UUIDModelMixin):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
@@ -23,6 +26,29 @@ class Localizacao(UUIDModelMixin):
     Class Questionario
     documentação
 """
+
+class QuestionarioManager(models.Manager):
+
+    def get_by_superior(self, usuario_superior):
+        queryset = self.get_queryset()
+        todos_subordinados = list()
+        subordinados = list()
+
+        for usuario in User.objects.filter(superior = usuario_superior):
+            subordinados.append(usuario)
+
+        while len(subordinados) > 0:
+            a = subordinados[0]
+            todos_subordinados.append(a)
+            subordinados = subordinados[1:]
+            subsubordinados = User.objects.filter(superior = a)
+
+            for subsubordinado in subsubordinados:
+                if subsubordinado not in subordinados:
+                    subordinados.append(subsubordinado)
+        return queryset.filter(usuario__in  = todos_subordinados)
+
+
 class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
 
@@ -35,7 +61,7 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         related_name = "questionarios",
     )
 
-    objects = models.Manager()
+    objects = QuestionarioManager()
 
     class Meta:
         verbose_name = "Questionario"
@@ -74,7 +100,7 @@ class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         verbose_name_plural = "Perguntas"
 
     def __str__(self):
-        return "{}: {}".format(self.variavel, self.texto)
+        return "{}".format(self.variavel)
     
     def save(self, *args, **kwargs):
         if not self.tipo:
@@ -249,6 +275,9 @@ class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
         unique_together = ("resposta_questionario", "pergunta")
         verbose_name = "Resposta da Pergunta"
         verbose_name_plural = "Respostas das Perguntas"
+    
+    def __str__(self):
+        return "{} - {}".format(self.resposta_questionario, self.pergunta)
     
     @property
     def tipo(self):

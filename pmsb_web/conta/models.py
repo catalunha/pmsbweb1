@@ -1,16 +1,12 @@
 # encoding: utf-8
-import uuid
 from django.db import models
 from django.urls import reverse
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext as _
 from django.utils import timezone
-''' Model Mixins '''
 from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
-""" Final Model Mixins """
 
-""" Hierarquia Horizontal """
 class Departamento(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
