@@ -180,33 +180,33 @@ class PossivelEscolhaRespostaAdmin(admin.ModelAdmin):
 admin.site.register(PossivelEscolhaResposta, PossivelEscolhaRespostaAdmin)
 
 
-class CoordenadaRespostaAdmin(admin.ModelAdmin):
+class BaseRespostaAdmin(admin.ModelAdmin):
+    list_filter = ("resposta_pergunta__resposta_questionario__questionario", "resposta_pergunta")
+
+
+class CoordenadaRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "coordenada", "resposta_pergunta", "criado_em")
-    list_filter = ("resposta_pergunta", )
+    
 
 admin.site.register(CoordenadaResposta, CoordenadaRespostaAdmin)
 
-class TextoRespostaAdmin(admin.ModelAdmin):
+class TextoRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "texto", "resposta_pergunta", "criado_em")
-    list_filter = ("resposta_pergunta", )
 
 admin.site.register(TextoResposta, TextoRespostaAdmin)
 
-class NumeroRespostaAdmin(admin.ModelAdmin):
+class NumeroRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "numero", "resposta_pergunta", "criado_em")
-    list_filter = ("resposta_pergunta", )
 
 admin.site.register(NumeroResposta, NumeroRespostaAdmin)
 
 
-class ArquivoRespostaAdmin(admin.ModelAdmin):
+class ArquivoRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "arquivo", "resposta_pergunta", "criado_em")
-    list_filter = ("resposta_pergunta", )
 
 admin.site.register(ArquivoResposta, ArquivoRespostaAdmin)
 
-class ImagemRespostaAdmin(admin.ModelAdmin):
+class ImagemRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "imagem", "resposta_pergunta", "criado_em")
-    list_filter = ("resposta_pergunta", )
 
 admin.site.register(ImagemResposta, ImagemRespostaAdmin)
