@@ -51,16 +51,7 @@ class QuestionarioManager(models.Manager):
 
 class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
-
     publicado = models.BooleanField(default = False)
-
-    perguntas = models.ManyToManyField(
-        "Pergunta",
-        through = "PerguntaDoQuestionario",
-        through_fields = ("questionario","pergunta"),
-        related_name = "questionarios",
-    )
-
     objects = QuestionarioManager()
 
     class Meta:
@@ -71,8 +62,13 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         return "Questionario {}".format(self.nome)
 
     @property
-    def perguntas_ordenadas(self):
-        return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
+    def perguntas_do_questionario(self):
+        return PerguntaDoQuestionario.objects.filter(questionario = self)
+    
+    @property
+    def perguntas(self):
+        queryset = Pergunta.objects.filter(perguntadoquestionario__questionario = self).order_by("perguntadoquestionario__ordem")
+        return queryset
 
 class PerguntaManger(models.Manager):
     def by_questionario(self, questionario, exclude_obj = None):
