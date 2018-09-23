@@ -253,13 +253,18 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
             escolhas = escolhas.exclude( pergunta = exclude_pergunta )
         return escolhas
 
+class SetorCensitario(UUIDModelMixin, TimedModelMixin):
+    nome = models.CharField(max_length = 255)
+
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
+    setor_censitario = models.ForeignKey(SetorCensitario, on_delete = models.CASCADE, related_name="respostas")
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE, related_name="respostas")
     objects = models.Manager()
 
     class Meta:
         verbose_name = "Resposta Questionario"
         verbose_name_plural = "Respostas Questionarios"
+        unique_together = ("setor_sensitario", "questionario")
 
     def __str__(self):
         return "Resposta do {0}".format(self.questionario)
