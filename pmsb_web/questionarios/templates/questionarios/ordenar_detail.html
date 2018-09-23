@@ -13,7 +13,7 @@
     </p>
     
     <ul id="sortable" class="list-group">
-        {% for pergunta_do_questionario in object.perguntas_ordenadas %}
+        {% for pergunta_do_questionario in object.perguntas_do_questionario %}
         <li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
             <p>
                 <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span>

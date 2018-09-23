@@ -43,7 +43,7 @@ class LocalizacaoViewSet(viewsets.ModelViewSet):
     serializer_class = LocalizacaoSerializer
     queryset = Localizacao.objects.all()
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("id", "username", "email")
@@ -52,24 +52,22 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-class PossivelEscolhaSerializer(serializers.HyperlinkedModelSerializer):
+class PossivelEscolhaSerializer(serializers.ModelSerializer):
     class Meta:
         model = PossivelEscolha
-        fields = ("id", "url", "criado_em", "editado_em", "texto", "pergunta", "pre_requisito_de")
-        extra_kwargs  = {"pergunta":{"view_name":"pergunta-detail"}}
+        fields = ("id", "criado_em", "editado_em", "texto", "pergunta", "pre_requisito_de")
 
 class PossivelEscolhaViewSet(viewsets.ModelViewSet):
     queryset = PossivelEscolha.objects.all()
     serializer_class = PossivelEscolhaSerializer
 
-class PerguntaSerializerMixin(serializers.HyperlinkedModelSerializer):
+class PerguntaSerializerMixin(serializers.ModelSerializer):
     possivel_escolha_requisito = PossivelEscolhaSerializer()
-    #possivel_escolha_requisito = serializers.SerializerMethodField()
+
     class Meta:
         model = Pergunta
         fields = (
             "id",
-            "url",
             "criado_em",
             "editado_em",
             "variavel",
@@ -78,15 +76,6 @@ class PerguntaSerializerMixin(serializers.HyperlinkedModelSerializer):
             "pergunta_requisito",
             "possivel_escolha_requisito",
         )
-    
-    """
-    def get_possivel_escolha_requisito(self, instance):
-        print("sjaflskdjflajsdlfjla")
-        return {
-            "id": instance.possivel_escolha_requisito.id,
-            "pergunta": instance.possivel_escolha_requisito.pergunta,
-        }
-    """
 
 
 class PerguntaSerializer(PerguntaSerializerMixin):
@@ -120,7 +109,7 @@ class PerguntaEscolhaSerializer(PerguntaSerializerMixin):
     possiveis_escolhas = PossivelEscolhaSerializer(many=True, read_only = True)
     class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaEscolha
-        fields = "__all__"
+        fields = PerguntaSerializerMixin.Meta.fields + ("multipla", "possiveis_escolhas")
 
 class PerguntaEscolhaViewSet(viewsets.ModelViewSet):
     queryset = PerguntaEscolha.objects.all()
@@ -177,12 +166,16 @@ class PerguntaImagemViewSet(viewsets.ModelViewSet):
     queryset = PerguntaImagem.objects.all()
     serializer_class = PerguntaImagemSerializer
 
-class QuestionarioSerializer(serializers.HyperlinkedModelSerializer):
+class QuestionarioSerializer(serializers.ModelSerializer):
     usuario = UserSerializer
-    perguntas = PerguntaSerializer(many = True, read_only = True)
+    perguntas = serializers.SerializerMethodField()
     class Meta:
         model = Questionario
-        fields = ("id", "url", "usuario", "nome", "criado_em", "editado_em", "publicado", "perguntas")
+        fields = ("id", "usuario", "nome", "criado_em", "editado_em", "publicado", "perguntas")
+    
+    def get_perguntas(self, instance):
+        perguntas = instance.perguntas
+        return PerguntaSerializer(perguntas, many = True, read_only = True).data
 
 class QuestionarioViewSet(viewsets.ModelViewSet):
     queryset = Questionario.objects.all()
@@ -262,7 +255,7 @@ class RespostaPerguntaSerializer(serializers.ModelSerializer):
     imagem = ImagemRespostaSerializer(required = False)
     class Meta:
         model = RespostaPergunta
-        fields = ("id", "localizacao", "url", "resposta_questionario", "pergunta", "tipo", "coordenada", "escolhas", "texto", "numero", "arquivo", "imagem")
+        fields = ("id", "localizacao",  "resposta_questionario", "pergunta", "tipo", "coordenada", "escolhas", "texto", "numero", "arquivo", "imagem")
 
     
     def create(self, validated_data):
@@ -306,7 +299,7 @@ class RespostaQuestionarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RespostaQuestionario
-        fields = ("id", "url", "usuario", "questionario", "perguntas")
+        fields = ("id",  "usuario", "questionario", "perguntas")
     
     def create(self, validated_data):
         validated_data.pop("perguntas")
