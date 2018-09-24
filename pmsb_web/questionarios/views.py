@@ -146,7 +146,6 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     def get_form(self):
         form = super(PerguntaCreateView, self).get_form()
         questionario = get_object_or_404(Questionario, pk = self.kwargs.get("pk"))
-        form.fields["pergunta_requisito"].queryset = Pergunta.objects.by_questionario(questionario)
         form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(questionario)
         return form
 
@@ -174,7 +173,6 @@ class PerguntaUpdateView(PermissionRequiredMixin, UpdateView):
     
     def get_form(self):
         form = super(PerguntaUpdateView, self).get_form()
-        form.fields["pergunta_requisito"].queryset = Pergunta.objects.by_questionario(self.pergunta_do_questionario.questionario, self.object)
         form.fields["possivel_escolha_requisito"].queryset = PossivelEscolha.by_questionario(self.pergunta_do_questionario.questionario, exclude_pergunta=self.object)
         return form
     
@@ -206,6 +204,15 @@ class PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView(Upd
     form_class = PerguntaRequisitoHiddenChangeForm
     template_name = "questionarios/update_pergunta_requisito.html"
 
+    def get_success_url(self):
+        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pk")})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        if hasattr(self, 'object'):
+            kwargs.update({'instance': self.object.pergunta})
+        return kwargs
+
     def get_context_data(self, **kwargs):
         
         context = super().get_context_data(**kwargs)
@@ -219,11 +226,11 @@ class PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView(Upd
 
         elif questionario_pk is not None:
             questionario = get_object_or_404(Questionario, pk = questionario_pk)
-            perguntas = PerguntaDoQuestionario.objects.filter(questionario = questionario).order_by("ordem")
+            perguntas = PerguntaDoQuestionario.objects.filter(questionario = questionario).exclude(pergunta = self.object.pergunta).order_by("ordem")
             context["perguntas"] = perguntas
 
         else:
-            questionarios = Questionario.objects.all().exclude(pk = self.object.questionario.pk)
+            questionarios = Questionario.objects.all()
             context["questionarios"] = questionarios
         
         return context
