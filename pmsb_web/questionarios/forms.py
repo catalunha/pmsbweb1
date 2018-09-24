@@ -29,7 +29,7 @@ class QuestionarioDeleteForm(forms.Form):
 class BasePerguntaForm(forms.ModelForm):
     class Meta:
         model = Pergunta
-        fields = ("variavel", "texto", "pergunta_requisito", "possivel_escolha_requisito")
+        fields = ("variavel", "texto", "possivel_escolha_requisito")
 
 class PerguntaArquivoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
@@ -66,6 +66,7 @@ class PossivelEscolhaForm(forms.ModelForm):
         }
 
 class PerguntaRequisitoHiddenChangeForm(forms.ModelForm):
+
     class Meta:
         model = Pergunta
         fields = ("pergunta_requisito", )
