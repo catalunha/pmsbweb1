@@ -164,6 +164,13 @@ class PerguntaEscolha(Pergunta):
         verbose_name = "Pergunta Escolha"
         verbose_name_plural = "Perguntas Escolha"
 
+    @property
+    def multipla_verbose(self):
+        if self.multipla:
+            return "Multipla"
+        else:
+            return "Unica"
+
 class PerguntaTexto(Pergunta):
     TIPO = 1
 
