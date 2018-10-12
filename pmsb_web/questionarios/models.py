@@ -250,8 +250,12 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
         return escolhas
 
 class SetorCensitario(UUIDModelMixin, TimedModelMixin):
+    NOME_SETOR_DEFAULT = "setor_default"
+    
     nome = models.CharField(max_length = 255, unique = True)
     setor_superior = models.ForeignKey("SetorCensitario", null = True, blank = True, on_delete = models.SET_NULL, related_name="subsetores")
+
+    objects = models.Manager()
 
     def __str__(self):
         if self.setor_superior is not None:
@@ -259,8 +263,18 @@ class SetorCensitario(UUIDModelMixin, TimedModelMixin):
         else:
             return "{}".format(self.nome)
 
+def default_setor_censitario():
+
+    try:
+        setor = SetorCensitario.objects.get(nome = SetorCensitario.NOME_SETOR_DEFAULT)
+    except SetorCensitario.DoesNotExist:
+        setor = SetorCensitario(nome = SetorCensitario.NOME_SETOR_DEFAULT, setor_superior = None)
+        setor.save()
+    
+    return setor
+
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
-    setor_censitario = models.ForeignKey(SetorCensitario, on_delete = models.CASCADE, related_name="respostas")
+    setor_censitario = models.ForeignKey(SetorCensitario, on_delete = models.CASCADE, related_name="respostas", default = default_setor_censitario)
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE, related_name="respostas")
     objects = models.Manager()
 
