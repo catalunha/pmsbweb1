@@ -15,15 +15,22 @@
     <ul id="sortable" class="list-group">
         {% for pergunta_do_questionario in object.perguntas_do_questionario %}
         <li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
-            <p>
+            <h3>
                 <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span>
                 -
-                {{pergunta_do_questionario.pergunta.variavel}}:<br>
+                {{pergunta_do_questionario.pergunta.variavel}}
+            </h3>
+            <h3>
+                {{pergunta_do_questionario.pergunta.verbose_name_tipo}}
+                {% if pergunta_do_questionario.pergunta.tipo == 0 %}
+                - {{pergunta_do_questionario.pergunta.perguntaescolha.multipla_verbose}}
+                {% endif %}
+            </h3>
+            <p>
                 {{pergunta_do_questionario.pergunta.texto}}
-                
             </p>
             {% if pergunta_do_questionario.pergunta.tipo == 0 %}
-            <p>Escolhas:</p>
+            <h3>Escolhas:</h3>
             <ul>
             {% for escolha in pergunta_do_questionario.pergunta.perguntaescolha.possiveis_escolhas.all %}
             <li>
