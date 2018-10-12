@@ -1,0 +1,32 @@
+
+{% for pergunta_do_questionario in perguntas_do_questionario %}
+
+<li class="list-group-item">
+    <h3>{{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}</h3>
+    <h3>
+        {{pergunta_do_questionario.pergunta.tipo_verbose}}
+        {% if pergunta_do_questionario.pergunta.tipo == 0 %}-{{pergunta_do_questionario.pergunta.multipla_verbose}}{% endif %}
+    </h3>
+    <p>
+        {{pergunta_do_questionario.pergunta.texto}}
+    </p>
+    <p>
+    {% if pergunta_do_questionario.pergunta.tipo == 0 %}
+    <ul class="list-group">
+    {% for a in pergunta_do_questionario.pergunta.possiveis_escolhas.all %}
+        <li class="list-group-item">{{a.texto}}</li>
+    {% empty %}
+        <li class="list-group-item">Não existem escolhas</li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    </p>
+</li>
+
+{% empty %}
+
+<li class="list-group-item">
+    Sem perguntas
+</li>
+
+{% endfor %}
