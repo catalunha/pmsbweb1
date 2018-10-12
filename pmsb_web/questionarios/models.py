@@ -250,7 +250,14 @@ class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
         return escolhas
 
 class SetorCensitario(UUIDModelMixin, TimedModelMixin):
-    nome = models.CharField(max_length = 255)
+    nome = models.CharField(max_length = 255, unique = True)
+    setor_superior = models.ForeignKey("SetorCensitario", null = True, blank = True, on_delete = models.SET_NULL, related_name="subsetores")
+
+    def __str__(self):
+        if self.setor_superior is not None:
+            return "{} -> {}".format(self.setor_superior, self.nome)
+        else:
+            return "{}".format(self.nome)
 
 class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     setor_censitario = models.ForeignKey(SetorCensitario, on_delete = models.CASCADE, related_name="respostas")
@@ -260,7 +267,7 @@ class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin)
     class Meta:
         verbose_name = "Resposta Questionario"
         verbose_name_plural = "Respostas Questionarios"
-        unique_together = ("setor_sensitario", "questionario")
+        unique_together = ("setor_censitario", "questionario")
 
     def __str__(self):
         return "Resposta do {0}".format(self.questionario)
