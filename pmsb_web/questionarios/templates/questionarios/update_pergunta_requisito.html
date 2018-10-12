@@ -10,7 +10,7 @@
         </p>
     
         <h2>Escolher pergunta requisito para: {{object.pergunta.variavel}}</h2>
-        
+        <h2>Pergunta escolhida: {{pergunta_questionario.pergunta}}</h2>
         {% if pergunta_questionario %}
         <form method="post">
             {% csrf_token %}
@@ -40,7 +40,7 @@
 
 <!-- Perguntas -->
 {% if perguntas %}
-    <h4>Lista de Perguntas:</h4>
+    <h4>Lista de Perguntas do Questionario: {{questionario}}</h4>
     <ul class="list-group">
 
     {% for pergunta_questionario in perguntas %}
