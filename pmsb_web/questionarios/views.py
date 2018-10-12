@@ -210,6 +210,7 @@ class PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView(Upd
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         if hasattr(self, 'object'):
+            self.object.pergunta.pergunta_requisito = None
             kwargs.update({'instance': self.object.pergunta})
         return kwargs
 
@@ -227,6 +228,7 @@ class PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView(Upd
         elif questionario_pk is not None:
             questionario = get_object_or_404(Questionario, pk = questionario_pk)
             perguntas = PerguntaDoQuestionario.objects.filter(questionario = questionario).exclude(pergunta = self.object.pergunta).order_by("ordem")
+            context["questionario"] = questionario
             context["perguntas"] = perguntas
 
         else:
