@@ -22,6 +22,7 @@ urlpatterns = [
     path("editar/pergunta/<uuid:pk>/", views.PerguntaUpdateView.as_view(), name = "update_pergunta"),
     path("delete/pergunta/<uuid:pk>/", views.PerguntaDoQuestionarioDeleteView.as_view(), name = "delete_pergunta_do_questionario"),
     path("perguntas/", views.PerguntaListView.as_view(), name = "pergunta_list"),
+    path("pergunta/<uuid:pk>/", views.PerguntaDetailView.as_view(), name = "pergunta_detail"),
 
     #possivel escolha
     path("editar/pergunta/<uuid:pk>/criar_escolha", views.PossivelEscolhaCreateView.as_view(), name = "create_possivelescolha"),
