@@ -1,32 +1,54 @@
 
 {% for pergunta_do_questionario in perguntas_do_questionario %}
 
-<li class="list-group-item">
-    <h3>{{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}</h3>
+<li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
     <h3>
-        {{pergunta_do_questionario.pergunta.tipo_verbose}}
-        {% if pergunta_do_questionario.pergunta.tipo == 0 %}-{{pergunta_do_questionario.pergunta.multipla_verbose}}{% endif %}
+        <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span> - {{pergunta_do_questionario.pergunta.variavel}}
     </h3>
+    <h3>
+        {{pergunta_do_questionario.pergunta.verbose_name_tipo}}
+        {% if pergunta_do_questionario.pergunta.tipo == 0 %}
+        - {{pergunta_do_questionario.pergunta.perguntaescolha.multipla_verbose}}
+        {% endif %}
+    </h3>
+    
     <p>
         {{pergunta_do_questionario.pergunta.texto}}
     </p>
     <p>
     {% if pergunta_do_questionario.pergunta.tipo == 0 %}
+    <h3>Escolhas:</h3>
     <ul class="list-group">
-    {% for a in pergunta_do_questionario.pergunta.possiveis_escolhas.all %}
-        <li class="list-group-item">{{a.texto}}</li>
+    {% for escolha in pergunta_do_questionario.pergunta.perguntaescolha.possiveis_escolhas.all %}
+        <li class="list-group-item"><p>{{escolha.texto}}</p></li>
     {% empty %}
         <li class="list-group-item">Não existem escolhas</li>
     {% endfor %}
     </ul>
     {% endif %}
     </p>
+
+    <h5>
+        Pergunta Requisito:
+        {% with pergunta=pergunta_do_questionario.pergunta.pergunta_requisito %}
+        {% if pergunta %}
+        <a href="{% url "questionarios:pergunta_detail" pergunta.pk %}" target="_blank">{{pergunta}}</a>
+        {% else %}
+            Sem Pergunta Requisito
+        {% endif %}
+        {% endwith %}
+    </h5>
+    <h5>Escolha Requisito:
+        {% with escolha=pergunta_do_questionario.pergunta.possivel_escolha_requisito%}
+        {% if escolha %}
+        <a href="{% url "questionarios:pergunta_detail" escolha.pergunta.pk %}" target="_blank">{{escolha}}</a>
+        {% else %}
+            Sem Escolha Requisito
+        {% endif %}
+        {% endwith %}
+    </h5>
 </li>
 
 {% empty %}
-
-<li class="list-group-item">
-    Sem perguntas
-</li>
-
+<li class="list-group-item">Nenhuma pergunta</li>
 {% endfor %}
