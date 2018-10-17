@@ -72,7 +72,7 @@ class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
 class PerguntaManger(models.Manager):
     def by_questionario(self, questionario, exclude_obj = None):
-        queryset = self.get_queryset().filter(questionarios = questionario)
+        queryset = self.get_queryset().filter(perguntadoquestionario__questionario = questionario)
         if exclude_obj is not None:
             queryset = queryset.exclude(pk = exclude_obj.pk)
         return queryset
@@ -104,7 +104,7 @@ class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         super(Pergunta, self).save(*args, **kwargs)
     
         #atualiza editado_em nos questionarios com esta pergunta
-        for questionario in self.questionarios.all():
+        for questionario in self.perguntadoquestionario_set.all():
             questionario.save()
 
     @property
