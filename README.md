@@ -4,11 +4,16 @@ Descrição do projeto ...
 
 ## Como Instalar
 
-Somente python3 e Djando2
+Primeiro certifique-se de ter instalado Python3 e GIT na sua maquina.
 
 ### Instale as dependencias do projeto usando pip
 
+Sempre instale dependencias atravez do arquivo de dependencias.
+
 `pip install -r requirements_server.txt`
+
+
+Apos instalar entre na pasta `pmsb_web`.
 
 `cd pmsb_web`
 
