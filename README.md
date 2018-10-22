@@ -40,4 +40,8 @@ Modifique a linha do banco de dados baseado na documentação da biblioteca [dj-
 
 ## APPS
 
-questionarios
+* conta
+* core
+* pinax
+* questionarios
+* relatorios
