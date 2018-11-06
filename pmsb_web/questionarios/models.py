@@ -260,7 +260,7 @@ class PerguntaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         unique_together = ("pergunta", "pergunta_requisito")
     
     def __str__(self):
-        return "{} {}".format(self.pergunta, self.pergunta_requisito)
+        return "{}".format(self.pergunta_requisito)
 
 class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
@@ -271,7 +271,7 @@ class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         unique_together = ("pergunta", "questionario", "escolha_requisito")
     
     def __str__(self):
-        return "{} {} {}".format(self.pergunta, self.questionario, self.escolha_requisito)
+        return "{} - {}".format(self.questionario, self.escolha_requisito)
 
 class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255, unique = True)
