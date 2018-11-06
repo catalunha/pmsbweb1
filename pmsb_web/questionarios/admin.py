@@ -221,3 +221,12 @@ class ImagemRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "imagem", "resposta_pergunta", "criado_em")
 
 admin.site.register(ImagemResposta, ImagemRespostaAdmin)
+
+
+class PerguntaRequisitoAdmin(admin.ModelAdmin):
+    list_display = ("id", "pergunta", "pergunta_requisito", "fake_deletado")
+admin.site.register(PerguntaRequisito, PerguntaRequisitoAdmin)
+
+class EscolhaRequisitoAdmin(admin.ModelAdmin):
+    list_display = ("id", "pergunta", "questionario", "escolha_requisito", "fake_deletado")
+admin.site.register(EscolhaRequisito, EscolhaRequisitoAdmin)
