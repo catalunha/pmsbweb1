@@ -1,0 +1,109 @@
+{% extends "questionarios/base.html" %}
+
+{% block conteudo %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h3>
+            {{object.verbose_name_tipo}}
+        </h3>
+        
+        <form method="post">
+            {% csrf_token %}
+            {% include "includes/form.html" with form=form %}
+            
+            <a class="btn btn-primary" href="{% url "questionarios:list" %}">Voltar</a>
+            
+            <button type="submit" class="btn btn-success">Salvar</button>
+        </form>
+    </div>
+</div>
+
+{% endblock conteudo %}
+
+{% block js %}
+<script>
+$(document).ready(function(){
+    
+    $("#id_pergunta_requisito").html('<option value="" selected>---------</option>');
+    $("#id_escolha_requisito").html('<option value="" selected>---------</option>');
+
+
+    var conteudo_html = '<option value="" selected>---------</option>';
+    var questionario_id;
+    questionario_id = $("#id_questionario").val();
+    
+    $.ajax({
+        url: '{% url "questionarios:ajax_get_perguntas_do_questionario" %}',
+        data: {
+            "questionario_pk": questionario_id
+        },
+        dataType: 'json',
+        success: function (data) {
+            console.log(data);
+
+            for ( d in data)
+            {
+                conteudo_html += '<option value="'+d+'" selected>'+data[d]["pergunta"]+'</option>';
+            }
+            $("#id_pergunta_requisito").html(conteudo_html);
+        }
+    });
+    
+    $("#id_questionario").change(function (){
+        
+        $("#id_escolha_requisito").html('<option value="" selected>---------</option>');
+        var conteudo_html = '<option value="" selected>---------</option>';
+        var questionario_id;
+        questionario_id = $("#id_questionario").val();
+        
+        $.ajax({
+            url: '{% url "questionarios:ajax_get_perguntas_do_questionario" %}',
+            data: {
+                "questionario_pk": questionario_id
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+
+                for ( d in data)
+                {
+                    conteudo_html += '<option value="'+d+'">'+data[d]["pergunta"]+'</option>';
+                }
+                $("#id_pergunta_requisito").html(conteudo_html);
+            }
+        });
+    });
+
+
+    $("#id_pergunta_requisito").change(function (){
+        
+        var conteudo_html = '<option value="" selected>---------</option>';
+        var questionario_id;
+        pergunta_do_questionario_id = $("#id_pergunta_requisito").val();
+        console.log(pergunta_do_questionario_id);
+        $.ajax({
+            url: '{% url "questionarios:ajax_get_escolhas_da_pergunta_do_questionario" %}',
+            data: {
+                "pergunta_do_questionario_pk": pergunta_do_questionario_id
+            },
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+
+                for ( d in data["escolhas"])
+                {
+                    conteudo_html += '<option value="'+data["escolhas"][d]["id"]+'">'+data["escolhas"][d]["texto"]+'</option>';
+                }
+                $("#id_escolha_requisito").html(conteudo_html);
+            }
+        });
+    });
+
+
+
+} );
+</script>
+
+
+{% endblock js %}

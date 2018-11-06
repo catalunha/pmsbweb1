@@ -1,0 +1,13 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block conteudo %}
+<p><h5>Remover Pergunta Requisito: {{object}} de <b>{{object.pergunta}}</b></h5></p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Apagar</button>
+    <a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</a>
+</form>
+
+{% endblock %}
