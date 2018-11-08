@@ -197,11 +197,22 @@ class PerguntaUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, U
 
 
 """Requisitos"""
-class PerguntaRequisitoCreateView(PermissionRequiredMixin, CreateView):
+
+class PerguntaDoQuestionarioPKOnContextMixin(object):
+    pergunta_do_questionario_pk = None
+
+    def get_context_data(self, **kwargs):
+        assert self.pergunta_do_questionario_pk is not None, "pergunta_do_questionario_pk deve ser definida!" 
+        context = super().get_context_data(**kwargs)
+        context["pergunta_do_questionario_pk"] = self.kwargs.get(self.pergunta_do_questionario_pk)
+        return context
+
+class PerguntaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, CreateView):
     template_name = "questionarios/perguntarequisito_create.html"
     model = PerguntaRequisito
     form_class = CreatePerguntaRequisitoForm
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    pergunta_do_questionario_pk = "pk"
 
     def get_success_url(self):
         return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pk")})
@@ -242,19 +253,21 @@ def ajax_get_escolhas_da_pergunta_do_questionario(request):
     return JsonResponse(dict(escolhas=list(escolhas_da_pergunta_do_questionario)))
 
 
-class PerguntaRequisitoDeleteView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
+class PerguntaRequisitoDeleteView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
     model = PerguntaRequisito
     template_name = "questionarios/perguntarequisito_delete.html"
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    pergunta_do_questionario_pk = "pergunta_do_questionario_pk"
 
     def get_success_url(self):
         return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_do_questionario_pk")})
 
-class EscolhaRequisitoCreateView(PermissionRequiredMixin, CreateView):
+class EscolhaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, CreateView):
     template_name = "questionarios/escolharequisito_create.html"
     model = EscolhaRequisito
     form_class = CreateEscolhaRequisitoForm
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    pergunta_do_questionario_pk = "pk"
 
     def get_success_url(self):
         return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pk")})
@@ -268,10 +281,11 @@ class EscolhaRequisitoCreateView(PermissionRequiredMixin, CreateView):
 
 
 
-class EscolhaRequisitoDeleteView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
+class EscolhaRequisitoDeleteView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
     model = EscolhaRequisito
     template_name = "questionarios/escolharequisito_delete.html"
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
+    pergunta_do_questionario_pk = "pergunta_do_questionario_pk"
 
     def get_success_url(self):
         return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_do_questionario_pk")})
