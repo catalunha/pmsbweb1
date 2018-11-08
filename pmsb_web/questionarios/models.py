@@ -4,7 +4,14 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils import timezone
 from model_utils.managers import InheritanceManager
-from core.mixins import UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin
+
+from core.mixins import (
+    UUIDModelMixin,
+    FakeDeleteModelMixin,
+    UserOwnedModelMixin,
+    TimedModelMixin,
+    FakeDeleteManager,
+)
 
 User = get_user_model()
 
@@ -46,7 +53,7 @@ class QuestionarioManager(models.Manager):
             for subsubordinado in subsubordinados:
                 if subsubordinado not in subordinados:
                     subordinados.append(subsubordinado)
-        return queryset.filter(usuario__in  = todos_subordinados)
+        return queryset.filter(usuario__in  = todos_subordinados, fake_deletado = False)
 
 
 class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
@@ -63,16 +70,16 @@ class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, Ti
 
     @property
     def perguntas_do_questionario(self):
-        return PerguntaDoQuestionario.objects.filter(questionario = self)
+        return PerguntaDoQuestionario.objects.filter(questionario = self, fake_deletado = False)
     
     @property
     def perguntas(self):
-        queryset = Pergunta.objects.filter(perguntadoquestionario__questionario = self).order_by("perguntadoquestionario__ordem")
+        queryset = Pergunta.objects.filter(perguntadoquestionario__questionario = self, fake_deletado = False).order_by("perguntadoquestionario__ordem")
         return queryset
 
 class PerguntaManger(models.Manager):
     def by_questionario(self, questionario, exclude_obj = None):
-        queryset = self.get_queryset().filter(perguntadoquestionario__questionario = questionario)
+        queryset = self.get_queryset().filter(perguntadoquestionario__questionario = questionario, fake_deletado = False)
         if exclude_obj is not None:
             queryset = queryset.exclude(pk = exclude_obj.pk)
         return queryset
@@ -137,7 +144,19 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
             return self.perguntaimagem
         elif self.tipo == PerguntaNumero.TIPO:
             return self.perguntanumero
-            
+    
+    @property
+    def possiveis_escolhas_fake_delete(self):
+        return self.possiveis_escolhas.filter(fake_deletado = False)
+    
+    @property
+    def escolharequisito_fake_delete(self):
+        return self.escolharequisito_set.filter(fake_deletado = False)
+
+    @property
+    def perguntarequisito_fake_delete(self):
+        return self.perguntarequisito_set.filter(fake_deletado = False)
+
 
 class UnidadeMedida(UUIDModelMixin, FakeDeleteModelMixin):
     """
@@ -256,6 +275,8 @@ class PerguntaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     pergunta_requisito = models.ForeignKey(PerguntaDoQuestionario, on_delete = models.CASCADE)
 
+    objects = models.Manager()
+
     class Meta:
         unique_together = ("pergunta", "pergunta_requisito")
     
@@ -266,6 +287,9 @@ class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     escolha_requisito = models.ForeignKey(PossivelEscolha, on_delete = models.CASCADE)
+
+    objects = models.Manager()
+
 
     class Meta:
         unique_together = ("pergunta", "questionario", "escolha_requisito")

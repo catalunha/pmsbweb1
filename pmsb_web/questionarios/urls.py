@@ -20,9 +20,6 @@ urlpatterns = [
     path("criar/pergunta/tipo/<uuid:pk>/", views.PerguntaEscolherTipoTemplateView.as_view(), name = "create_pergunta_tipo"),
     path("criar/pergunta/<uuid:pk>/tipo/<int:tipo>/", views.PerguntaCreateView.as_view(), name = "create_pergunta"),
     path("editar/pergunta/<uuid:pk>/", views.PerguntaUpdateView.as_view(), name = "update_pergunta"),
-    path("editar/pergunta/<uuid:pk>/pergunta_requisito/", views.PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView.as_view(), name = "update_pergunta_requisito"),
-    path("editar/pergunta/<uuid:pk>/pergunta_requisito/<uuid:questionario_pk>/questionario/", views.PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView.as_view(), name = "update_pergunta_requisito_questionario"),
-    path("editar/pergunta/<uuid:pk>/pergunta_requisito/<uuid:pergunta_questionario_pk>/pergunta/", views.PerguntaDoQuestionarioPerguntaRequisitoDeOutrosQuestionariosUpdateView.as_view(), name = "update_pergunta_requisito_pergunta"),
     
     path("delete/pergunta/<uuid:pk>/", views.PerguntaDoQuestionarioDeleteView.as_view(), name = "delete_pergunta_do_questionario"),
     path("perguntas/", views.PerguntaListView.as_view(), name = "pergunta_list"),
