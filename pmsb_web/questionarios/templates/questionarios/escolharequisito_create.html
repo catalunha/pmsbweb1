@@ -25,6 +25,7 @@
 <script>
 $(document).ready(function(){
     
+    //inicio tem que zerar todos menos questionarios
     $("#id_pergunta_requisito").html('<option value="" selected>---------</option>');
     $("#id_escolha_requisito").html('<option value="" selected>---------</option>');
 
@@ -54,6 +55,7 @@ $(document).ready(function(){
         
         $("#id_escolha_requisito").html('<option value="" selected>---------</option>');
         var conteudo_html = '<option value="" selected>---------</option>';
+        $("#id_pergunta_requisito").html(conteudo_html);
         var questionario_id;
         questionario_id = $("#id_questionario").val();
         
@@ -81,7 +83,7 @@ $(document).ready(function(){
         var conteudo_html = '<option value="" selected>---------</option>';
         var questionario_id;
         pergunta_do_questionario_id = $("#id_pergunta_requisito").val();
-        console.log(pergunta_do_questionario_id);
+        
         $.ajax({
             url: '{% url "questionarios:ajax_get_escolhas_da_pergunta_do_questionario" %}',
             data: {
