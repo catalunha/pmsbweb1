@@ -62,7 +62,8 @@ $(document).ready(function(){
         $.ajax({
             url: '{% url "questionarios:ajax_get_perguntas_do_questionario" %}',
             data: {
-                "questionario_pk": questionario_id
+                "questionario_pk": questionario_id,
+                "perguntas_escolha":"True"
             },
             dataType: 'json',
             success: function (data) {

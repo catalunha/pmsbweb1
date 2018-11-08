@@ -229,8 +229,15 @@ class PerguntaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionari
 
 def ajax_get_perguntas_do_questionario(request):
     questionario_pk = request.GET.get("questionario_pk", None)
+    perguntas_escolha = request.GET.get("perguntas_escolha", None)
     questionario_obj = get_object_or_404(Questionario, pk = questionario_pk, fake_deletado = False)
-    perguntas_do_questionario = questionario_obj.perguntas_do_questionario.values("id", "pergunta__variavel", "questionario__nome")
+    
+    queryset = questionario_obj.perguntas_do_questionario
+
+    if perguntas_escolha == "True":
+        queryset = queryset.filter(pergunta__tipo = PerguntaEscolha.TIPO)
+    
+    perguntas_do_questionario = queryset.values("id", "pergunta__variavel", "questionario__nome")
 
     rdict = dict()
 
