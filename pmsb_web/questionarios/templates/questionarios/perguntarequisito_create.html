@@ -54,6 +54,7 @@ $(document).ready(function(){
         var conteudo_html = '<option value="" selected>---------</option>';
         var questionario_id;
         questionario_id = $("#id_questionario").val();
+        $("#id_pergunta_requisito").html(conteudo_html);
         
         $.ajax({
             url: '{% url "questionarios:ajax_get_perguntas_do_questionario" %}',
