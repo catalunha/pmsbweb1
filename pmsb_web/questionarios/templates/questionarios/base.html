@@ -1,9 +1,14 @@
 {% extends "dashboard/index.html" %}
 {% block main %}
 <style>
-    #questionarios .row {
+    #conteudo_questionarios .row{
         margin-top: 20px;
         margin-bottom: 20px;
+    }
+
+    #conteudo_questionarios
+    {
+        margin-bottom: 70px;
     }
 </style>
 
@@ -27,7 +32,7 @@
         <h2 style="text-align: center;">{% block card_titulo %} Questionarios {% endblock %}</h2>
     </div>
 
-    <div class="row" style="margin-bottom: 70px;">
+    <div id="conteudo_questionarios" class="row">
         <div class="col-lg-10 offset-lg-1">
             {% block conteudo%}
             super

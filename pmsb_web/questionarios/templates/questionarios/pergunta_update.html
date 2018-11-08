@@ -23,11 +23,13 @@
     <div class="col-lg-12">
         <h4>Perguntas Requisito</h4>
 
+        <p>*<b>Questionario</b> <b style="color:blue">Pergunta</b></p>
+
         <ul class="list-group">
         {% for requisito in object.perguntarequisito_fake_delete %}
         
-        
-        <li class="list-group-item">{{requisito}}
+        <li class="list-group-item">
+            <b>{{requisito.pergunta_requisito.questionario}}</b> <b style="color:blue">{{requisito.pergunta_requisito.pergunta}}</b> <b style="color:red">{{requisito.escolha_requisito.texto}}</b>
             <a href="{% url "questionarios:perguntarequisito_delete" pergunta_do_questionario_pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
         </li>
         {% empty %}
@@ -36,30 +38,41 @@
         
         {% endfor %}
         </ul>
+        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
         <a class="btn btn-primary" href="{% url "questionarios:perguntarequisito_create" pergunta_do_questionario_pk %}">Adicionar Pergunta Requisito</a>
     </div>
 </div>
 
 <div class="row">
-        <div class="col-lg-12">
-            <h4>Escolhas Requisito</h4>
-    
-            <ul class="list-group">
-            {% for requisito in object.escolharequisito_fake_delete %}
-            
-            
-            <li class="list-group-item">{{requisito}}
-                <a href="{% url "questionarios:escolharequisito_delete" pergunta_do_questionario_pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
-            </li>
-            {% empty %}
-            
-            <li class="list-group-item">Sem Pergunta Requisito</li>
-            
-            {% endfor %}
-            </ul>
-            <a class="btn btn-primary" href="{% url "questionarios:escolharequisito_create" pergunta_do_questionario_pk %}">Adicionar Escolha Requisito</a>
-        </div>
+    <div class="col-lg-12">
+        <h4>Escolhas Requisito</h4>
+        <p>*<b>Questionario</b> <b style="color:blue">Pergunta</b> <b style="color:red">Escolha</b></p>
+        <ul class="list-group">
+        {% for requisito in object.escolharequisito_fake_delete %}
+        
+        <li class="list-group-item">
+            <b>{{requisito.questionario}}</b> <b style="color:blue">{{requisito.escolha_requisito.pergunta}}</b> <b style="color:red">{{requisito.escolha_requisito.texto}}</b>
+            <a href="{% url "questionarios:escolharequisito_delete" pergunta_do_questionario_pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
+        </li>
+        {% empty %}
+        
+        <li class="list-group-item">Sem Pergunta Requisito</li>
+        
+        {% endfor %}
+        </ul>
     </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <a class="btn btn-primary" href="{% url "questionarios:escolharequisito_create" pergunta_do_questionario_pk %}">Adicionar Escolha Requisito</a>
+    </div>
+</div>
 
 {% if object.tipo == 0 %}
 

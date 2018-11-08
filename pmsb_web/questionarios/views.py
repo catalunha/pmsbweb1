@@ -125,7 +125,7 @@ class PerguntaEscolherTipoTemplateView(PermissionRequiredMixin, FakeDeleteQuerys
     permission_required = ["questionarios.change_questionario"]
 
 class PerguntaCreateView(PermissionRequiredMixin, CreateView):
-    template_name = "questionarios/create_pergunta.html"
+    template_name = "questionarios/pergunta_create.html"
     model = Pergunta
     form_class = BasePerguntaForm
     permission_required = ["questionarios.change_questionario", "questionarios.add_pergunta"]
@@ -162,7 +162,7 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
         return HttpResponseRedirect(self.get_success_url())
 
 class PerguntaUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, UpdateView):
-    template_name = "questionarios/update_pergunta.html"
+    template_name = "questionarios/pergunta_update.html"
     model = Pergunta
     form_class = BasePerguntaForm
     success_url = reverse_lazy("questionarios:list")
@@ -219,7 +219,7 @@ class PerguntaRequisitoCreateView(PermissionRequiredMixin, CreateView):
 def ajax_get_perguntas_do_questionario(request):
     questionario_pk = request.GET.get("questionario_pk", None)
     questionario_obj = get_object_or_404(Questionario, pk = questionario_pk, fake_deletado = False)
-    perguntas_do_questionario = questionario_obj.perguntas_do_questionario().values("id", "pergunta__variavel", "questionario__nome")
+    perguntas_do_questionario = questionario_obj.perguntas_do_questionario.values("id", "pergunta__variavel", "questionario__nome")
 
     rdict = dict()
 
