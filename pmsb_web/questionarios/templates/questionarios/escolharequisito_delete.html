@@ -2,7 +2,9 @@
 
 
 {% block conteudo %}
-<p><h5>Remover Pergunta Requisito: {{object}} de <b>{{object.pergunta}}</b></h5></p>
+
+<p>Pergunta: <b>{{object.pergunta}}</b></p>
+<p>Escolha Requisito: <b>{{object.escolha_requisito}}</b> do <b>{{object.questionario}}</b></p>
 
 <form method="post">
     {% csrf_token %}
