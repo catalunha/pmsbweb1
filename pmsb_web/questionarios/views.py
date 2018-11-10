@@ -266,3 +266,8 @@ class PerguntaListView(PermissionRequiredMixin, ListView):
 
     def get_queryset(self):
         return super(PerguntaListView, self).get_queryset().filter(usuario = self.request.user)
+
+class PerguntaDetailView(PermissionRequiredMixin, DetailView):
+    model = Pergunta
+    template_name = "questionarios/pergunta_detail.html"
+    permission_required = ["questionarios.view_pergunta", ]

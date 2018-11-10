@@ -1,0 +1,55 @@
+{% extends "questionarios/base.html" %}
+
+{% block conteudo %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h3>
+            {{object.variavel}}
+        </h3>
+        <h3>
+            {{object.verbose_name_tipo}}
+            {% if object.tipo == 0 %}
+            - {{object.perguntaescolha.multipla_verbose}}
+            {% endif %}
+        </h3>
+        
+        <p>
+            {{object.texto}}
+        </p>
+        <p>
+        {% if object.tipo == 0 %}
+        <h3>Escolhas:</h3>
+        <ul class="list-group">
+        {% for escolha in object.perguntaescolha.possiveis_escolhas.all %}
+            <li class="list-group-item"><p>{{escolha.texto}}</p></li>
+        {% empty %}
+            <li class="list-group-item">Não existem escolhas</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        </p>
+    
+        <h5>
+            Pergunta Requisito:
+            {% with pergunta=object.pergunta_requisito %}
+            {% if pergunta %}
+            <a href="{% url "questionarios:pergunta_detail" pergunta.pk %}" target="_blank">{{pergunta}}</a>
+            {% else %}
+                Sem Pergunta Requisito
+            {% endif %}
+            {% endwith %}
+        </h5>
+        <h5>Escolha Requisito:
+            {% with escolha=object.possivel_escolha_requisito%}
+            {% if escolha %}
+            <a href="{% url "questionarios:pergunta_detail" escolha %}">{{escolha}}</a>
+            {% else %}
+                Sem Escolha Requisito
+            {% endif %}
+            {% endwith %}
+        </h5>
+    </div>
+</div>
+
+{% endblock %}
