@@ -45,3 +45,8 @@ class AjaxableFormResponseMixin(object):
             return JsonResponse(data)
         else:
             return response
+
+
+class FakeDeleteQuerysetViewMixin(object):
+    def get_queryset(self):
+        return super().get_queryset().filter(fake_deletado = False)
