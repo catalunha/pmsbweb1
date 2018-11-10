@@ -56,3 +56,21 @@ class FakeDeleteModelMixin(models.Model):
         self.fake_deletado = True
         self.fake_deletado_em = now()
         self.save()
+
+    @property
+    def all_related_objects(self):
+        from django.contrib.admin.utils import NestedObjects
+        import itertools
+
+        collector = NestedObjects(using="default")
+        collector.collect([self])
+
+        def flatten(elem):
+            if isinstance(elem, list):
+                return itertools.chain.from_iterable(map(flatten, elem))
+            elif self != elem:
+                return (elem,)
+            return ()
+    
+        return flatten(collector.nested())
+        
