@@ -4,18 +4,11 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils import timezone
 from model_utils.managers import InheritanceManager
-
-from core.mixins import (
-    UUIDModelMixin,
-    FakeDeleteModelMixin,
-    UserOwnedModelMixin,
-    TimedModelMixin,
-    FakeDeleteManager,
-)
+from core.mixins import UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin
 
 User = get_user_model()
 
-class Localizacao(UUIDModelMixin, FakeDeleteModelMixin):
+class Localizacao(UUIDModelMixin):
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
     altitude = models.DecimalField(max_digits=9, decimal_places=6)
@@ -53,12 +46,21 @@ class QuestionarioManager(models.Manager):
             for subsubordinado in subsubordinados:
                 if subsubordinado not in subordinados:
                     subordinados.append(subsubordinado)
-        return queryset.filter(usuario__in  = todos_subordinados, fake_deletado = False)
+        return queryset.filter(usuario__in  = todos_subordinados)
 
 
-class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
+class Questionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
+
     publicado = models.BooleanField(default = False)
+
+    perguntas = models.ManyToManyField(
+        "Pergunta",
+        through = "PerguntaDoQuestionario",
+        through_fields = ("questionario","pergunta"),
+        related_name = "questionarios",
+    )
+
     objects = QuestionarioManager()
 
     class Meta:
@@ -69,22 +71,17 @@ class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, Ti
         return "Questionario {}".format(self.nome)
 
     @property
-    def perguntas_do_questionario(self):
-        return PerguntaDoQuestionario.objects.filter(questionario = self, fake_deletado = False)
-    
-    @property
-    def perguntas(self):
-        queryset = Pergunta.objects.filter(perguntadoquestionario__questionario = self, fake_deletado = False).order_by("perguntadoquestionario__ordem")
-        return queryset
+    def perguntas_ordenadas(self):
+        return PerguntaDoQuestionario.objects.filter(questionario = self).order_by("ordem")
 
 class PerguntaManger(models.Manager):
     def by_questionario(self, questionario, exclude_obj = None):
-        queryset = self.get_queryset().filter(perguntadoquestionario__questionario = questionario, fake_deletado = False)
+        queryset = self.get_queryset().filter(questionarios = questionario)
         if exclude_obj is not None:
             queryset = queryset.exclude(pk = exclude_obj.pk)
         return queryset
 
-class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
+class Pergunta(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
 
     TIPO = None
 
@@ -92,7 +89,6 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
     texto = models.TextField()
     tipo = models.PositiveSmallIntegerField(editable = False)
     pergunta_requisito = models.ForeignKey("Pergunta", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
-    
     possivel_escolha_requisito = models.ForeignKey("PossivelEscolha", on_delete = models.SET_NULL, null = True, blank = True, related_name="pre_requisito_de")
     
     objects = PerguntaManger()
@@ -107,13 +103,13 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
         return "{}".format(self.variavel)
     
     def save(self, *args, **kwargs):
-        if self.tipo is None:
+        if not self.tipo:
             self.tipo = self.TIPO
         super(Pergunta, self).save(*args, **kwargs)
     
         #atualiza editado_em nos questionarios com esta pergunta
-        for perguntadoquestionario in self.perguntadoquestionario_set.all():
-            perguntadoquestionario.questionario.save()
+        for questionario in self.questionarios.all():
+            questionario.save()
 
     @property
     def verbose_name_tipo(self):
@@ -144,21 +140,9 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
             return self.perguntaimagem
         elif self.tipo == PerguntaNumero.TIPO:
             return self.perguntanumero
-    
-    @property
-    def possiveis_escolhas_fake_delete(self):
-        return self.possiveis_escolhas.filter(fake_deletado = False)
-    
-    @property
-    def escolharequisito_fake_delete(self):
-        return self.escolharequisito_set.filter(fake_deletado = False)
+            
 
-    @property
-    def perguntarequisito_fake_delete(self):
-        return self.perguntarequisito_set.filter(fake_deletado = False)
-
-
-class UnidadeMedida(UUIDModelMixin, FakeDeleteModelMixin):
+class UnidadeMedida(UUIDModelMixin):
     """
     Tabela - Unidade de Medida
     """
@@ -223,7 +207,7 @@ class PerguntaNumero(Pergunta):
         verbose_name_plural = "Perguntas Numero"
 
 
-class PerguntaDoQuestionario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class PerguntaDoQuestionario(UUIDModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     ordem = models.PositiveSmallIntegerField()
@@ -235,9 +219,6 @@ class PerguntaDoQuestionario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMix
         ordering = ("questionario","ordem","pergunta")
         verbose_name = "Pergunta do Questionario"
         verbose_name_plural = "Perguntas dos Questionarios"
-
-    def __str__(self):
-        return "{} - {}".format(self.questionario, self.pergunta)
     
     def save(self, *args, **kwargs):
         if self.ordem is None:
@@ -251,7 +232,8 @@ class PerguntaDoQuestionario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMix
         
         super(PerguntaDoQuestionario, self).save(*args, **kwargs)
 
-class PossivelEscolha(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+
+class PossivelEscolha(UUIDModelMixin, TimedModelMixin):
     pergunta = models.ForeignKey(PerguntaEscolha, on_delete = models.CASCADE, related_name="possiveis_escolhas")
     texto = models.TextField()
 
@@ -271,61 +253,18 @@ class PossivelEscolha(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
             escolhas = escolhas.exclude( pergunta = exclude_pergunta )
         return escolhas
 
-class PerguntaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
-    pergunta_requisito = models.ForeignKey(PerguntaDoQuestionario, on_delete = models.CASCADE)
-
-    objects = models.Manager()
-
-    class Meta:
-        unique_together = ("pergunta", "pergunta_requisito")
-    
-    def __str__(self):
-        return "{}".format(self.pergunta_requisito)
-
-class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
-    questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE)
-    escolha_requisito = models.ForeignKey(PossivelEscolha, on_delete = models.CASCADE)
-
-    objects = models.Manager()
-
-
-    class Meta:
-        unique_together = ("pergunta", "questionario", "escolha_requisito")
-    
-    def __str__(self):
-        return "{} - {}".format(self.questionario, self.escolha_requisito)
-
-class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    nome = models.CharField(max_length = 255, unique = True)
-    setor_superior = models.ForeignKey("SetorCensitario", null = True, blank = True, on_delete = models.SET_NULL, related_name="subsetores")
-
-    objects = models.Manager()
-
-    def __str__(self):
-        if self.setor_superior is not None:
-            return "{} -> {}".format(self.setor_superior, self.nome)
-        else:
-            return "{}".format(self.nome)
-
-class RespostaQuestionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
-    setor_censitario = models.ForeignKey(SetorCensitario, on_delete = models.CASCADE, related_name="respostas", null = True)
+class RespostaQuestionario(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     questionario = models.ForeignKey(Questionario, on_delete = models.CASCADE, related_name="respostas")
     objects = models.Manager()
 
     class Meta:
         verbose_name = "Resposta Questionario"
         verbose_name_plural = "Respostas Questionarios"
-        """
-        adicionar e remove null=True na proxima migração
-        unique_together = ("setor_censitario", "questionario")
-        """
 
     def __str__(self):
         return "Resposta do {0}".format(self.questionario)
 
-class RespostaPergunta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class RespostaPergunta(UUIDModelMixin, TimedModelMixin):
     resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete = models.CASCADE, related_name="perguntas")
     pergunta = models.ForeignKey(Pergunta, on_delete = models.CASCADE)
     localizacao = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True, blank = True)
@@ -344,7 +283,7 @@ class RespostaPergunta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     def tipo(self):
         return self.pergunta.tipo
 
-class PossivelEscolhaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class PossivelEscolhaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete = models.CASCADE, related_name="escolhas")
     possivel_escolha = models.ForeignKey(PossivelEscolha, on_delete = models.CASCADE)
 
@@ -355,7 +294,7 @@ class PossivelEscolhaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMi
         verbose_name_plural = "Possiveis Escolhas Resposta"
         unique_together = ("resposta_pergunta", "possivel_escolha")
 
-class CoordenadaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class CoordenadaResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="coordenada")
     coordenada = models.ForeignKey(Localizacao, on_delete = models.CASCADE, null = True)
 
@@ -366,7 +305,7 @@ class CoordenadaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         verbose_name_plural = "Coordenadas Resposta"
         unique_together = ("resposta_pergunta", "coordenada")
 
-class TextoResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class TextoResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="texto")
     texto = models.TextField()
 
@@ -376,7 +315,7 @@ class TextoResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         verbose_name = "Texto Resposta"
         verbose_name_plural = "Textos Resposta"
 
-class NumeroResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class NumeroResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="numero")
     unidade_medida = models.ForeignKey(UnidadeMedida, on_delete = models.CASCADE)
     numero = models.FloatField()
@@ -397,7 +336,7 @@ def caminho_para_arquivos(instance, filename):
     nome_arquivo = "{}_{}".format(file_uuid, filename)
     return "questionarios/arquivos/{}/{}/{}/{}".format( hoje.year, hoje.month, hoje.day, nome_arquivo)
 
-class ArquivoResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class ArquivoResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="arquivo")
     arquivo = models.FileField(upload_to=caminho_para_arquivos)
 
@@ -417,7 +356,7 @@ def caminho_para_imagens(instance, filename):
     nome_arquivo = "{}_{}".format(file_uuid, filename)
     return "questionarios/imagens/{}/{}/{}/{}".format( hoje.year, hoje.month, hoje.day, nome_arquivo)
 
-class ImagemResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+class ImagemResposta(UUIDModelMixin, TimedModelMixin):
     resposta_pergunta = models.OneToOneField(RespostaPergunta, on_delete = models.CASCADE, related_name="imagem")
     imagem = models.ImageField(upload_to=caminho_para_imagens)
 

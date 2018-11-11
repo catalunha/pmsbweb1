@@ -9,10 +9,7 @@ from .models import (
     PerguntaImagem,
     PerguntaNumero,
     PerguntaTexto,
-    PerguntaDoQuestionario,
     PossivelEscolha,
-    PerguntaRequisito,
-    EscolhaRequisito,
 )
 
 class QuestionarioForm(forms.ModelForm):
@@ -32,7 +29,7 @@ class QuestionarioDeleteForm(forms.Form):
 class BasePerguntaForm(forms.ModelForm):
     class Meta:
         model = Pergunta
-        fields = ("variavel", "texto", )
+        fields = ("variavel", "texto", "pergunta_requisito", "possivel_escolha_requisito")
 
 class PerguntaArquivoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
@@ -67,28 +64,3 @@ class PossivelEscolhaForm(forms.ModelForm):
         widgets = {
           'texto': forms.Textarea(attrs={'rows':2, 'cols':15}),
         }
-
-class PerguntaRequisitoHiddenChangeForm(forms.ModelForm):
-
-    class Meta:
-        model = Pergunta
-        fields = ("pergunta_requisito", )
-        widgets = {
-            "pergunta_requisito": forms.HiddenInput(),
-        }
-
-class CreatePerguntaRequisitoForm(forms.ModelForm):
-    questionario = forms.ModelChoiceField(queryset = Questionario.objects.all())
-    pergunta_requisito = forms.ModelChoiceField(queryset = PerguntaDoQuestionario.objects.all())
-    class Meta:
-        model = PerguntaRequisito
-        fields = ("questionario","pergunta_requisito")
-
-class CreateEscolhaRequisitoForm(forms.ModelForm):
-    questionario = forms.ModelChoiceField(queryset = Questionario.objects.all())
-    pergunta_requisito = forms.ModelChoiceField(queryset = PerguntaDoQuestionario.objects.all()) 
-    escolha_requisito = forms.ModelChoiceField(queryset = PossivelEscolha.objects.all())
-
-    class Meta:
-        model = EscolhaRequisito
-        fields = ("questionario", "pergunta_requisito", "escolha_requisito")
