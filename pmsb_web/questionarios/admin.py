@@ -54,7 +54,7 @@ class PerguntaDoQuestionarioInlineAdmin(admin.StackedInline):
     extra = 0
 
 class QuestionarioAdmin(admin.ModelAdmin):
-    list_display = ("id", "nome", "publicado", "criado_em", "editado_em")
+    list_display = ("id", "nome", "publicado", "fake_deletado", "criado_em", "editado_em")
     list_filter = ("publicado", "usuario")
     search_fields = ("nome", )
     inlines = (PerguntaDoQuestionarioInlineAdmin, RespostaStackedInlineAdmin)

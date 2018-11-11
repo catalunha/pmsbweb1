@@ -1,15 +1,12 @@
-{% extends "questionarios/base.html" %}
+{% extends "questionarios/base_delete.html" %}
 
-
-{% block conteudo %}
-
+{% block object_name %}
 <p>Pergunta: <b>{{object.pergunta}}</b></p>
 <p>Escolha Requisito: <b>{{object.escolha_requisito}}</b> do <b>{{object.questionario}}</b></p>
+{% endblock object_name %}
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Apagar</button>
-    <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario_pk %}" class="btn btn-primary">Cancelar</a>
-</form>
+{% block object_id %} 
+{{object.id}}
+{% endblock object_id %}
 
-{% endblock %}
+{% block btn_cancelar %}<a href="{% url "questionarios:update_pergunta" pergunta_do_questionario_pk %}" class="btn btn-primary">Cancelar</a>{% endblock btn_cancelar %}
