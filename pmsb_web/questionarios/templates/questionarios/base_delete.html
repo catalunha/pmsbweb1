@@ -1,0 +1,41 @@
+{% extends "questionarios/base.html" %}
+
+
+{% block conteudo %}
+
+
+<div class="row">
+    <div class="col-md-12">
+    <h4>{% block object_name %}{% endblock object_name %}</h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p>ID: <b>{% block object_id %} {% endblock object_id %}</b></p>
+        <p style="color: red;">Confirme a ação informando o id do objeto</p>
+    <div>
+</div>
+    
+<div class="row">
+    <div class="col-md-12">
+    {% block delete_form %}
+        <form method="post">
+            {% csrf_token %}
+            {% include "includes/form.html" with form=form %}
+            <button type="submit" class="btn btn-danger">Apagar</button>
+            {% block btn_cancelar %}<a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</a>{% endblock btn_cancelar %}
+        </form>        
+    {% endblock delete_form %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+    {% block related_objects %}
+    {% include "includes/related_objects.html" with obj=object %}
+    {% endblock related_objects %}
+    <div>
+</div>
+
+{% endblock %}

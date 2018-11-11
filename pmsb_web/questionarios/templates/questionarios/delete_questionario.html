@@ -1,26 +1,13 @@
-{% extends "questionarios/base.html" %}
+{% extends "questionarios/base_delete.html" %}
 
+{% block object_name %}
+Questionario: {{questionario.nome}}
+{% endblock object_name %}
 
-{% block conteudo %}
-<div class="row">
-    <div class="col-lg-12">
-        <p><h5>Questionario: {{questionario.nome}}, id: {{questionario.id}}</h5></p>
+{% block object_id %} 
+{{questionario.id}}
+{% endblock object_id %}
 
-        confirme a ação informando o id do questionario
-        
-        <form method="post">
-            {% csrf_token %}
-            {% include "includes/form.html" with form=form %}
-            <button type="submit" class="btn btn-danger">Apagar</button>
-            <a href="{% url "questionarios:list" %}" class="btn btn-primary">Cancelar</a>
-        </form>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-lg-12">
-        {% include "includes/related_objects.html" with obj=questionario %}
-    </div>
-</div>
-
-{% endblock %}
+{% block related_objects %}
+{% include "includes/related_objects.html" with obj=questionario %}
+{% endblock related_objects %}

@@ -1,27 +1,9 @@
-{% extends "questionarios/base.html" %}
+{% extends "questionarios/base_delete.html" %}
 
+{% block object_name %}
+Remover pergunta {{ object.pergunta }} do questionario {{object.questionario}}.
+{% endblock object_name %}
 
-{% block conteudo %}
-
-<div id="content-container" class="container p-none">
-    <div class="side-p">
-        <h3>Vai remover mesmo a pergunta?</h3>
-        <p>Você esta prestes a apagar a pergunta {{ object.pergunta }} do questionario {{object.questionario}}.</p>
-        <form action="" method="post">
-            {% csrf_token %}
-            <input class="btn btn-primary" 
-                    type="button" value="Cancelar" 
-                    onclick="window.history.go(-1);"/>
-            <input class="btn btn-danger" type="submit" value="Deletar"/>
-        </form>
-    </div>
-</div>
-
-
-<div class="row">
-    <div class="col-lg-12">
-        {% include "includes/related_objects.html" with obj=object %}
-    </div>
-</div>
-    
-{% endblock conteudo %}
+{% block object_id %} 
+{{object.id}}
+{% endblock object_id %}
