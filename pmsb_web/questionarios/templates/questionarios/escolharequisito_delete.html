@@ -6,7 +6,7 @@
 {% endblock object_name %}
 
 {% block object_id %} 
-{{questionario.id}}
+{{object.id}}
 {% endblock object_id %}
 
 {% block btn_cancelar %}<a href="{% url "questionarios:update_pergunta" pergunta_do_questionario_pk %}" class="btn btn-primary">Cancelar</a>{% endblock btn_cancelar %}
