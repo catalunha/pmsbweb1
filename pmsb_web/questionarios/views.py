@@ -85,21 +85,12 @@ class QuestioanrioUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixi
     permission_required = ["questionarios.change_questionario"]
     success_url = reverse_lazy("questionarios:list")
 
-class QuestioanrioDeleteView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FormMixin, FakeDeleteView):
+class QuestioanrioDeleteView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
     template_name = "questionarios/delete_questionario.html"
     model = Questionario
-    form_class = QuestionarioDeleteForm
+    
     success_url = reverse_lazy("questionarios:list")
     permission_required = ["questionarios.delete_questionario"]
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        form.object_id = self.kwargs.get("pk")
-        if form.is_valid():
-            return super(QuestioanrioDeleteView, self).post(request, *args, **kwargs)
-        else:
-            return self.form_invalid(form)
 
 class QuestionarioOrdenarDetailView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, DetailView):
     model = Questionario
