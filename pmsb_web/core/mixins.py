@@ -33,18 +33,12 @@ class FakeDeleteManagerMixin(models.Manager):
     def fake_delete_all(self):
         return self.get_queryset().fake_delete_all()
 
-class FakeDeleteManager(models.Manager):
-    def get_queryset(self):
-        print("*"*40)
-        return super().get_queryset().filter(fake_deletado = False)
-
 class FakeDeleteModelMixin(models.Model):
     """
     Mixin para 'deletar' objetos sem removelos do banco de dados
     """    
     fake_deletado = models.BooleanField(default = False)
     fake_deletado_em = models.DateTimeField(null = True, blank = True)
-
 
     class Meta:
         abstract = True

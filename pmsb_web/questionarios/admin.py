@@ -17,8 +17,6 @@ from .models import (
     PerguntaTexto,
     PerguntaNumero,
     PerguntaDoQuestionario,
-    PerguntaRequisito,
-    EscolhaRequisito,
 )
 
 #respostas 
@@ -68,27 +66,18 @@ class PossivelEscolhaStackedInline(admin.StackedInline):
     model = PossivelEscolha
     extra = 0
 
-class PerguntaRequisitoStackedInline(admin.StackedInline):
-    model = PerguntaRequisito
-    extra = 0
-
-class EscolhaRequisitoStackedInline(admin.StackedInline):
-    model = EscolhaRequisito
-    extra = 0
-
 class PerguntaAdmin(admin.ModelAdmin):
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
     readonly_fields = ("tipo", )
     list_filter = ("usuario", )
     search_fields = ("variavel", "texto")
     readonly_fields = ("criado_em", "editado_em")
-    inlines = (PerguntaRequisitoStackedInline, EscolhaRequisitoStackedInline, )
 
 class PerguntaEscolhaAdmin(admin.ModelAdmin):
     fields = ("id", "variavel", "texto", "possivel_escolha_requisito", "tipo", "multipla","criado_em", "editado_em")
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
     readonly_fields = ("tipo", "id", "criado_em", "editado_em")
-    inlines = (PerguntaRequisitoStackedInline, EscolhaRequisitoStackedInline, PossivelEscolhaStackedInline, )
+    inlines = (PossivelEscolhaStackedInline, )
 
 admin.site.register(PerguntaEscolha, PerguntaEscolhaAdmin)
 
@@ -221,12 +210,3 @@ class ImagemRespostaAdmin(BaseRespostaAdmin):
     list_display = ("id", "imagem", "resposta_pergunta", "criado_em")
 
 admin.site.register(ImagemResposta, ImagemRespostaAdmin)
-
-
-class PerguntaRequisitoAdmin(admin.ModelAdmin):
-    list_display = ("id", "pergunta", "pergunta_requisito", "fake_deletado")
-admin.site.register(PerguntaRequisito, PerguntaRequisitoAdmin)
-
-class EscolhaRequisitoAdmin(admin.ModelAdmin):
-    list_display = ("id", "pergunta", "questionario", "escolha_requisito", "fake_deletado")
-admin.site.register(EscolhaRequisito, EscolhaRequisitoAdmin)
