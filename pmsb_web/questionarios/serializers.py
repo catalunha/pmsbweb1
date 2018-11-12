@@ -240,7 +240,7 @@ class QuestionarioViewSet(viewsets.ModelViewSet):
 """ Respostas dos tipos """
 
 class ExcludeFakeDeleteFieldsMeta:
-    exclude = ("criado_em","editado_em","fake_deletado","fake_deletado_em")
+    exclude = ("fake_deletado","fake_deletado_em")
 
 class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
