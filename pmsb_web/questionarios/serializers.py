@@ -219,7 +219,7 @@ class PerguntaImagemViewSet(viewsets.ModelViewSet):
     serializer_class = PerguntaImagemSerializer
 
 class QuestionarioSerializer(serializers.ModelSerializer):
-    usuario = UserSerializer
+    usuario = UserSerializer()
     perguntas = serializers.SerializerMethodField()
     class Meta(FakeDeleteSerializerMeta):
         model = Questionario
