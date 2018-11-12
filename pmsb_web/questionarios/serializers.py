@@ -297,59 +297,25 @@ class ImagemRespostaViewSet(viewsets.ModelViewSet):
 """ Resposta Pergunta """
 
 class RespostaPerguntaSerializer(serializers.ModelSerializer):
-    pergunta = PerguntaSerializer
-    localizacao = LocalizacaoSerializer(required = False)
-    escolhas = PossivelEscolhaRespostaSerializer(many = True, required = False)
-    coordenada = CoordenadaRespostaSerializer(required = False)
-    texto = TextoRespostaSerializer(required = False)
-    numero = NumeroRespostaSerializer(required = False)
-    arquivo = ArquivoRespostaSerializer(required = False)
-    imagem = ImagemRespostaSerializer(required = False)
+    localizacao = LocalizacaoSerializer(allow_null = True)
 
     class Meta(FakeDeleteSerializerMeta):
         model = RespostaPergunta
         fields = (
             "id",
-            "localizacao",
             "resposta_questionario",
             "pergunta",
-            "tipo",
-            "coordenada",
-            "escolhas",
-            "texto",
-            "numero",
-            "arquivo",
-            "imagem",
+            "localizacao",
         )
-
     
+
     def create(self, validated_data):
-
-        localizacao_data = validated_data.pop("localizacao", None)
-
-        #tipos de respostas
-        coordenada_data = validated_data.pop("coordenada", None)
-        imagem_data = validated_data.pop("imagem", None)
-        arquivo_data = validated_data.pop("arquivo", None)
-        numero_data = validated_data.pop("numero", None)
-        texto_data = validated_data.pop("texto", None)
-        escolhas_data = validated_data.pop("escolhas", None)
-        
-        resposta = RespostaPergunta.objects.create(**validated_data)
-        
-        if localizacao_data is not None:
-            localizacao = LocalizacaoSerializer(data = localizacao_data)
-
-            if localizacao.is_valid():
-                localizacao.save()
-        
-        if coordenada_data is not None:
-            coordenada = CoordenadaRespostaSerializer(data = coordenada_data)
-            if coordenada.is_valid():
-                coordenada.save()
-        
-        return resposta
-        
+        localizacao = validated_data.pop("localizacao")
+        local = LocalizacaoSerializer(data = localizacao)
+        if local.is_valid():
+            local.save()
+            validated_data["localizacao"] = local.instance
+        return super().create(validated_data)
 
 class RespostaPerguntaViewSet(viewsets.ModelViewSet):
     queryset = RespostaPergunta.objects.all()
