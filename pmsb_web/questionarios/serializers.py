@@ -305,9 +305,22 @@ class RespostaPerguntaSerializer(serializers.ModelSerializer):
     numero = NumeroRespostaSerializer(required = False)
     arquivo = ArquivoRespostaSerializer(required = False)
     imagem = ImagemRespostaSerializer(required = False)
+
     class Meta(FakeDeleteSerializerMeta):
         model = RespostaPergunta
-        fields = ("id", "localizacao",  "resposta_questionario", "pergunta", "tipo", "coordenada", "escolhas", "texto", "numero", "arquivo", "imagem")
+        fields = (
+            "id",
+            "localizacao",
+            "resposta_questionario",
+            "pergunta",
+            "tipo",
+            "coordenada",
+            "escolhas",
+            "texto",
+            "numero",
+            "arquivo",
+            "imagem",
+        )
 
     
     def create(self, validated_data):
@@ -343,34 +356,12 @@ class RespostaPerguntaViewSet(viewsets.ModelViewSet):
     serializer_class = RespostaPerguntaSerializer
 
 """ Resposta Questionario """
-
 class RespostaQuestionarioSerializer(serializers.ModelSerializer):
-    usuario = UserSerializer
-    questionario = QuestionarioSerializer
-    perguntas = RespostaPerguntaSerializer(many = True, required = False)
+    perguntas = RespostaPerguntaSerializer(many = True, read_only = True)
 
     class Meta(FakeDeleteSerializerMeta):
         model = RespostaQuestionario
-        fields = ("id",  "usuario", "questionario", "perguntas")
-    
-    def create(self, validated_data):
-        validated_data.pop("perguntas")
-        resposta_questionario = RespostaQuestionario.objects.create(**validated_data)
-        return resposta_questionario
-    
-    def update(self, instance, validated_data):
-        perguntas = validated_data.pop("perguntas")
-
-        for pergunta_data in perguntas:
-            pergunta_data["pergunta"] = pergunta_data["pergunta"].pk
-            pergunta_data["resposta_questionario"] = pergunta_data["resposta_questionario"].pk
-            pergunta = RespostaPerguntaSerializer(data = pergunta_data )
-            if pergunta.is_valid():
-                pergunta.save()
-            else:
-                print(pergunta.errors)
-            
-        return instance
+        fields = ("id",  "usuario", "setor_censitario", "questionario", "perguntas")
 
 class RespostaQuestionarioViewSet(viewsets.ModelViewSet):
     queryset = RespostaQuestionario.objects.all()
