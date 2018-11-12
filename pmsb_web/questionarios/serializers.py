@@ -299,14 +299,25 @@ class ImagemRespostaViewSet(viewsets.ModelViewSet):
 class RespostaPerguntaSerializer(serializers.ModelSerializer):
     localizacao = LocalizacaoSerializer(allow_null = True)
 
+    resposta = serializers.SerializerMethodField()
+    tipo = serializers.SerializerMethodField()
+
     class Meta(FakeDeleteSerializerMeta):
         model = RespostaPergunta
         fields = (
             "id",
+            "localizacao",
             "resposta_questionario",
             "pergunta",
-            "localizacao",
+            "tipo",
+            "resposta",
         )
+    
+    def get_resposta(self, instance):
+        return "resposta"
+
+    def get_tipo(self, instance):
+        return instance.pergunta.tipo
     
 
     def create(self, validated_data):
