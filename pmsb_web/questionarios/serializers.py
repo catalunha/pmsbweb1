@@ -239,10 +239,12 @@ class QuestionarioViewSet(viewsets.ModelViewSet):
 
 """ Respostas dos tipos """
 
+class ExcludeFakeDeleteFieldsMeta:
+    exclude = ("criado_em","editado_em","fake_deletado","fake_deletado_em")
+
 class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = PossivelEscolhaResposta
-        fields = "__all__"
 
 class PossivelEscolhaRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = PossivelEscolhaRespostaSerializer
@@ -250,45 +252,40 @@ class PossivelEscolhaRespostaViewSet(viewsets.ModelViewSet):
 
 class CoordenadaRespostaSerializer(serializers.ModelSerializer):
     coordenada = LocalizacaoSerializer()
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = CoordenadaResposta
-        fields = "__all__"
     
 class CoordenadaRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = CoordenadaRespostaSerializer
     queryset = CoordenadaResposta.objects.all()
 
 class TextoRespostaSerializer(serializers.ModelSerializer):
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = TextoResposta
-        fields = "__all__"
 
 class TextoRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = TextoRespostaSerializer
     queryset = TextoResposta.objects.all()
 
 class NumeroRespostaSerializer(serializers.ModelSerializer):
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = NumeroResposta
-        fields = "__all__"
 
 class NumeroRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = NumeroRespostaSerializer
     queryset = NumeroResposta.objects.all()
 
 class ArquivoRespostaSerializer(serializers.ModelSerializer):
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = ArquivoResposta
-        fields = "__all__"
 
 class ArquivoRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = ArquivoRespostaSerializer
     queryset = ArquivoResposta.objects.all()
 
 class ImagemRespostaSerializer(serializers.ModelSerializer):
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = ImagemResposta
-        fields = "__all__"
 
 class ImagemRespostaViewSet(viewsets.ModelViewSet):
     serializer_class = ImagemRespostaSerializer
