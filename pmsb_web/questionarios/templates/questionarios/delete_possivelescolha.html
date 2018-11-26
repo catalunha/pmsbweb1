@@ -1,19 +1,11 @@
-{% extends "questionarios/base.html" %}
+{% extends "questionarios/base_delete.html" %}
 
+{% block object_name %}
+<p>Você esta prestes a apagar a escolha <b>{{ object.texto }}</b> da pergunta <b>{{object.pergunta}}</b>.</p>
+{% endblock object_name %}
 
-{% block conteudo %}
+{% block object_id %} 
+{{object.id}}
+{% endblock object_id %}
 
-<div id="content-container" class="container p-none">
-    <div class="side-p">
-        <h3>Vai remover mesmo a escolha?</h3>
-        <p>Você esta prestes a apagar a escolha <b>{{ object.texto }}</b> da pergunta <b>{{object.pergunta}}</b>.</p>
-        <form action="" method="post">
-            {% csrf_token %}
-            <input class="btn btn-primary" 
-                    type="button" value="Cancelar" 
-                    onclick="window.history.go(-1);"/>
-            <input class="btn btn-danger" type="submit" value="Deletar"/>
-        </form>
-    </div>
-</div>
-{% endblock conteudo %}
+{% block btn_cancelar %}<input class="btn btn-primary" type="button" value="Cancelar" onclick="window.history.go(-1);"/>{% endblock btn_cancelar %}

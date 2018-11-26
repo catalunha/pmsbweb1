@@ -33,12 +33,18 @@ class FakeDeleteManagerMixin(models.Manager):
     def fake_delete_all(self):
         return self.get_queryset().fake_delete_all()
 
+class FakeDeleteManager(models.Manager):
+    def get_queryset(self):
+        print("*"*40)
+        return super().get_queryset().filter(fake_deletado = False)
+
 class FakeDeleteModelMixin(models.Model):
     """
     Mixin para 'deletar' objetos sem removelos do banco de dados
     """    
     fake_deletado = models.BooleanField(default = False)
     fake_deletado_em = models.DateTimeField(null = True, blank = True)
+
 
     class Meta:
         abstract = True
@@ -50,3 +56,21 @@ class FakeDeleteModelMixin(models.Model):
         self.fake_deletado = True
         self.fake_deletado_em = now()
         self.save()
+
+    @property
+    def all_related_objects(self):
+        from django.contrib.admin.utils import NestedObjects
+        import itertools
+
+        collector = NestedObjects(using="default")
+        collector.collect([self])
+
+        def flatten(elem):
+            if isinstance(elem, list):
+                return itertools.chain.from_iterable(map(flatten, elem))
+            elif self != elem:
+                return (elem,)
+            return ()
+    
+        return flatten(collector.nested())
+        

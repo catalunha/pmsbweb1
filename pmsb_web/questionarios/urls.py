@@ -20,8 +20,20 @@ urlpatterns = [
     path("criar/pergunta/tipo/<uuid:pk>/", views.PerguntaEscolherTipoTemplateView.as_view(), name = "create_pergunta_tipo"),
     path("criar/pergunta/<uuid:pk>/tipo/<int:tipo>/", views.PerguntaCreateView.as_view(), name = "create_pergunta"),
     path("editar/pergunta/<uuid:pk>/", views.PerguntaUpdateView.as_view(), name = "update_pergunta"),
+    
     path("delete/pergunta/<uuid:pk>/", views.PerguntaDoQuestionarioDeleteView.as_view(), name = "delete_pergunta_do_questionario"),
     path("perguntas/", views.PerguntaListView.as_view(), name = "pergunta_list"),
+    path("pergunta/<uuid:pk>/", views.PerguntaDetailView.as_view(), name = "pergunta_detail"),
+
+    #requisitos
+    path("perguntas/perguntarequisito/<uuid:pk>/criar/", views.PerguntaRequisitoCreateView.as_view(), name = "perguntarequisito_create"),
+    path("perguntas/escolharequisito/<uuid:pk>/criar/", views.EscolhaRequisitoCreateView.as_view(), name = "escolharequisito_create"),
+
+    path("perguntas/perguntarequisito/<uuid:pergunta_do_questionario_pk>/deletar/<uuid:pk>/", views.PerguntaRequisitoDeleteView.as_view(), name = "perguntarequisito_delete"),
+    path("perguntas/escolharequisito/<uuid:pergunta_do_questionario_pk>/deletar/<uuid:pk>/", views.EscolhaRequisitoDeleteView.as_view(), name = "escolharequisito_delete"),
+
+    path("perguntas/ajax/get_perguntas_do_questionario", views.ajax_get_perguntas_do_questionario, name = "ajax_get_perguntas_do_questionario"),
+    path("perguntas/ajax/get_escolhas_da_pergunta_do_questionario", views.ajax_get_escolhas_da_pergunta_do_questionario, name = "ajax_get_escolhas_da_pergunta_do_questionario"),
 
     #possivel escolha
     path("editar/pergunta/<uuid:pk>/criar_escolha", views.PossivelEscolhaCreateView.as_view(), name = "create_possivelescolha"),
