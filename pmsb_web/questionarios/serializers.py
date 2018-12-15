@@ -72,9 +72,13 @@ class PerguntaRequisitoViewSet(viewsets.ModelViewSet):
 
 
 class EscolhaRequisitoSerializer(serializers.ModelSerializer):
+    pergunta = serializers.SerializerMethodField()
     class Meta(FakeDeleteSerializerMeta):
         model = EscolhaRequisito
-        fields = ("id","questionario","escolha_requisito")
+        fields = ("id","questionario","pergunta","escolha_requisito")
+    
+    def get_pergunta(self, instance):
+        return instance.escolha_requisito.pergunta
 
 class EscolhaRequisitoViewSet(viewsets.ModelViewSet):
     serializer_class = EscolhaRequisitoSerializer
