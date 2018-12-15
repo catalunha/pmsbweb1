@@ -78,7 +78,7 @@ class EscolhaRequisitoSerializer(serializers.ModelSerializer):
         fields = ("id","questionario","pergunta","escolha_requisito")
     
     def get_pergunta(self, instance):
-        return instance.escolha_requisito.pergunta
+        return instance.escolha_requisito.pergunta.pk
 
 class EscolhaRequisitoViewSet(viewsets.ModelViewSet):
     serializer_class = EscolhaRequisitoSerializer
