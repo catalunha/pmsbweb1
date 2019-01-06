@@ -17,14 +17,11 @@ class Departamento(UUIDModelMixin, TimedModelMixin):
         verbose_name = 'Departamento'
         verbose_name_plural = 'Departamentos'
     
-    def __concat_str__(self):
-        if self.superior is None:
-            return self.nome
-        else:
-            return self.superior.__concat_str__() + ' -> ' + self.nome
-
     def __str__(self):
-        return self.__concat_str__()
+        if self.superior is not None:
+            return f'{self.superior} -> {self.nome}'
+        else:
+            return f'{self.nome}'
 
 class Cargo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
