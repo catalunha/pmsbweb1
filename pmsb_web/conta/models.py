@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
+from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin, FakeDeleteModelMixin
 
 class Departamento(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
