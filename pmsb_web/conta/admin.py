@@ -44,14 +44,14 @@ admin.site.register(Atributo, AtributoAdmin)
 
 class ValorAtributoAdmin(admin.ModelAdmin):
     list_display = ("id", "usuario", "tipo", "valor", "criado_em", "editado_em")
-    list_filter = ('criado_em', 'editado_em')
+    list_filter = ('usuario', 'criado_em', 'editado_em')
     search_fields = ("nome",)
 
 admin.site.register(ValorAtributo, ValorAtributoAdmin)
 
 class DocumentoAtributoAdmin(admin.ModelAdmin):
     list_display = ("id", "usuario", "tipo", "criado_em", "editado_em")
-    list_filter = ('criado_em', 'editado_em')
+    list_filter = ('usuario', 'criado_em', 'editado_em')
     search_fields = ("nome",)
 
 admin.site.register(DocumentoAtributo, DocumentoAtributoAdmin)
