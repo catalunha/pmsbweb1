@@ -53,7 +53,12 @@ class CreateListModelMixin(object):
 
 class FakeDeleteListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        data = data.filter(fake_deletado = False)
+        
+        try:
+            data = data.filter(fake_deletado = False)
+        except AttributeError as e:
+            pass
+        
         return super().to_representation(data)
 
 class FakeDeleteSerializerMeta:
