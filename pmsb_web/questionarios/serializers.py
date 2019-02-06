@@ -7,7 +7,7 @@ from .models import (
 
     Localizacao,
     Questionario,
-    
+    SetorCensitario,
     Pergunta,
     PerguntaDoQuestionario,
     PerguntaEscolha,
@@ -39,11 +39,26 @@ from .models import (
 
 User = get_user_model()
 
+
+class CreateListModelMixin(object):
+
+    def get_serializer(self, *args, **kwargs):
+        """ if an array is passed, set serializer to many """
+        if isinstance(kwargs.get('data', {}), list):
+            kwargs['many'] = True
+        return super(CreateListModelMixin, self).get_serializer(*args, **kwargs)
+
+
 """ Requisitos """
 
 class FakeDeleteListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
-        data = data.filter(fake_deletado = False)
+        
+        try:
+            data = data.filter(fake_deletado = False)
+        except AttributeError as e:
+            pass
+        
         return super().to_representation(data)
 
 class FakeDeleteSerializerMeta:
@@ -98,7 +113,7 @@ class LocalizacaoViewSet(viewsets.ModelViewSet):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta:
         model = User
         fields = ("id", "username", "email")
     
@@ -250,7 +265,7 @@ class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = PossivelEscolhaResposta
 
-class PossivelEscolhaRespostaViewSet(viewsets.ModelViewSet):
+class PossivelEscolhaRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     serializer_class = PossivelEscolhaRespostaSerializer
     queryset = PossivelEscolhaResposta.objects.all()
 
@@ -259,7 +274,7 @@ class CoordenadaRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = CoordenadaResposta
     
-class CoordenadaRespostaViewSet(viewsets.ModelViewSet):
+class CoordenadaRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     serializer_class = CoordenadaRespostaSerializer
     queryset = CoordenadaResposta.objects.all()
 
@@ -267,7 +282,7 @@ class TextoRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = TextoResposta
 
-class TextoRespostaViewSet(viewsets.ModelViewSet):
+class TextoRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     serializer_class = TextoRespostaSerializer
     queryset = TextoResposta.objects.all()
 
@@ -275,7 +290,7 @@ class NumeroRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = NumeroResposta
 
-class NumeroRespostaViewSet(viewsets.ModelViewSet):
+class NumeroRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     serializer_class = NumeroRespostaSerializer
     queryset = NumeroResposta.objects.all()
 
@@ -283,7 +298,7 @@ class ArquivoRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = ArquivoResposta
 
-class ArquivoRespostaViewSet(viewsets.ModelViewSet):
+class ArquivoRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     serializer_class = ArquivoRespostaSerializer
     queryset = ArquivoResposta.objects.all()
 
@@ -291,7 +306,7 @@ class ImagemRespostaSerializer(serializers.ModelSerializer):
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = ImagemResposta
 
-class ImagemRespostaViewSet(viewsets.ModelViewSet):
+class ImagemRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     serializer_class = ImagemRespostaSerializer
     queryset = ImagemResposta.objects.all()
 
@@ -329,7 +344,7 @@ class RespostaPerguntaSerializer(serializers.ModelSerializer):
             validated_data["localizacao"] = local.instance
         return super().create(validated_data)
 
-class RespostaPerguntaViewSet(viewsets.ModelViewSet):
+class RespostaPerguntaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaPergunta.objects.all()
     serializer_class = RespostaPerguntaSerializer
 
@@ -337,10 +352,19 @@ class RespostaPerguntaViewSet(viewsets.ModelViewSet):
 class RespostaQuestionarioSerializer(serializers.ModelSerializer):
     perguntas = RespostaPerguntaSerializer(many = True, read_only = True)
 
-    class Meta(FakeDeleteSerializerMeta):
+    class Meta:
         model = RespostaQuestionario
         fields = ("id",  "usuario", "setor_censitario", "questionario", "perguntas")
 
-class RespostaQuestionarioViewSet(viewsets.ModelViewSet):
+class RespostaQuestionarioViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaQuestionario.objects.all()
     serializer_class = RespostaQuestionarioSerializer
+
+class SetorCensitarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SetorCensitario
+        fields = "__all__"
+
+class SetorCensitarioViewset(viewsets.ModelViewSet):
+    serializer_class = SetorCensitarioSerializer
+    queryset = SetorCensitario.objects.all()

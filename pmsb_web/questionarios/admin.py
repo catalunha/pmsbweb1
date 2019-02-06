@@ -9,6 +9,7 @@ from .models import (
 from .models import (
     Questionario,
     Pergunta,
+    SetorCensitario,
     PerguntaEscolha,
     PossivelEscolha,
     PerguntaArquivo,
@@ -230,3 +231,6 @@ admin.site.register(PerguntaRequisito, PerguntaRequisitoAdmin)
 class EscolhaRequisitoAdmin(admin.ModelAdmin):
     list_display = ("id", "pergunta", "questionario", "escolha_requisito", "fake_deletado")
 admin.site.register(EscolhaRequisito, EscolhaRequisitoAdmin)
+
+
+admin.site.register(SetorCensitario)
