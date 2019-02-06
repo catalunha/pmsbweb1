@@ -3,6 +3,9 @@
 # Visual Code Settings Folder
 .vscode/
 
+# Inteljj
+.idea
+
 ### OSX ###
 .DS_Store
 .AppleDouble
