@@ -94,12 +94,14 @@
                   <i class="nav-icon fa fa-address-card" style="margin-left: 15px" ></i>Cargos</a>
               </li>
               {% endif %}
+              {% comment %}
               {% if 'conta.view_user' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:hierarquia_tree' %}">
                   <i class="nav-icon icon-people" style="margin-left: 15px" ></i>Hierárquia</a>
               </li>
               {% endif %}
+              {% endcomment %}
             </ul>
           </li>
           {% if 'questionarios' in perms %}
