@@ -21,7 +21,7 @@
           {% if user.foto %}
           <a href="#" class="nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
             {{user.first_name}}
-            <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="">
+            <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="" draggable="false" style="-moz-user-select: none;" >
             &#9660;
           </a>
           {% else %}
