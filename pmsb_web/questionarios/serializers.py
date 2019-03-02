@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, viewsets
 
 from .models import (
@@ -332,6 +333,8 @@ class ArquivoRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
 
 
 class ImagemRespostaSerializer(serializers.ModelSerializer):
+    imagem = Base64ImageField()
+
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = ImagemResposta
 
