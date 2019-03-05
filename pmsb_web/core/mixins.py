@@ -1,11 +1,12 @@
 import uuid
+from mimetypes import guess_extension
 
 from django.conf import settings
 from django.db import models
 from django.utils.timezone import now
 from drf_extra_fields.fields import Base64FileField
 from magic import Magic, MAGIC_MIME_TYPE
-from mimetypes import guess_extension
+
 
 class TimedModelMixin(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -86,7 +87,8 @@ class FakeDeleteModelMixin(models.Model):
 
 
 class ArquivoBase64SerializerField(Base64FileField):
-    ALLOWED_ANY_TYPES = True
+
+    ALLOW_ALL_TYPES = True
 
     def get_file_extension(self, filename, decoded_file):
         with Magic(flags=MAGIC_MIME_TYPE) as m:
