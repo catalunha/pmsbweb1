@@ -87,7 +87,6 @@ class FakeDeleteModelMixin(models.Model):
 
 
 class ArquivoBase64SerializerField(Base64FileField):
-
     ALLOW_ALL_TYPES = True
 
     def get_file_extension(self, filename, decoded_file):
