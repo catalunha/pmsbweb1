@@ -30,6 +30,7 @@ SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", cast = bool, default = False)
 
+
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
@@ -64,6 +65,10 @@ INCLUDE_APPS = [
     'pinax.messages',
     'widget_tweaks',
 ]
+
+if DEBUG:
+    INCLUDE_APPS += ['rest_framework_swagger',]
+
 
 LOCAL_APPS = [
     'core.apps.CoreConfig',
