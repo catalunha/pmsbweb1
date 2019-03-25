@@ -8,9 +8,10 @@ Primeiro certifique-se de ter instalado Python3 e GIT na sua maquina.
 
 ### Instale as dependencias do projeto usando pip
 
-Sempre instale dependencias atravez do arquivo de dependencias.
+Crie uma copia do arquivo env.exemplo e modifique os valores das variaveis
+ de ambiente. Depois execute com os comandos a saguir. 
 
-`pip install -r requirements_server.txt`
+`pip install -r requirements.txt`
 
 
 Apos instalar entre na pasta `pmsb_web`.
@@ -45,3 +46,8 @@ Modifique a linha do banco de dados baseado na documentação da biblioteca [dj-
 * pinax
 * questionarios
 * relatorios
+
+
+## Documentação API Rest
+Para ter acesso a documentação da API REST o sistema deve estar com a flag DEBUG=True.
+Para visualizar a documentação visite a url http://127.0.0.1:8000/pmsb/docs/api/swagger.
