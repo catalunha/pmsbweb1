@@ -7,7 +7,7 @@ from rest_framework_swagger.views import get_swagger_view
 urlpatterns = [
     path('pmsb/', include(('conta.urls', 'conta'), namespace='conta')),
     path('pmsb/admin/', admin.site.urls),
-    path('pmsb/api/', include("questionarios.api_urls")),
+    path('pmsb/api/', include("api.urls")),
     path('pmsb/tarefas/', include('pinax.messages.urls', namespace='pinax_messages')),
     path("pmsb/questionarios/", include("questionarios.urls")),
     path("pmsb/relatorios/", include("relatorios.urls")),

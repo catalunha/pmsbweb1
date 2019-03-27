@@ -50,4 +50,4 @@ Modifique a linha do banco de dados baseado na documentação da biblioteca [dj-
 
 ## Documentação API Rest
 Para ter acesso a documentação da API REST o sistema deve estar com a flag DEBUG=True.
-Para visualizar a documentação visite a url http://127.0.0.1:8000/pmsb/docs/api/swagger.
+Para visualizar a documentação visite a url http://127.0.0.1:8000/pmsb/docs/swagger.
