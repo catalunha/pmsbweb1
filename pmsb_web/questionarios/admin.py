@@ -9,6 +9,7 @@ from .models import (
 from .models import (
     Questionario,
     Pergunta,
+    SetorCensitario,
     PerguntaEscolha,
     PossivelEscolha,
     PerguntaArquivo,
@@ -85,7 +86,7 @@ class PerguntaAdmin(admin.ModelAdmin):
     inlines = (PerguntaRequisitoStackedInline, EscolhaRequisitoStackedInline, )
 
 class PerguntaEscolhaAdmin(admin.ModelAdmin):
-    fields = ("id", "variavel", "texto", "possivel_escolha_requisito", "tipo", "multipla","criado_em", "editado_em")
+    fields = ("id", "usuario", "variavel", "texto", "possivel_escolha_requisito", "tipo", "multipla","criado_em", "editado_em")
     list_display = ("id", "variavel", "texto", "possivel_escolha_requisito")
     readonly_fields = ("tipo", "id", "criado_em", "editado_em")
     inlines = (PerguntaRequisitoStackedInline, EscolhaRequisitoStackedInline, PossivelEscolhaStackedInline, )
@@ -230,3 +231,6 @@ admin.site.register(PerguntaRequisito, PerguntaRequisitoAdmin)
 class EscolhaRequisitoAdmin(admin.ModelAdmin):
     list_display = ("id", "pergunta", "questionario", "escolha_requisito", "fake_deletado")
 admin.site.register(EscolhaRequisito, EscolhaRequisitoAdmin)
+
+
+admin.site.register(SetorCensitario)

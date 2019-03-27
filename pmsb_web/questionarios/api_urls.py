@@ -27,6 +27,11 @@ from .serializers import (
     NumeroRespostaViewSet,
     ArquivoRespostaViewSet,
     ImagemRespostaViewSet,
+
+    PerguntaRequisitoViewSet,
+    EscolhaRequisitoViewSet,
+
+    SetorCensitarioViewset,
 )
 
 questionario_router = routers.DefaultRouter()
@@ -57,8 +62,10 @@ questionario_router.register(r'numero_respostas', NumeroRespostaViewSet)
 questionario_router.register(r'arquivo_respostas', ArquivoRespostaViewSet)
 questionario_router.register(r'imagem_respostas', ImagemRespostaViewSet)
 
+questionario_router.register(r'perguntas_requisito', PerguntaRequisitoViewSet)
+questionario_router.register(r'escolhas_requisito', EscolhaRequisitoViewSet)
 
-
+questionario_router.register(r'setores_censitarios', SetorCensitarioViewset)
 urlpatterns = [
     path("get-auth-token", obtain_auth_token),
     path('', include(questionario_router.urls)),
