@@ -19,3 +19,4 @@ wrapt==1.10.11
 gunicorn==19.9.0
 filemagic==1.6
 django-rest-swagger==2.2.0
+djangorestframework-jwt==1.11.0
