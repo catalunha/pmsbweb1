@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import (
     Localizacao,
     UnidadeMedida,
-)
+    PerguntaRequisito, EscolhaRequisito)
 
 #perguntas 
 from .models import (
