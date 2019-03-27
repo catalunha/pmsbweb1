@@ -21,17 +21,17 @@
                                 <td>{{atributo.0.nome}}</td>
                                 {% if atributo.1 %}
                                 <td style="text-align:center">
-                                    <span class="badge badge-info">Preenchido</span>
+                                    <span class="badge badge-warning">Preenchido</span>
                                 </td>
                                 <td style="text-align:center" >
-                                    <a class="btn btn-info" href="{{atributo.0.get_absolute_url}}"><i class="fa fa-edit"></i>editar</a>
+                                    <a class="btn btn-warning" href="{{atributo.0.get_absolute_url}}"><i class="fa fa-edit"></i>editar</a>
                                 </td>
                                 {% else %}
                                 <td style="text-align:center">
-                                    <span class="badge badge-danger">Não Preenchido</span>
+                                    <span class="badge badge-success">Não Preenchido</span>
                                 </td>
                                 <td style="text-align:center">
-                                    <a class="btn btn-danger" href="{{atributo.0.get_absolute_url}}"><i class="fa fa-plus"></i>preencher</a>
+                                    <a class="btn btn-success" href="{{atributo.0.get_absolute_url}}"><i class="fa fa-plus"></i>preencher</a>
                                 </td>
                                 {% endif %}
                             </tr>

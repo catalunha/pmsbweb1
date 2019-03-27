@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils.translation import gettext as _
 from django.utils import timezone
-from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin
+from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin, FakeDeleteModelMixin
 
 class Departamento(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)
@@ -17,14 +17,11 @@ class Departamento(UUIDModelMixin, TimedModelMixin):
         verbose_name = 'Departamento'
         verbose_name_plural = 'Departamentos'
     
-    def __concat_str__(self):
-        if self.superior is None:
-            return self.nome
-        else:
-            return self.superior.__concat_str__() + ' -> ' + self.nome
-
     def __str__(self):
-        return self.__concat_str__()
+        if self.superior is not None:
+            return f'{self.superior} -> {self.nome}'
+        else:
+            return f'{self.nome}'
 
 class Cargo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)

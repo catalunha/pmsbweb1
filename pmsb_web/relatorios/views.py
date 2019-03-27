@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 from core.views import (
     FakeDeleteView,
     AjaxableFormResponseMixin,
+    FakeDeleteQuerysetViewMixin
 )
 
 from .models import (
@@ -83,7 +84,7 @@ class RelatorioUpdateView(RelatorioDonoQuerysetMixin, PermissionRequiredMixin, U
 
     success_url = reverse_lazy("relatorios:list_relatorio")
 
-class RelatorioDeleteView(RelatorioDonoQuerysetMixin, PermissionRequiredMixin, FakeDeleteView):
+class RelatorioDeleteView(RelatorioDonoQuerysetMixin, PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
     model = Relatorio
     template_name = "relatorios/delete_relatorio.html"
     permission_required = ["relatorios.view_relatorio", "relatorios.delete_relatorio"]

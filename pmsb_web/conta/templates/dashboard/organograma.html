@@ -4,17 +4,17 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-sm">
-                    {% if dep %}
+                    {% if departamentos %}
                     <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma das Áreas</div>
-                    {% elif tree_list %}
+                    {% elif hierarquia %}
                     <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma Hierárquico</div>
-                    {% elif departamentos %}
+                    {% elif cargolist %}
                     <div class="btn-align"><i class="nav-icon fa fa-sitemap"></i>Organograma das Áreas e Cargos</div>
                     {% endif %}
                 </div>
-                {% if not dep %}
+                {% if not departamentos %}
                     {% if 'conta.view_user' in perms %}
-                    <div class="col-sm">
+                    <!-- <div class="col-sm">
                         <select id="selecao" class="form-control-sm" style="float:right;">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown"
                                 aria-haspopup="true" aria-expanded="true">Ações<span class="caret"></span>
@@ -24,7 +24,7 @@
                                 <option value="2">Todos</option>
                             </ul>
                         </select>
-                    </div>
+                    </div> -->
                     {% endif %}
                 {% endif %}
             </div>
@@ -35,21 +35,21 @@
                     <a href="javascript: d.openAll();">Expandir tudo</a> |
                     <a href="javascript: d.closeAll();">Contrair tudo</a>
                 </small>
-                {% if tree_list %}
+                {% if hierarquia %}
                 <script type="text/javascript">
                     d = new dTree('d');
                     d.add(0, -1, 'Organograma: Árvore Hierárquica');
-                    {% for user in tree_list %}
+                    {% for user in hierarquia %}
                     d.add('{{user.id}}', '{{user.superior.id}}', '{{user.first_name}}');
                     {% endfor %}
                     document.write(d);
                 </script>
                 <!-- SETORES+CARGOS -->
-                {% elif departamentos %}
+                {% elif cargolist %}
                 <script type="text/javascript">
                     d = new dTree('d');
                     d.add(0, -1, 'Organograma: Áreas e Cargos');
-                    {% for dep in departamentos %}
+                    {% for dep in cargolist %}
                     d.add('{{dep.id}}', '{{dep.superior.id}}', '{{dep.nome}}');
                     {% endfor %}
                     {% for users in all_user_active %}
@@ -59,12 +59,12 @@
                 </script>
                 <!-- USUARIOS N ATIVOS -->
 
-                {% elif dep %}
+                {% elif departamentos %}
                 <!-- SETORES -->
                 <script type="text/javascript">
                     d = new dTree('d');
                     d.add(0, -1, 'Organograma: Áreas');
-                    {% for departamentos in dep %}
+                    {% for departamentos in departamentos %}
                     d.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
                     {% endfor %}
                     document.write(d);
@@ -77,7 +77,7 @@
                     <a href="javascript: d.openAll();">Expandir tudo</a> |
                     <a href="javascript: d.closeAll();">Contrair tudo</a>
                 </small>
-                {% if tree_list %}
+                {% if hierarquia %}
                 <script type="text/javascript">
                     n_ativos = new dTree('n_ativos');
                     n_ativos.add(0, -1, 'Organograma: Árvore Hierárquica');
@@ -101,12 +101,12 @@
                 </script>
                 <!-- USUARIOS N ATIVOS -->
 
-                {% elif dep %}
+                {% elif departamentos %}
                 <!-- SETORES -->
                 <script type="text/javascript">
                     n_ativos = new dTree('n_ativos');
                     n_ativos.add(0, -1, 'Organograma: Áreas');
-                    {% for departamentos in dep %}
+                    {% for departamentos in departamentos %}
                     n_ativos.add('{{departamentos.id}}', '{{departamentos.superior.id}}', '{{departamentos.nome}}');
                     {% endfor %}
                     document.write(n_ativos);

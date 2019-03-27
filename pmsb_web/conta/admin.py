@@ -24,29 +24,34 @@ admin.site.register(User, CustomUserAdmin)
 class DepartamentoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao", "superior", "criado_em", "editado_em")
     list_filter = ('superior', 'criado_em', 'editado_em')
+    search_fields = ("nome",)
 
 admin.site.register(Departamento, DepartamentoAdmin)
 
 class CargoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao", "criado_em", "editado_em")
     list_filter = ('criado_em', 'editado_em')
+    search_fields = ("nome",)
 
 admin.site.register(Cargo, CargoAdmin)
 
 class AtributoAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "descricao", "valor", "documento", "criado_em", "editado_em")
     list_filter = ('criado_em', 'editado_em')
+    search_fields = ("nome",)
 
 admin.site.register(Atributo, AtributoAdmin)
 
 class ValorAtributoAdmin(admin.ModelAdmin):
     list_display = ("id", "usuario", "tipo", "valor", "criado_em", "editado_em")
-    list_filter = ('criado_em', 'editado_em')
+    list_filter = ('usuario', 'criado_em', 'editado_em')
+    search_fields = ("nome",)
 
 admin.site.register(ValorAtributo, ValorAtributoAdmin)
 
 class DocumentoAtributoAdmin(admin.ModelAdmin):
     list_display = ("id", "usuario", "tipo", "criado_em", "editado_em")
-    list_filter = ('criado_em', 'editado_em')
+    list_filter = ('usuario', 'criado_em', 'editado_em')
+    search_fields = ("nome",)
 
 admin.site.register(DocumentoAtributo, DocumentoAtributoAdmin)

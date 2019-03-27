@@ -1,0 +1,11 @@
+<h3>Objetos Relacionados</h3>
+
+<ul>
+{% for object_manager in obj.all_related_objects %}
+<li>
+    <h6>{{object_manager}}</h6>
+</li>
+{% empty %}
+<li>Sem objetos relarionados</li>
+{% endfor %}
+</ul>

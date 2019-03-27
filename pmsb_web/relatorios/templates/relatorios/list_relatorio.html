@@ -6,7 +6,7 @@
             <div class="btn-align"><i class="nav-icon fa icon-note"></i>Produtos</div>
         </div>
         <div class="col-sm">
-            <a class="btn btn-primary" style="float: right;" href="{% url 'relatorios:create_relatorio'%}">
+            <a class="btn btn-success" style="float: right;" href="{% url 'relatorios:create_relatorio'%}">
                 <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Produto</a>
         </div>
     </div>
@@ -15,28 +15,29 @@
     <h2 style="text-align: center;">Lista de seus Produtos</h2>
     <hr>
     <ul class="list-group">
-        {% for r in object_list %}{% comment %} dono:{{r.usuario}} {% endcomment %}
+        {% for relatorio in object_list %}
+        {% comment %} dono:{{r.usuario}} {% endcomment %}
         <li class="list-group-item" style="font-size: 16px;">
             <div class="row">
                 <div class="col-sm-6">
-                    <b>Título:</b> {{r}}
+                    <b>Título:</b> {{relatorio}}
                 </div>
                 <div class="col-sm-6" style="text-align:right;">
-                    <a href="{% url 'relatorios:detail_relatorio' r.pk %}"><span class="badge badge-secondary">Gerênciar
+                    <a href="{% url 'relatorios:detail_relatorio' relatorio.id %}"><span class="badge badge-secondary">Gerênciar
                             índices</span></a>
-                    <a href="{% url 'relatorios:update_relatorio' r.pk %}"><span class="badge badge-secondary">Editar
+                    <a href="{% url 'relatorios:update_relatorio' relatorio.id %}"><span class="badge badge-secondary">Editar
                             título
                             e descrição</span></a>
-                    <a href="{% url 'relatorios:delete_relatorio' r.pk %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash"
+                    <a href="{% url 'relatorios:delete_relatorio' relatorio.id %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash"
                                 style="color:white; margin-right:1px;"></i>Excluir produto</span></a>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm">
-                    <b>Descrição:</b> {{r.descricao}}
+                    <b>Descrição:</b> {{relatorio.descricao}}
                 </div>
                 <div class="col-sm" style="text-align:right;">
-                    <b>Data de criação:</b> {{r.criado_em}}
+                    <b>Data de criação:</b> {{relatorio.criado_em}}
                 </div>
             </div>
         </li>

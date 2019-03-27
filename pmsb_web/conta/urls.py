@@ -26,7 +26,7 @@ urlpatterns = [
 
     
     # organograma
-    path('organograma/hierarquia/',views.HierarquiaListView.as_view(), name='hierarquia_tree'),
+    #path('organograma/hierarquia/',views.HierarquiaListView.as_view(), name='hierarquia_tree'),
     path('organograma/cargos/',views.CargoListView.as_view(), name='cargo_tree'),
     path('organograma/departamentos/',views.DepartamentoListView.as_view(), name='departamento_tree')
 

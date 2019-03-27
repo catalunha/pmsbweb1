@@ -179,19 +179,19 @@ class UserContextData(object):
 
 class HierarquiaListView(UserContextData, UserFilteringQuerySet, PermissionRequiredMixin, ListView):
     template_name = 'dashboard/organograma.html'
-    context_object_name = 'tree_list'
+    context_object_name = 'hierarquia'
     model = User    
     permission_required = ["conta.view_user"]
 
 class DepartamentoListView(PermissionRequiredMixin, ListView):
     template_name = 'dashboard/organograma.html'
-    context_object_name = 'dep'
+    context_object_name = 'departamentos'
     model = Departamento
     permission_required = ["conta.view_departamento"]
 
 class CargoListView(UserContextData, PermissionRequiredMixin, ListView):
     template_name = 'dashboard/organograma.html'
-    context_object_name = 'departamentos'
+    context_object_name = 'cargolist'
     model = Departamento
     permission_required = ["conta.view_departamento"]
 

@@ -3,6 +3,9 @@
 # Visual Code Settings Folder
 .vscode/
 
+# Inteljj
+.idea
+
 ### OSX ###
 .DS_Store
 .AppleDouble
@@ -39,6 +42,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+venv/
+tmp/
 build/
 develop-eggs/
 dist/
@@ -90,5 +95,8 @@ __pycache__/
 local_settings.py
 
 .env
-db.sqlite3
+*.db
 *.sqlite3
+.idea
+venv
+tmp
