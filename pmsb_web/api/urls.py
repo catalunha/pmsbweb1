@@ -8,10 +8,7 @@ app_name = 'api'
 urlpatterns = [
     path('auth/', include('api.urls_auth')),
     path('questionarios/', include('questionarios.api_urls')),
+    path('docs/', include('api.urls_docs')),
+
     path('', include('questionarios.api_urls')),
 ]
-
-if settings.DEBUG:    
-    urlpatterns += [
-        path('docs/swagger', get_swagger_view(title="PMSB API")),
-    ]
