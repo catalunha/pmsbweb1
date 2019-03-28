@@ -64,6 +64,7 @@ INCLUDE_APPS = [
     'corsheaders',
     'pinax.messages',
     'widget_tweaks',
+    'storages',
 ]
 
 if DEBUG:
@@ -166,20 +167,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.0/howto/static-files/
-
-STATIC_URL = '/pmsb/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-MEDIA_URL = '/pmsb/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-FILE_UPLOAD_TEMP_DIR = '/tmp/'
-FILE_UPLOAD_PERMISSIONS = 0o644
-FILE_UPLOAD_MAX_MEMORY_SIZE = 33554432
-
-
 AUTH_USER_MODEL = "conta.User"
 
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
@@ -197,3 +184,36 @@ SERVER_EMAIL = 'pmsb@gmail.com'
 #Cross Origin Resource Sharing para cordova
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = ('localhost:8100', )
+
+
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='files')
+
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='sfo2')
+
+AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL', default='https://sfo2.digitaloceanspaces.com')
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+S3_URL = config('S3_URL', default='https://pmsb.sfo2.cdn.digitaloceanspaces.com')
+
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+STATIC_URL = '/pmsb/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+
+DEFAULT_FILE_STORAGE = 'core.storages.MediaStorage'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+FILE_UPLOAD_TEMP_DIR = '/tmp/'
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_MAX_MEMORY_SIZE = 33554432
+
