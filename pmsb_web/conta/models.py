@@ -94,6 +94,7 @@ class Atributo(UUIDModelMixin, TimedModelMixin):
     class Meta:
         ordering = ['nome']
 
+
 class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     valor = models.CharField(max_length = 255)
@@ -106,9 +107,10 @@ class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     def __str__(self):
         return '{}-{}'.format(self.tipo, self.valor)
 
+
 def documento_atributo(instance, filename):
     hoje = timezone.now()
-    return "documentos_atributo/{}/{}/{}/{}/{}".format( instance.usuario.id, hoje.year, hoje.month, hoje.day, filename)
+    return f"documentos_atributo/{instance.usuario.id}/{hoje.year}/{hoje.month}/{hoje.day}/{filename}"
 
 class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
@@ -125,3 +127,6 @@ class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
         verbose_name = 'Documento de Atributo'
         verbose_name_plural = 'Documentos de Atributo'
 
+
+    def __str__(self):
+        return f"{self.tipo}:{self.arquivo}"
