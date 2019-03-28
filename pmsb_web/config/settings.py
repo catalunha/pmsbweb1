@@ -11,30 +11,28 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from decouple import config, Csv
+
 import dj_database_url
+from decouple import config, Csv
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config("SECRET_KEY")
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #atenção aqui, nao temos certificado
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # atenção aqui, nao temos certificado
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=True, cast=bool)
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=True, cast=bool)
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast = bool, default = False)
-
+DEBUG = config("DEBUG", cast=bool, default=False)
 
 TEMPLATE_DEBUG = DEBUG
 
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
-
 
 ADMINS = (
     ('Catalunha', 'pmsb@gmail.com'),
@@ -44,8 +42,6 @@ MANAGERS = ADMINS
 
 LOGIN_URL = '/pmsb/'
 LOGOUT_URL = '/pmsb/logout'
-
-
 
 # Application definition
 DEFAULT_APPS = [
@@ -57,7 +53,6 @@ DEFAULT_APPS = [
     'django.contrib.staticfiles',
 ]
 
-
 INCLUDE_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
@@ -68,8 +63,7 @@ INCLUDE_APPS = [
 ]
 
 if DEBUG:
-    INCLUDE_APPS += ['rest_framework_swagger',]
-
+    INCLUDE_APPS += ['rest_framework_swagger', ]
 
 LOCAL_APPS = [
     'core.apps.CoreConfig',
@@ -83,7 +77,7 @@ INSTALLED_APPS = DEFAULT_APPS + INCLUDE_APPS + LOCAL_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', #cors para ionic
+    'corsheaders.middleware.CorsMiddleware',  # cors para ionic
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -112,16 +106,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
     'default': dj_database_url.config(
-      default = config('DATABASE_URL'))
+        default=config('DATABASE_URL'))
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -141,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-#rest framework
+# rest framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.DjangoModelPermissions',
@@ -166,7 +157,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 AUTH_USER_MODEL = "conta.User"
 
 EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
@@ -181,10 +171,9 @@ DEFAULT_FROM_EMAIL = 'PMSB <pmsb@gmail.com>'
 EMAIL_SUBJECT_PREFIX = '[PMSB] '
 SERVER_EMAIL = 'pmsb@gmail.com'
 
-#Cross Origin Resource Sharing para cordova
+# Cross Origin Resource Sharing para cordova
 CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = ('localhost:8100', )
-
+CORS_ORIGIN_WHITELIST = ('localhost:8100',)
 
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 
@@ -200,14 +189,12 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-S3_URL = config('S3_URL', default='https://pmsb.sfo2.cdn.digitaloceanspaces.com')
 
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 STATIC_URL = '/pmsb/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 
 DEFAULT_FILE_STORAGE = 'core.storages.MediaStorage'
 MEDIA_URL = '/media/'
@@ -216,4 +203,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 FILE_UPLOAD_TEMP_DIR = '/tmp/'
 FILE_UPLOAD_PERMISSIONS = 0o644
 FILE_UPLOAD_MAX_MEMORY_SIZE = 33554432
-
