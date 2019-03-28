@@ -231,9 +231,22 @@ class AtributoListView(ListView):
 # trocar esta joça feia
 class ValorAtributoCreateView(CreateView):
     template_name = 'dashboard/perfil_form.html'
-    
+
+    def get_atributo(self):
+        return Atributo.objects.get(id=self.kwargs.get('pk'))
+
+    def get_context_data(self, **kwargs):
+        """
+        TODO: refatorar, codigo vai contra a classe que está herdando
+        :param kwargs:
+        :return:
+        """
+        context = super().get_context_data(**kwargs)
+        context['atributo'] = self.get_atributo()
+        return context
+
     def get(self, request, *args, **kwargs):
-        atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
+        atributo = self.get_atributo()
         #valoratributo = ValorAtributo.objects.get(tipo=atributo.id, usuario=self.request.user)
         if atributo.valor == atributo.documento:
             formValor = BaseValorAtributoForm() 
@@ -247,7 +260,7 @@ class ValorAtributoCreateView(CreateView):
             return render(request, self.template_name, {'args':atributo, 'formValor': formDocumento})
 
     def post(self, request, *args, **kwargs):
-        atributo = Atributo.objects.get(id=self.kwargs.get('pk'))
+        atributo = self.get_atributo()
         if atributo.valor == atributo.documento:
             formValor = BaseValorAtributoForm(request.POST)
             formDocumento = BaseDocumentoAtributoForm(request.POST, request.FILES)

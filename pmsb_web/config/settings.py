@@ -60,10 +60,8 @@ INCLUDE_APPS = [
     'pinax.messages',
     'widget_tweaks',
     'storages',
+    'rest_framework_swagger',
 ]
-
-if DEBUG:
-    INCLUDE_APPS += ['rest_framework_swagger', ]
 
 LOCAL_APPS = [
     'core.apps.CoreConfig',

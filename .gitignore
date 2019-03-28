@@ -15,7 +15,8 @@
 Icon
 
 media/
-static/
+/static/
+/pmsb_web/static/
 # Thumbnails
 ._*
 
