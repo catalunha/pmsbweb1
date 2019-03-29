@@ -32,7 +32,7 @@ class QuestionarioDeleteForm(forms.Form):
 class BasePerguntaForm(forms.ModelForm):
     class Meta:
         model = Pergunta
-        fields = ("variavel", "texto", "pergunta_requisito", "possivel_escolha_requisito")
+        fields = ("variavel", "texto")
 
 class PerguntaArquivoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
