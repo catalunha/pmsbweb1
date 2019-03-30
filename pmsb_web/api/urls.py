@@ -10,5 +10,4 @@ urlpatterns = [
     path('questionarios/', include('questionarios.api_urls')),
     path('docs/', include('api.urls_docs')),
 
-    path('', include('questionarios.api_urls')),
 ]
