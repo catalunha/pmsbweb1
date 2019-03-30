@@ -1,4 +1,5 @@
 from django.urls import path, include
+from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_jwt.views import (
     obtain_jwt_token, 
     refresh_jwt_token, 
@@ -7,7 +8,9 @@ from rest_framework_jwt.views import (
 
 app_name = 'auth'
 
+
 urlpatterns = [
+    path("get-auth-token", obtain_auth_token),
     path('jwt/', include([
         path('auth-token/', obtain_jwt_token),
         path('refresh-token/', refresh_jwt_token),
