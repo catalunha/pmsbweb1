@@ -52,20 +52,24 @@ class QuestionarioManager(models.Manager):
         queryset = self.get_queryset()
         todos_subordinados = list()
         subordinados = list()
+        processados = list()
 
         for usuario in User.objects.filter(superior=usuario_superior):
             subordinados.append(usuario)
 
         while len(subordinados) > 0:
-            a = subordinados[0]
+            a = subordinados.pop(0)
+            processados.append(a)
             todos_subordinados.append(a)
-            subordinados = subordinados[1:]
             subsubordinados = User.objects.filter(superior=a)
 
+
             for subsubordinado in subsubordinados:
-                if subsubordinado not in subordinados:
+                if subsubordinado not in processados:
                     subordinados.append(subsubordinado)
-        return queryset.filter(usuario__in=todos_subordinados, fake_deletado=False)
+        q = queryset.filter(usuario__in=todos_subordinados, fake_deletado=False)
+
+        return q
 
 
 class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
