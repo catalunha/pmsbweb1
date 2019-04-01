@@ -4,6 +4,9 @@
 {% block titulo %} {{block.super}} Adiciona Pergunta {% endblock titulo %}
 
 {% block conteudo %}
+    <h3>
+        <b>Tipo de Pergunta:</b> {{form.model_verbose_name_tipo}}
+    </h3>
 <form method="post">
     {% csrf_token %}
     {% include "includes/form.html" with form=form %}
