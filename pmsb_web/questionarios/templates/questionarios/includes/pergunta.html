@@ -30,9 +30,9 @@
 
     <h5>
         Pergunta Requisito:
-        {% with perguntas_do_questionario=pergunta_do_questionario.pergunta.perguntarequisito_set.all %}
-        {% for pergunta_do_questionario in perguntas_do_questionario %}
-        <a href="{% url "questionarios:pergunta_detail" pergunta_do_questionario.pergunta.pk %}" target="_blank">{{pergunta_do_questionario}}</a>,
+        {% with perguntas_requisito=pergunta_do_questionario.pergunta.perguntarequisito_set.all %}
+        {% for requisito in perguntas_requisito %}
+        <a href="{% url "questionarios:pergunta_detail" requisito.pergunta_requisito.pk %}" target="_blank">{{requisito}}</a>,
         {% empty %}
             Sem Pergunta Requisito
         {% endfor %}
