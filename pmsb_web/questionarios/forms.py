@@ -34,6 +34,10 @@ class BasePerguntaForm(forms.ModelForm):
         model = Pergunta
         fields = ("variavel", "texto")
 
+    @property
+    def model_verbose_name_tipo(self):
+        return self.Meta.model.TIPO_VERBOSE
+
 class PerguntaArquivoForm(BasePerguntaForm):
     class Meta(BasePerguntaForm.Meta):
         model = PerguntaArquivo

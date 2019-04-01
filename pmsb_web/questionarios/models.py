@@ -52,20 +52,24 @@ class QuestionarioManager(models.Manager):
         queryset = self.get_queryset()
         todos_subordinados = list()
         subordinados = list()
+        processados = list()
 
         for usuario in User.objects.filter(superior=usuario_superior):
             subordinados.append(usuario)
 
         while len(subordinados) > 0:
-            a = subordinados[0]
+            a = subordinados.pop(0)
+            processados.append(a)
             todos_subordinados.append(a)
-            subordinados = subordinados[1:]
             subsubordinados = User.objects.filter(superior=a)
 
+
             for subsubordinado in subsubordinados:
-                if subsubordinado not in subordinados:
+                if subsubordinado not in processados:
                     subordinados.append(subsubordinado)
-        return queryset.filter(usuario__in=todos_subordinados, fake_deletado=False)
+        q = queryset.filter(usuario__in=todos_subordinados, fake_deletado=False)
+
+        return q
 
 
 class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
@@ -116,7 +120,7 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
     Pergunta: Representação da pergunta
     """
     TIPO = None
-
+    TIPO_VERBOSE = None
     variavel = models.CharField(max_length=255)
     texto = models.TextField()
     tipo = models.PositiveSmallIntegerField(editable=False)
@@ -145,6 +149,7 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
         # atualiza editado_em nos questionarios com esta pergunta
         for perguntadoquestionario in self.perguntadoquestionario_set.all():
             perguntadoquestionario.questionario.save()
+
 
     @property
     def verbose_name_tipo(self):
@@ -209,11 +214,13 @@ class UnidadeMedida(UUIDModelMixin, FakeDeleteModelMixin):
 
 class PerguntaEscolha(Pergunta):
     TIPO = 0
+    TIPO_VERBOSE = "Pergunta Escolha"
     multipla = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Pergunta Escolha"
         verbose_name_plural = "Perguntas Escolha"
+
 
     @property
     def multipla_verbose(self):
@@ -225,6 +232,7 @@ class PerguntaEscolha(Pergunta):
 
 class PerguntaTexto(Pergunta):
     TIPO = 1
+    TIPO_VERBOSE = "Pergunta Texto"
 
     class Meta:
         verbose_name = "Pergunta Texto"
@@ -233,6 +241,7 @@ class PerguntaTexto(Pergunta):
 
 class PerguntaArquivo(Pergunta):
     TIPO = 2
+    TIPO_VERBOSE = "Pergunta Arquivo"
 
     class Meta:
         verbose_name = "Pergunta Arquivo"
@@ -241,6 +250,7 @@ class PerguntaArquivo(Pergunta):
 
 class PerguntaImagem(Pergunta):
     TIPO = 3
+    TIPO_VERBOSE = "Pergunta Imagem"
 
     class Meta:
         verbose_name = "Pergunta Imagem"
@@ -249,6 +259,7 @@ class PerguntaImagem(Pergunta):
 
 class PerguntaCoordenada(Pergunta):
     TIPO = 4
+    TIPO_VERBOSE = "Pergunta Coordenada"
 
     class Meta:
         verbose_name = "Pergunta Coordenada"
@@ -257,6 +268,7 @@ class PerguntaCoordenada(Pergunta):
 
 class PerguntaNumero(Pergunta):
     TIPO = 5
+    TIPO_VERBOSE = "Pergunta Numero"
     unidade_medida = models.ForeignKey(UnidadeMedida, on_delete=models.CASCADE)
     maior_que = models.FloatField(blank=True, null=True)
     menor_que = models.FloatField(blank=True, null=True)

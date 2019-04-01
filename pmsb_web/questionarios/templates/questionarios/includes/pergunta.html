@@ -30,21 +30,21 @@
 
     <h5>
         Pergunta Requisito:
-        {% with pergunta=pergunta_do_questionario.pergunta.pergunta_requisito %}
-        {% if pergunta %}
-        <a href="{% url "questionarios:pergunta_detail" pergunta.pk %}" target="_blank">{{pergunta}}</a>
-        {% else %}
+        {% with perguntas=pergunta_do_questionario.pergunta.perguntarequisito_set.all %}
+        {% for pergunta in perguntas %}
+        <a href="{% url "questionarios:pergunta_detail" pergunta.pk %}" target="_blank">{{pergunta}}</a>,
+        {% empty %}
             Sem Pergunta Requisito
-        {% endif %}
+        {% endfor %}
         {% endwith %}
     </h5>
     <h5>Escolha Requisito:
-        {% with escolha=pergunta_do_questionario.pergunta.possivel_escolha_requisito%}
-        {% if escolha %}
-        <a href="{% url "questionarios:pergunta_detail" escolha.pergunta.pk %}" target="_blank">{{escolha}}</a>
-        {% else %}
+        {% with escolhas=pergunta_do_questionario.pergunta.escolharequisito_set.all %}
+        {% for escolha in escolhas %}
+        <a href="{% url "questionarios:pergunta_detail" escolha.pergunta.pk %}" target="_blank">{{escolha}}</a>,
+        {% empty %}
             Sem Escolha Requisito
-        {% endif %}
+        {% endfor %}
         {% endwith %}
     </h5>
 </li>
