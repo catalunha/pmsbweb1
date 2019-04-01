@@ -34,7 +34,7 @@
             Pergunta Requisito:
             {% with perguntas_requisito=object.perguntarequisito_set.all %}
             {% for requisito in perguntas_requisito %}
-            <a href="{% url "questionarios:pergunta_detail" requisito.pergunta_requisito.pk %}" target="_blank">{{requisito}}</a>,
+            <a href="{% url "questionarios:pergunta_detail" requisito.pergunta_requisito.pergunta.pk %}" target="_blank">{{requisito}}</a>,
             {% empty %}
                 Sem Pergunta Requisito
             {% endfor %}
