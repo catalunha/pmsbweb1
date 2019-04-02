@@ -1,4 +1,5 @@
 {% extends "dashboard/index.html" %}
+{% load static %}
 {% block main %}
 <style>
     #questionarios .row {
@@ -15,6 +16,7 @@
             <div class="col-sm">
                 <div class="btn-align"><i class="nav-icon fa icon-note"></i>Questionarios</div>
             </div>
+
             <div class="col-sm">
                 {% block ul_menu %}
 
@@ -26,6 +28,12 @@
     <div class="card-body">
         <h2 style="text-align: center;">{% block card_titulo %} Questionarios {% endblock %}</h2>
         <hr>
+    </div>
+
+    <div class="row" style="margin-bottom: 70px;">
+        <div class="col-lg-10 offset-lg-1">
+            <a href="{% static 'PMSB-Mobile-Android.apk' %}">PMSB-Mobile-Android.apk</a>
+        </div>
     </div>
 
     <div class="row" style="margin-bottom: 70px;">
