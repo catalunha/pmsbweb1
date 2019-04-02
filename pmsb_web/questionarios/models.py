@@ -1,16 +1,15 @@
 import uuid
 
-from django.contrib.auth import get_user_model
-from django.db import models
-from django.utils import timezone
-from model_utils.managers import InheritanceManager
-
 from core.mixins import (
     UUIDModelMixin,
     FakeDeleteModelMixin,
     UserOwnedModelMixin,
     TimedModelMixin,
 )
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.utils import timezone
+from model_utils.managers import InheritanceManager
 
 User = get_user_model()
 
@@ -44,6 +43,7 @@ class QuestionarioManager(models.Manager):
     """
     QuestionarioManager: Gerenciados de querys para o modelo Questionario
     """
+
     def get_by_superior(self, usuario_superior):
         """
         :param usuario_superior:
@@ -62,7 +62,6 @@ class QuestionarioManager(models.Manager):
             processados.append(a)
             todos_subordinados.append(a)
             subsubordinados = User.objects.filter(superior=a)
-
 
             for subsubordinado in subsubordinados:
                 if subsubordinado not in processados:
@@ -99,7 +98,11 @@ class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, Ti
         """
         :return: Lista de Pergunta
         """
-        queryset = Pergunta.objects.filter(perguntadoquestionario__questionario=self, fake_deletado=False).order_by(
+        queryset = Pergunta.objects.filter(
+            perguntadoquestionario__questionario=self,
+            perguntadoquestionario__fake_deletado=False,
+            fake_deletado=False,
+        ).order_by(
             "perguntadoquestionario__ordem")
         return queryset
 
@@ -108,6 +111,7 @@ class PerguntaManger(models.Manager):
     """
     PerguntaManger: Gerenciador de querys para o modelo Pergunta
     """
+
     def by_questionario(self, questionario, exclude_obj=None):
         queryset = self.get_queryset().filter(perguntadoquestionario__questionario=questionario, fake_deletado=False)
         if exclude_obj is not None:
@@ -149,7 +153,6 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
         # atualiza editado_em nos questionarios com esta pergunta
         for perguntadoquestionario in self.perguntadoquestionario_set.all():
             perguntadoquestionario.questionario.save()
-
 
     @property
     def verbose_name_tipo(self):
@@ -220,7 +223,6 @@ class PerguntaEscolha(Pergunta):
     class Meta:
         verbose_name = "Pergunta Escolha"
         verbose_name_plural = "Perguntas Escolha"
-
 
     @property
     def multipla_verbose(self):

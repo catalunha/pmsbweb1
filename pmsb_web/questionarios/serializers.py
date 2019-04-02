@@ -292,7 +292,7 @@ class PossivelEscolhaRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet
 
 
 class CoordenadaRespostaSerializer(serializers.ModelSerializer):
-    coordenada = LocalizacaoSerializer()
+    coordenada = LocalizacaoSerializer
 
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = CoordenadaResposta
