@@ -2,13 +2,17 @@
 
 {% block ul_menu %}
 <div class="pull-right">
-<a class="btn btn-primary" href=" {% url "questionarios:questionario_list_equipe"%}">
-    Questionarios de sua equipe
-</a>
+    <a class="btn btn-primary" href=" {% url "questionarios:list"%}?equipe=True">
+            <i class="nav-icon fa icon-note" style="color:white;"></i>Editar questionarios de sua equipe
+    </a>
 
-<a  class="btn btn-success" href=" {% url "questionarios:create"%}">
-    <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Questionario
-</a>
+    <a class="btn btn-primary" href=" {% url "questionarios:questionario_list_equipe"%}">
+        Questionarios de sua equipe
+    </a>
+
+    <a  class="btn btn-success" href=" {% url "questionarios:create"%}">
+        <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Questionario
+    </a>
 </div>
 {% endblock ul_menu%}
 
