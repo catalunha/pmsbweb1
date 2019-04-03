@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from api.models import MobileApp
+
+class MobileAppAdmin(admin.ModelAdmin):
+    list_display = ('pk','major', 'minor', 'patch')
+    list_filter = ('major', 'minor')
+
+admin.site.register(MobileApp, MobileAppAdmin)
