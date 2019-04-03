@@ -1,6 +1,6 @@
 from rest_framework import serializers
-
-from .models import User, Cargo, Departamento
+from core.mixins import ArquivoBase64SerializerField
+from .models import User, Cargo, Departamento, Atributo, DocumentoAtributo, ValorAtributo
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -38,4 +38,22 @@ class CargoSerializer(serializers.ModelSerializer):
 class DepartamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departamento
+        fields = '__all__'
+
+
+class AtributoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Atributo
+        fields = '__all__'
+
+class DocumentoAtributoSerializer(serializers.ModelSerializer):
+    arquivo = ArquivoBase64SerializerField()
+    class Meta:
+        model = DocumentoAtributo
+        fields = '__all__'
+
+
+class ValorAtributoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ValorAtributo
         fields = '__all__'
