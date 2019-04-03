@@ -78,6 +78,28 @@ class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
 
     def __str__(self):
         return '{0}: {1}'.format(self.departamento, self.first_name)
+    
+    def get_subordinados(self):        
+        todos_subordinados = list()
+        subordinados = list()
+        processados = list()
+
+        for usuario in User.objects.filter(superior=usuario_superior):
+            subordinados.append(usuario)
+
+        while len(subordinados) > 0:
+            a = subordinados.pop(0)
+            processados.append(a)
+            todos_subordinados.append(a)
+            subsubordinados = User.objects.filter(superior=a)
+
+            for subsubordinado in subsubordinados:
+                if subsubordinado not in processados:
+                    subordinados.append(subsubordinado)
+        return todos_subordinados
+
+    def is_subordinado(self, user):
+        return user in self.get_subordinados()
 
 class Atributo(UUIDModelMixin, TimedModelMixin):
     nome = models.CharField(max_length = 255)

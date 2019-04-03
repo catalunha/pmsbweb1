@@ -9,7 +9,7 @@
     <p>
         <a class="btn btn-primary" href="{% url "questionarios:list" %}">Voltar</a>
         <a id="salvar_ordem" class="btn btn-success" href="#" >Salvar</a>
-        <a class="btn btn-primary" href="{% url "questionarios:list" %}">Recarregar</a>
+        <a class="btn btn-primary" href="{% url "questionarios:ordenar" object.pk %}">Recarregar</a>
     </p>
     
     <ul id="sortable" class="list-group">

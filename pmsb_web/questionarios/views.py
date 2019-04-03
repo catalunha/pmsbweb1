@@ -55,8 +55,18 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
     permission_required = ["questionarios.view_questionario"]
 
     def get_queryset(self):
+        equipe = self.request.GET.get('equipe', None)
+
         queryset = super(QuestionarioListView, self).get_queryset()
-        return queryset.filter(usuario = self.request.user)
+        queryset = queryset.filter(usuario = self.request.user)
+        if equipe == 'True':
+            superior_queryset = Questionario.objects.get_by_superior(
+                usuario_superior=self.request.user,
+            )
+
+            queryset = superior_queryset | queryset
+
+        return queryset
 
 
 class QuestionarioEquipeListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, ListView):
@@ -110,6 +120,16 @@ class QuestionarioOrdenarSubmitAjaxView(PermissionRequiredMixin, FakeDeleteQuery
         return JsonResponse({"id":uuid})
 
 """Pergunta"""
+
+class PerguntaUserPassTest(UserPassesTestMixin):
+    """
+    TODO: Testar implementação do teste de usuario permitido
+    TODO: Adicionar teste as views
+    """
+    def test_func(self):
+        pergunta = get_object_or_404(Pergunta, pk = self.kwargs.get(self.pk_url_kwarg))
+        return self.request.user == pergunta.usuario or self.request.user.is_subordinado(pergunta.usuario)
+
 class PerguntaEscolherTipoTemplateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, DetailView):
     model = Questionario
     template_name = "questionarios/escolher_tipo_pergunta.html"
