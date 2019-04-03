@@ -68,6 +68,7 @@ LOCAL_APPS = [
     'conta.apps.ContaConfig',
     'questionarios.apps.QuestionariosConfig',
     'relatorios.apps.RelatoriosConfig',
+    'api.apps.ApiConfig',
 ]
 
 INSTALLED_APPS = DEFAULT_APPS + INCLUDE_APPS + LOCAL_APPS
