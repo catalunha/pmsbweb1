@@ -19,6 +19,30 @@
     </div>
 </div>
 
+{% if object.pergunta_requisito %}
+<div class="row" style="padding-top:10px;">
+    <div class="col-lg-12">
+        <div class="alert alert-warning">
+            <h4 style="color:red;">Pergunta Requisito Ignorada</h4>        
+            <p>Pergunta Requisito: <b>{{object.pergunta_requisito}}</b></p>
+            <p style="color:red;">Refaça selecionando abaixo.</p>        
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if object.possivel_escolha_requisito %}
+<div class="row" style="padding-top:10px;">
+    <div class="col-lg-12">
+        <div class="alert alert-warning">
+            <h4 style="color:red;">Possivel Escolha Requisito Ignorada</h4>
+            <p>Possivel Escolha Requisito: <b>{{object.possivel_escolha_requisito}}</b></p>
+            <p style="color:red;">Refaça selecionando abaixo.</p>        
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <div class="row">
     <div class="col-lg-12">
         <h4>Perguntas Requisito</h4>
