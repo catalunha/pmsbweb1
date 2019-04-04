@@ -66,7 +66,7 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
 
             queryset = superior_queryset | queryset
 
-        return queryset
+        return queryset.order_by('nome')
 
 
 class QuestionarioEquipeListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, ListView):
