@@ -2,8 +2,8 @@
 
 {% block ul_menu %}
 <div class="pull-right">
-    <a class="btn btn-primary" href=" {% url "questionarios:list"%}?equipe=True">
-            <i class="nav-icon fa icon-note" style="color:white;"></i>Editar questionarios de sua equipe
+    <a class="btn btn-primary" href=" {% url "questionarios:list"%}?equipe=False">
+            <i class="nav-icon fa icon-note" style="color:white;"></i>Editar meus questionarios
     </a>
 
     <a class="btn btn-primary" href=" {% url "questionarios:questionario_list_equipe"%}">
@@ -21,7 +21,8 @@
 {% for questionario in object_list %}
 <div class="row">
     <div class="col-lg-12">
-    <p><h5>Questionario: {{questionario.nome}}</h5></p>
+    <h5>Questionario: {{questionario.nome}}</h5>
+    <h6>{{ questionario.usuario }}</h6>
     <p>
         <a class="btn btn-primary" href="{% url "questionarios:update" questionario.id %}">Editar</a>
         <a class="btn btn-primary" href="{% url "questionarios:create_pergunta_tipo" questionario.id %}">Adicionar Pergunta</a>

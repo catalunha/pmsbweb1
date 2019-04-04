@@ -55,7 +55,7 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
     permission_required = ["questionarios.view_questionario"]
 
     def get_queryset(self):
-        equipe = self.request.GET.get('equipe', None)
+        equipe = self.request.GET.get('equipe', 'True')
 
         queryset = super(QuestionarioListView, self).get_queryset()
         queryset = queryset.filter(usuario = self.request.user)
