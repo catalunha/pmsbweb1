@@ -189,11 +189,11 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
         return self.possiveis_escolhas.filter(fake_deletado=False)
 
     @property
-    def escolharequisito_fake_delete(self):
+    def escolharequisito_set_fake_delete(self):
         return self.escolharequisito_set.filter(fake_deletado=False)
 
     @property
-    def perguntarequisito_fake_delete(self):
+    def perguntarequisito_set_fake_delete(self):
         return self.perguntarequisito_set.filter(fake_deletado=False)
 
 

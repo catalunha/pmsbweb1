@@ -32,9 +32,5 @@ class MobileApp(UUIDModelMixin, TimedModelMixin):
 
     @classmethod
     def latest(cls):
-        l = cls.objects.filter(liberado=True).first()
-        if l is None:
-            return "0.0.0"
-        else:
-            return l.versao()
+        return cls.objects.filter(liberado=True).first()
 

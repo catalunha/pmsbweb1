@@ -19,7 +19,7 @@
     {% if pergunta_do_questionario.pergunta.tipo == 0 %}
     <h3>Escolhas:</h3>
     <ul class="list-group">
-    {% for escolha in pergunta_do_questionario.pergunta.perguntaescolha.possiveis_escolhas.all %}
+    {% for escolha in pergunta_do_questionario.pergunta.perguntaescolha.possiveis_escolhas_fake_delete %}
         <li class="list-group-item"><p>{{escolha.texto}}</p></li>
     {% empty %}
         <li class="list-group-item">Não existem escolhas</li>
@@ -30,7 +30,7 @@
 
     <h5>
         Pergunta Requisito:
-        {% with perguntas_requisito=pergunta_do_questionario.pergunta.perguntarequisito_set.all %}
+        {% with perguntas_requisito=pergunta_do_questionario.pergunta.perguntarequisito_set_fake_delete %}
         {% for requisito in perguntas_requisito %}
         <a href="{% url "questionarios:pergunta_detail" requisito.pergunta_requisito.pergunta.pk %}" target="_blank">{{requisito}}</a>,
         {% empty %}
@@ -39,7 +39,7 @@
         {% endwith %}
     </h5>
     <h5>Escolha Requisito:
-        {% with escolhas=pergunta_do_questionario.pergunta.escolharequisito_set.all %}
+        {% with escolhas=pergunta_do_questionario.pergunta.escolharequisito_set_fake_delete %}
         {% for escolha in escolhas %}
         <a href="{% url "questionarios:pergunta_detail" escolha.pergunta.pk %}" target="_blank">{{escolha}}</a>,
         {% empty %}
