@@ -13,5 +13,10 @@ class VersaoAPIView(APIView):
         Retorna versão atual do app mobile
         """
         latest = MobileApp.latest()
-
-        return Response(latest)
+        
+        if latest is None:
+            latest_text = "0.0.0"
+        else:
+            latest_text = latest.versao()
+        
+        return Response(latest_text)
