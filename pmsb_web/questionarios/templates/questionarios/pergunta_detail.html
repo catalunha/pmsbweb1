@@ -32,7 +32,7 @@
     
         <h5>
             Pergunta Requisito:
-            {% with perguntas_requisito=object.perguntarequisito_set.all %}
+            {% with perguntas_requisito=object.perguntarequisito_set_fake_delete %}
             {% for requisito in perguntas_requisito %}
             <a href="{% url "questionarios:pergunta_detail" requisito.pergunta_requisito.pergunta.pk %}" target="_blank">{{requisito}}</a>,
             {% empty %}
@@ -41,7 +41,7 @@
             {% endwith %}
         </h5>
         <h5>Escolha Requisito:
-            {% with escolhas=object.escolharequisito_set.all %}
+            {% with escolhas=object.escolharequisito_set_fake_delete %}
             {% for escolha in escolhas %}
             <a href="{% url "questionarios:pergunta_detail" escolha.pergunta.pk %}" target="_blank">{{escolha}}</a>,
             {% empty %}
