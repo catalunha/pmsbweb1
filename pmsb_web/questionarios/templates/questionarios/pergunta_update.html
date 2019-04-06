@@ -50,7 +50,7 @@
         <p>*<b>Questionario</b> <b style="color:blue">Pergunta</b></p>
 
         <ul class="list-group">
-        {% for requisito in object.perguntarequisito_fake_delete %}
+        {% for requisito in object.perguntarequisito_set_fake_delete %}
         
         <li class="list-group-item">
             <b>{{requisito.pergunta_requisito.questionario}}</b> <b style="color:blue">{{requisito.pergunta_requisito.pergunta}}</b> <b style="color:red">{{requisito.escolha_requisito.texto}}</b>
@@ -77,7 +77,7 @@
         <h4>Escolhas Requisito</h4>
         <p>*<b>Questionario</b> <b style="color:blue">Pergunta</b> <b style="color:red">Escolha</b></p>
         <ul class="list-group">
-        {% for requisito in object.escolharequisito_fake_delete %}
+        {% for requisito in object.escolharequisito_set_fake_delete %}
         
         <li class="list-group-item">
             <b>{{requisito.questionario}}</b> <b style="color:blue">{{requisito.escolha_requisito.pergunta}}</b> <b style="color:red">{{requisito.escolha_requisito.texto}}</b>
