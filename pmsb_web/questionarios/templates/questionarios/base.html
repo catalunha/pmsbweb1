@@ -30,11 +30,23 @@
         <hr>
     </div>
 
-    <div class="row" style="margin-bottom: 70px;">
-        <div class="col-lg-10 offset-lg-1">
-            <a href="{% static 'PMSB-Mobile-Android.apk' %}">PMSB-Mobile-Android.apk</a>
+    {% if mobileapp %}
+    <div class="row" >
+        <div class="col-lg-10 offset-lg-1">                        
+            {% if mobileapp.android %}
+            <a href="{{mobileapp.android}}">PMSB-Mobile-Android.apk</a>        
+            {% else %}
+            <span>Não existe app para android</span>
+            {% endif %}
+            |
+            {% if mobileapp.ios %}
+            <a href="{{mobileapp.ios}}">PMSB-Mobile-IOS.ipa</a>        
+            {% else %}
+            <span>Não existe app para ios</span>
+            {% endif %}
         </div>
     </div>
+    {% endif %}
 
     <div class="row" style="margin-bottom: 70px;">
         <div class="col-lg-10 offset-lg-1">
