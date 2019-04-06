@@ -48,6 +48,8 @@ from .forms import (
     CreateEscolhaRequisitoForm,
 )
 
+from api.models import MobileApp
+
 """Questionario"""
 class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, ListView):
     model = Questionario
@@ -67,6 +69,11 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
             queryset = superior_queryset | queryset
 
         return queryset.order_by('nome')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mobileapp'] = MobileApp.latest()
+        return context
 
 
 class QuestionarioEquipeListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, ListView):
