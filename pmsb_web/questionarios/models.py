@@ -80,6 +80,7 @@ class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, Ti
     objects = QuestionarioManager()
 
     class Meta:
+        ordering = ('nome', )
         verbose_name = "Questionario"
         verbose_name_plural = "Questionarios"
 
