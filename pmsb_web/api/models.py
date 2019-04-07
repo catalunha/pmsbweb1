@@ -1,5 +1,5 @@
 from django.db import models
-from core.mixins import TimedModelMixin, UUIDModelMixin
+from core.mixins import TimedModelMixin, UUIDModelMixin, FakeDeleteModelMixin
 
 MEDIA_ROOT = 'api'
 MOBILE_APP_MEDIA_ROOT = 'mobile'
@@ -10,7 +10,7 @@ def android_upload_to(instance, filename):
 def ios_upload_to(instance, filename):
     return f"{MEDIA_ROOT}/{MOBILE_APP_MEDIA_ROOT}/{instance.pk}.ipa"
 
-class MobileApp(UUIDModelMixin, TimedModelMixin):
+class MobileApp(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
     android = models.FileField(upload_to=android_upload_to, null=True, blank=True)
     ios = models.FileField(upload_to=ios_upload_to, null=True, blank=True)
     major = models.SmallIntegerField()

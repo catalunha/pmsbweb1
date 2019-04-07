@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from django.utils import timezone
 from core.mixins import UserOwnedModelMixin, TimedModelMixin, UUIDModelMixin, FakeDeleteModelMixin
 
-class Departamento(UUIDModelMixin, TimedModelMixin):
+class Departamento(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
     nome = models.CharField(max_length = 255)
     superior = models.ForeignKey('self', on_delete = models.CASCADE, blank=True, null = True)
     descricao = models.TextField(verbose_name='Descrição')
@@ -23,7 +23,7 @@ class Departamento(UUIDModelMixin, TimedModelMixin):
         else:
             return f'{self.nome}'
 
-class Cargo(UUIDModelMixin, TimedModelMixin):
+class Cargo(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
     nome = models.CharField(max_length = 255)
     descricao = models.TextField(verbose_name='Descrição')
 
@@ -38,7 +38,7 @@ class Cargo(UUIDModelMixin, TimedModelMixin):
 def upload_foto_usuario(instance, filename):
     return 'usuario_foto/{0}/{1}'.format(instance.pk, filename)
 
-class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
+class User(AbstractUser, UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
 
     #username = cpf
     username_validator = UnicodeUsernameValidator()
@@ -101,7 +101,7 @@ class User(AbstractUser, UUIDModelMixin, TimedModelMixin):
     def is_subordinado(self, user):
         return user in self.get_subordinados()
 
-class Atributo(UUIDModelMixin, TimedModelMixin):
+class Atributo(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
     nome = models.CharField(max_length = 255)
     descricao = models.TextField(verbose_name='Descrição')
     valor = models.BooleanField(default = True)
@@ -117,7 +117,7 @@ class Atributo(UUIDModelMixin, TimedModelMixin):
         ordering = ['nome']
 
 
-class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
+class ValorAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin, FakeDeleteModelMixin):
     tipo = models.ForeignKey(Atributo, on_delete = models.CASCADE)
     valor = models.CharField(max_length = 255)
     
@@ -134,7 +134,7 @@ def documento_atributo(instance, filename):
     hoje = timezone.now()
     return f"documentos_atributo/{instance.usuario.id}/{hoje.year}/{hoje.month}/{hoje.day}/{filename}"
 
-class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin):
+class DocumentoAtributo(UUIDModelMixin, UserOwnedModelMixin, TimedModelMixin, FakeDeleteModelMixin):
     """
     Model definition for Arquivo.
     """    
