@@ -44,7 +44,7 @@ class RelatorioManager(FakeDeleteManagerMixin, models.Manager):
 class Relatorio(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length = 255)
     descricao = models.TextField()
-    objetcs = RelatorioManager()
+    objects = RelatorioManager()
 
     def __str__(self):
         return self.titulo
@@ -245,4 +245,4 @@ class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMod
     descricao = models.TextField()
     legenda = models.CharField(max_length = 255)
 
-    objetcs = FiguraManager()
+    objects = FiguraManager()

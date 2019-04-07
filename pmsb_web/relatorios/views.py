@@ -38,13 +38,13 @@ Relatorio
 
 class RelatorioDonoOuEditorQuerysetMixin(object):
     def get_queryset(self, queryset=None):
-        queryset = Relatorio.objetcs.by_dono_ou_editor(self.request.user)
+        queryset = Relatorio.objects.by_dono_ou_editor(self.request.user)
         return queryset.fake_delete_all()
 
 
 class RelatorioDonoQuerysetMixin(object):
     def get_queryset(self, queryset=None):
-        queryset = Relatorio.objetcs.fake_delete_all().filter(usuario=self.request.user)
+        queryset = Relatorio.objects.fake_delete_all().filter(usuario=self.request.user)
         return queryset
 
 
@@ -235,14 +235,14 @@ Figura
 
 class FiguraDonoQuerysetMixin(object):
     def get_queryset(self, queryset=None):
-        queryset = Figura.objetcs.filter(usuario=self.request.user)
+        queryset = Figura.objects.filter(usuario=self.request.user)
         queryset.filter(relatorio=self.kwargs.get("relatorio_pk"))
         return queryset
 
 
 class FiguraDonoOuEditorQuerysetMixin(object):
     def get_queryset(self, queryset=None):
-        queryset = Figura.objetcs.filter(usuario=self.request.user, relatorio=self.kwargs.get("relatorio_pk"))
+        queryset = Figura.objects.filter(usuario=self.request.user, relatorio=self.kwargs.get("relatorio_pk"))
         return queryset
 
 
