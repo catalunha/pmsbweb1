@@ -4,12 +4,13 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('pmsb/', include(('conta.urls', 'conta'), namespace='conta')),
-    path('pmsb/admin/', admin.site.urls),
-    path('pmsb/api/', include("api.urls")),
-    path('pmsb/tarefas/', include('pinax.messages.urls', namespace='pinax_messages')),
-    path("pmsb/questionarios/", include("questionarios.urls")),
-    path("pmsb/relatorios/", include("relatorios.urls")),
+    path('', include(('conta.urls', 'conta'), namespace='conta')),
+    path('tarefas/', include('pinax.messages.urls', namespace='pinax_messages')),
+    path('questionarios/', include("questionarios.urls")),
+    path('relatorios/', include("relatorios.urls")),
+
+    path('admin/', admin.site.urls),
+    path('api/', include("api.urls")),
 ]
 
 if settings.DEBUG:
