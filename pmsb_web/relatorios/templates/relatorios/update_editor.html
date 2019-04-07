@@ -7,7 +7,7 @@
         </h2>
         {% include "includes/form.html" with form=form %}
         <button type="submit" class="btn btn-primary">Salvar</button>
-        <a class="btn btn-primary" href="{% url 'relatorios:detail_relatorio' object.bloco.relatorio.pk %}" style="float:right;">Voltar</a>
+        <a class="btn btn-primary" href="{% url 'relatorios:detail_relatorio' object.relatorio.pk %}" style="float:right;">Voltar</a>
     </div>
 </form>
 {% endblock %}

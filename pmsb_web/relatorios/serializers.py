@@ -2,7 +2,6 @@ from rest_framework import serializers
 from relatorios.models import (
     Relatorio,
     Bloco,
-    Editor,
     Figura,
 )
 
@@ -16,12 +15,6 @@ class RelatorioSerializer(serializers.ModelSerializer):
 class BlocoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bloco
-        fields = "__all__"
-
-
-class EditorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Editor
         fields = "__all__"
 
 

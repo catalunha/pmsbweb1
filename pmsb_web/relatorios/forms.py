@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from .models import (
     Relatorio,
     Bloco,
-    Editor,
     Figura,
 )
 
@@ -51,18 +50,15 @@ class BlocoOrdemAjaxForm(forms.ModelForm):
         model = Bloco
         fields = ("ordem",)
 
-class EditorForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user")
-        super(EditorForm, self).__init__(*args, **kwargs)
-        self.fields["editor"].queryset = User.objects.filter(is_superuser=False).exclude(is_active=False).exclude(pk= user.pk)
-    
-    class Meta:
-        model = Editor
-        fields = ("editor", )
 
 class FiguraForm(forms.ModelForm):
     class Meta:
         model = Figura
         fields = ("imagem", "legenda", "descricao")
-        
+
+
+class EditorUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Bloco
+        fields = ("editor", )
+
