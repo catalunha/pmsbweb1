@@ -61,7 +61,7 @@ class Thread(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
         return objs
 
 
-class UserThread(UUIDModelMixin, TimedModelMixin):
+class UserThread(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
 
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -75,7 +75,7 @@ def documento_upload(instance, filename):
     """
     return 'upload/{0}/{1}/{0}_{2}'.format(instance.thread.id, instance.sender.id, filename)
 
-class Message(UUIDModelMixin, TimedModelMixin):
+class Message(UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
 
     thread = models.ForeignKey(Thread, related_name="messages", on_delete=models.CASCADE)
 
