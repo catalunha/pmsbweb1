@@ -366,6 +366,9 @@ class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
     objects = models.Manager()
 
+    class Meta:
+        ordering = ('nome', )
+
     def __str__(self):
         if self.setor_superior is not None:
             return "{} -> {}".format(self.setor_superior, self.nome)
