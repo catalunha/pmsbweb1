@@ -30,10 +30,11 @@
                 <hr>
             </div>
 
-            <div class="row">
-                <div class="col-lg-10 offset-lg-1">
-                    <div class="alert alert-info">
-                        {% if mobileapp %}
+            {% if mobileapp %}
+                <div class="row">
+                    <div class="col-lg-10 offset-lg-1">
+                        <div class="alert alert-info">
+
                             <span>
                         Aplicativo para celular Android:
                                 {% if mobileapp.android %}
@@ -52,12 +53,11 @@
                                 {% endif %}
                         </span>
 
-                        {% else %}
-                            <span>App Movel em manutenção</span>
-                        {% endif %}
+
+                        </div>
                     </div>
                 </div>
-            </div>
+            {% endif %}
 
 
             <div class="row" style="margin-bottom: 70px;">
