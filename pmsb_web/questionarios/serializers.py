@@ -134,8 +134,10 @@ class PossivelEscolhaViewSet(viewsets.ModelViewSet):
 
 
 class PerguntaSerializerMixin(serializers.ModelSerializer):
-    perguntarequisito_set = PerguntaRequisitoSerializer(many=True, read_only=True)
-    escolharequisito_set = EscolhaRequisitoSerializer(many=True, read_only=True)
+    perguntarequisito_set = PerguntaRequisitoSerializer(
+        many=True, read_only=True)
+    escolharequisito_set = EscolhaRequisitoSerializer(
+        many=True, read_only=True)
 
     class Meta(FakeDeleteSerializerMeta):
         model = Pergunta
@@ -183,7 +185,8 @@ class PerguntaEscolhaSerializer(PerguntaSerializerMixin):
 
     class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaEscolha
-        fields = PerguntaSerializerMixin.Meta.fields + ("multipla", "possiveis_escolhas")
+        fields = PerguntaSerializerMixin.Meta.fields + \
+            ("multipla", "possiveis_escolhas")
 
 
 class PerguntaEscolhaViewSet(viewsets.ModelViewSet):
@@ -260,7 +263,8 @@ class QuestionarioSerializer(serializers.ModelSerializer):
 
     class Meta(FakeDeleteSerializerMeta):
         model = Questionario
-        fields = ("id", "usuario", "nome", "criado_em", "editado_em", "publicado", "perguntas")
+        fields = ("id", "usuario", "nome", "criado_em",
+                  "editado_em", "publicado", "perguntas")
 
     def get_perguntas(self, instance):
         perguntas = instance.perguntas
@@ -395,12 +399,42 @@ class RespostaQuestionarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RespostaQuestionario
-        fields = ("id", "usuario", "setor_censitario", "questionario", "perguntas")
+        fields = ("id", "usuario", "setor_censitario",
+                  "questionario", "perguntas")
 
 
 class RespostaQuestionarioViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaQuestionario.objects.all()
     serializer_class = RespostaQuestionarioSerializer
+
+
+class RecursiveField(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
+class SetorCensitarioExpandidoSerializer(serializers.ModelSerializer):
+    subsetores = RecursiveField(many=True)
+
+    class Meta:
+        model = SetorCensitario
+        fields = (
+            "id",
+            "criado_em",
+            "editado_em",
+            "fake_deletado",
+            "fake_deletado_em",
+            "nome",
+            "ativo",
+            "setor_superior",
+            "subsetores",
+        )
+
+
+class SetorCensitarioExpandidoViewset(viewsets.ModelViewSet):
+    serializer_class = SetorCensitarioExpandidoSerializer
+    queryset = SetorCensitario.objects.filter(setor_superior=None)
 
 
 class SetorCensitarioSerializer(serializers.ModelSerializer):

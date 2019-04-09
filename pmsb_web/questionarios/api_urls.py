@@ -32,6 +32,7 @@ from .serializers import (
     EscolhaRequisitoViewSet,
 
     SetorCensitarioViewset,
+    SetorCensitarioExpandidoViewset,
 )
 
 questionario_router = routers.DefaultRouter()
@@ -66,6 +67,7 @@ questionario_router.register(r'perguntas_requisito', PerguntaRequisitoViewSet)
 questionario_router.register(r'escolhas_requisito', EscolhaRequisitoViewSet)
 
 questionario_router.register(r'setores_censitarios', SetorCensitarioViewset)
+questionario_router.register(r'setores_censitarios_expandido', SetorCensitarioExpandidoViewset)
 urlpatterns = [
     path("get-auth-token", obtain_auth_token),
     path('', include(questionario_router.urls)),
