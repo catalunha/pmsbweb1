@@ -66,6 +66,20 @@ class RelatorioDetailView(RelatorioDonoOuEditorQuerysetMixin, PermissionRequired
         return context
 
 
+class RelatorioTextoDetailView(RelatorioDonoOuEditorQuerysetMixin, PermissionRequiredMixin, DetailView):
+    model = Relatorio
+    template_name = "relatorios/relatorio_texto_detail.html"
+    permission_required = ["relatorios.view_relatorio", ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        relatorio = get_object_or_404(Relatorio, pk=self.kwargs.get("pk"))
+        blocos = Bloco.objects.filter(relatorio=relatorio, fake_deletado=False)
+        context["blocos"] = blocos
+        return context
+
+
+
 class RelatorioCreateView(PermissionRequiredMixin, CreateView):
     model = Relatorio
     form_class = RelatorioForm

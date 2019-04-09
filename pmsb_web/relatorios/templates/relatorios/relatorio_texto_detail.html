@@ -1,0 +1,25 @@
+<h1>{{ object }}</h1>
+
+{% for bloco in blocos %}
+    {{ bloco.html_nivel_to_header }}
+    <p>pk:{{ bloco.pk }}</p>
+    <p>superior:{{ bloco.nivel_superior.pk }}</p>
+    <p>{{ bloco.ordem }}</p>
+    <div>
+        {{ bloco.texto }}
+    </div>
+
+{% endfor %}
+
+<script>
+    var blocos_map = {};
+
+    {% for bloco in blocos %}
+    blocos_map["{{bloco.pk}}"] = {
+        "titulo":"{{bloco.pk}}",
+        "texto":"{{bloco.texto}}"
+    }
+    {% endfor %}
+
+    console.log(blocos_map);
+</script>

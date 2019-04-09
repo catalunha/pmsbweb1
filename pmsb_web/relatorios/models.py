@@ -9,6 +9,8 @@ from core.mixins import (
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 RELATORIOS_MEDIA = "relatorios"
 
@@ -101,6 +103,15 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         for filhos in self.subblocos.all():
             filhos.fake_delete()
         super().fake_delete()
+
+    @property
+    def html_nivel_to_header(self):
+        if self.nivel < 6:
+            numero_header = self.nivel + 1
+        else:
+            numero_header = 6
+
+        return mark_safe(f"<h{numero_header}>{self.titulo}</h{numero_header}>")
 
     @property
     def usuario(self):
