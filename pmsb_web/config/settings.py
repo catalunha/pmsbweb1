@@ -174,30 +174,36 @@ SERVER_EMAIL = 'pmsb@gmail.com'
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = ('localhost:8100',)
 
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='files')
-
-AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='sfo2')
-
-AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL', default='https://sfo2.digitaloceanspaces.com')
-
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',
-}
-
-
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-DEFAULT_FILE_STORAGE = 'core.storages.MediaStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+LOCAL_MEDIA_SERVER = config("LOCAL_MEDIA_SERVER", cast=bool, default=True)
+
+if not LOCAL_MEDIA_SERVER:
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='files')
+
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='sfo2')
+
+    AWS_S3_ENDPOINT_URL = config('AWS_S3_ENDPOINT_URL', default='https://sfo2.digitaloceanspaces.com')
+
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+
+    DEFAULT_FILE_STORAGE = 'core.storages.MediaStorage'
+
+LOCAL_STATIC_SERVER = config("LOCAL_STATIC_SERVER", cast=bool, default=True)
+
+if not LOCAL_STATIC_SERVER:
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
 
 FILE_UPLOAD_TEMP_DIR = '/tmp/'
 FILE_UPLOAD_PERMISSIONS = 0o644
