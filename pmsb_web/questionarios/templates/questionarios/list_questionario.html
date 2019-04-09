@@ -30,6 +30,7 @@
     <ul class="list-group">
         {% for pergunta_do_questionario in questionario.perguntas_do_questionario %}
         <li class="list-group-item">
+            <p><b>Pergunta Tipo:</b> {{ pergunta_do_questionario.pergunta.verbose_name_tipo }}</p>
             {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}
             <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Editar</span></a> 
             <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Remover</span></a>
