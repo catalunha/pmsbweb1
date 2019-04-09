@@ -72,7 +72,7 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['mobileapp'] = MobileApp.latest()
+        context['mobileapp'] = MobileApp.latest() or True
         return context
 
 

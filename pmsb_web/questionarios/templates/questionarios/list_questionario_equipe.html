@@ -23,6 +23,7 @@
     <ul id="sortable" class="list-group">
         {% for pergunta_do_questionario in questionario.perguntas_do_questionario %}
         <li id="{{pergunta_do_questionario.pk}}" class="list-group-item">
+            <p><b>Pergunta Tipo:</b> {{ pergunta_do_questionario.pergunta.verbose_name_tipo }}</p>
             <p>
                 <span id="ordem_{{pergunta_do_questionario.pk}}">{{pergunta_do_questionario.ordem}}</span>
                 -
