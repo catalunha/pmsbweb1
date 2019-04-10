@@ -84,7 +84,7 @@ class User(AbstractUser, UUIDModelMixin, TimedModelMixin, FakeDeleteModelMixin):
         subordinados = list()
         processados = list()
 
-        for usuario in User.objects.filter(superior=usuario_superior):
+        for usuario in User.objects.filter(superior=self):
             subordinados.append(usuario)
 
         while len(subordinados) > 0:

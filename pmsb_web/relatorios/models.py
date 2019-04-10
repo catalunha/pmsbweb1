@@ -32,7 +32,12 @@ class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
         dono = models.Q(usuario=user)
         editor = models.Q(blocos__editor=user)
 
-        return self.filter(editor | dono).distinct()
+        return self.filter(editor | dono)
+    
+    def by_superior(self, user):
+        usuarios_subordinados = user.get_subordinados()
+        subordinados_queryset = self.filter(usuario__in = usuarios_subordinados)
+        return subordinados_queryset
 
 
 class RelatorioManager(FakeDeleteManagerMixin, models.Manager):

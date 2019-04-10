@@ -20,7 +20,7 @@
         <li class="list-group-item" style="font-size: 16px;">
             <div class="row">
                 <div class="col-sm-6">
-                    <b>Título:</b> {{relatorio}}
+                    <b>Título:</b> {{relatorio}}                    
                 </div>
                 <div class="col-sm-6" style="text-align:right;">
                     <a href="{% url 'relatorios:detail_relatorio' relatorio.id %}"><span class="badge badge-secondary">Gerênciar
@@ -30,6 +30,11 @@
                             e descrição</span></a>
                     <a href="{% url 'relatorios:delete_relatorio' relatorio.id %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash"
                                 style="color:white; margin-right:1px;"></i>Excluir produto</span></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <b>Autor:</b> {{relatorio.usuario}}
                 </div>
             </div>
             <div class="row">
