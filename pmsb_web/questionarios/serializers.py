@@ -2,7 +2,7 @@ from core.mixins import ArquivoBase64SerializerField
 from django.contrib.auth import get_user_model
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, viewsets
-
+from rest_framework.validators import UniqueValidator
 from .models import (
 
     Localizacao,
@@ -438,9 +438,17 @@ class SetorCensitarioExpandidoViewset(viewsets.ModelViewSet):
 
 
 class SetorCensitarioSerializer(serializers.ModelSerializer):
+    #id = serializers.UUIDField(required=False)
     class Meta:
         model = SetorCensitario
         fields = "__all__"
+        extra_kwargs = {
+            'id': {
+                'read_only': False,
+                'required': False,
+                'validators': [UniqueValidator(queryset=SetorCensitario.objects.all()), ],
+            }
+}
 
 
 class SetorCensitarioViewset(viewsets.ModelViewSet):
