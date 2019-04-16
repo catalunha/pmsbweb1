@@ -1,47 +1,53 @@
 {% extends "questionarios/base.html" %}
 
 {% block ul_menu %}
-<div class="pull-right">
-    <a class="btn btn-primary" href=" {% url "questionarios:list"%}?equipe=False">
+    <div class="pull-right">
+        <a class="btn btn-primary" href=" {% url "questionarios:list" %}?equipe=False">
             <i class="nav-icon fa icon-note" style="color:white;"></i>Editar meus questionarios
-    </a>
+        </a>
 
 
-    <a  class="btn btn-success" href=" {% url "questionarios:create"%}">
-        <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Questionario
-    </a>
-</div>
-{% endblock ul_menu%}
+        <a class="btn btn-success" href=" {% url "questionarios:create" %}">
+            <i class="nav-icon fa icon-note" style="color:white;"></i>Novo Questionario
+        </a>
+    </div>
+{% endblock ul_menu %}
 
 {% block conteudo %}
 
-{% for questionario in object_list %}
-<div class="row">
-    <div class="col-lg-12">
-    <h5>Questionario: {{questionario.nome}}</h5>
-    <h6>{{ questionario.usuario }}</h6>
-    <p>
-        <a class="btn btn-primary" href="{% url "questionarios:update" questionario.id %}">Editar</a>
-        <a class="btn btn-primary" href="{% url "questionarios:create_pergunta_tipo" questionario.id %}">Adicionar Pergunta</a>
-        <a class="btn btn-primary" href="{% url "questionarios:ordenar" questionario.id %}">Ordenar</a>
-        <a class="btn btn-danger" href="{% url "questionarios:delete" questionario.id %}">Deletar</a>
-    </p>
-    
-    <ul class="list-group">
-        {% for pergunta_do_questionario in questionario.perguntas_do_questionario %}
-        <li class="list-group-item">
-            <p><b>Pergunta Tipo:</b> {{ pergunta_do_questionario.pergunta.verbose_name_tipo }}</p>
-            {{pergunta_do_questionario.ordem}} - {{pergunta_do_questionario.pergunta.variavel}}
-            <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Editar</span></a> 
-            <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span class="badge badge-secondary">Remover</span></a>
-        </li>
-        {% empty %}
-        <li class="list-group-item">Nenhuma pergunta</li>
-        {% endfor %}
-    </ul>
-        
-    </div>
-</div>
-{% endfor %}
+    {% for questionario in object_list %}
+        <div class="row">
+            <div class="col-lg-12">
+                <h5>Questionario: {{ questionario.nome }}</h5>
+                <h6>{{ questionario.usuario }}</h6>
+                <p>
+                    <a class="btn btn-primary" href="{% url "questionarios:update" questionario.id %}">Editar</a>
+                    <a class="btn btn-primary" href="{% url "questionarios:create_pergunta_tipo" questionario.id %}">Adicionar
+                        Pergunta</a>
+                    <a class="btn btn-primary" href="{% url "questionarios:ordenar" questionario.id %}">Ordenar</a>
+                    <a class="btn btn-danger" href="{% url "questionarios:delete" questionario.id %}">Deletar</a>
+                </p>
+
+                <ul class="list-group">
+                    {% for pergunta_do_questionario in questionario.perguntas_do_questionario %}
+                        <li class="list-group-item">
+                            <p>
+                                {% include 'questionarios/includes/pergunta/tipo.html' with pergunta=pergunta_do_questionario.pergunta %}
+                            </p>
+
+                            {{ pergunta_do_questionario.ordem }} - {{ pergunta_do_questionario.pergunta.variavel }}
+                            <a href="{% url "questionarios:update_pergunta" pergunta_do_questionario.id %}"><span
+                                    class="badge badge-secondary">Editar</span></a>
+                            <a href="{% url "questionarios:delete_pergunta_do_questionario" pergunta_do_questionario.id %}"><span
+                                    class="badge badge-secondary">Remover</span></a>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item">Nenhuma pergunta</li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    {% endfor %}
 
 {% endblock %}

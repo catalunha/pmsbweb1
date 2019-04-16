@@ -1,0 +1,5 @@
+<b>Pergunta Tipo:</b> {{ pergunta.verbose_name_tipo }}
+
+{% if pergunta.tipo == 0 %}
+    {{ pergunta.perguntaescolha.multipla_verbose }}
+{% endif %}
