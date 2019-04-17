@@ -38,7 +38,7 @@
                             <span>
                         Aplicativo para celular Android:
                                 {% if mobileapp.android %}
-                                    <a href="{{ mobileapp.android }}">clique para baixar</a>
+                                    <a href="{{ mobileapp.android.url }}">clique para baixar</a>
                                 {% else %}
                                     em manutenção
                                 {% endif %}
@@ -47,7 +47,7 @@
                             <span>
                             Aplicativo para celular iOS:
                                 {% if mobileapp.ios %}
-                                    <a href="{{ mobileapp.ios }}">clique para baixar</a>
+                                    <a href="{{ mobileapp.ios.url }}">clique para baixar</a>
                                 {% else %}
                                     em manutenção.
                                 {% endif %}
