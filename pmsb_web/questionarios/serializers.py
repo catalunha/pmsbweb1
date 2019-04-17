@@ -1,8 +1,11 @@
 from core.mixins import ArquivoBase64SerializerField
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers, viewsets
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.validators import UniqueValidator
+
 from .models import (
 
     Localizacao,
@@ -36,6 +39,12 @@ from .models import (
 )
 
 User = get_user_model()
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class CreateListModelMixin(object):
@@ -186,7 +195,7 @@ class PerguntaEscolhaSerializer(PerguntaSerializerMixin):
     class Meta(PerguntaSerializerMixin.Meta):
         model = PerguntaEscolha
         fields = PerguntaSerializerMixin.Meta.fields + \
-            ("multipla", "possiveis_escolhas")
+                 ("multipla", "possiveis_escolhas")
 
 
 class PerguntaEscolhaViewSet(viewsets.ModelViewSet):
@@ -286,6 +295,8 @@ class ExcludeFakeDeleteFieldsMeta:
 
 
 class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
+    possivel_escolha = PossivelEscolhaSerializer()
+
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = PossivelEscolhaResposta
 
@@ -356,7 +367,7 @@ class ImagemRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
 
 class RespostaPerguntaSerializer(serializers.ModelSerializer):
     localizacao = LocalizacaoSerializer(allow_null=True)
-
+    pergunta = PerguntaSerializer()
     resposta = serializers.SerializerMethodField()
     tipo = serializers.SerializerMethodField()
 
@@ -372,7 +383,38 @@ class RespostaPerguntaSerializer(serializers.ModelSerializer):
         )
 
     def get_resposta(self, instance):
-        return "resposta"
+
+        if instance.tipo == 0:
+            return PossivelEscolhaRespostaSerializer(instance.escolhas, many=True).data
+        elif instance.tipo == 1:
+            try:
+                return TextoRespostaSerializer(instance.texto).data
+            except ObjectDoesNotExist:
+                return None
+
+        elif instance.tipo == 2:
+            try:
+                return ArquivoRespostaSerializer(instance.arquivo).data
+            except ObjectDoesNotExist:
+                return None
+
+        elif instance.tipo == 3:
+            try:
+                return ImagemRespostaSerializer(instance.imagem).data
+            except ObjectDoesNotExist:
+                return None
+
+        elif instance.tipo == 4:
+            try:
+                return CoordenadaRespostaSerializer(instance.coordenada).data
+            except ObjectDoesNotExist:
+                return None
+
+        elif instance.tipo == 5:
+            try:
+                return NumeroRespostaSerializer(instance.numero).data
+            except ObjectDoesNotExist:
+                return None
 
     def get_tipo(self, instance):
         return instance.pergunta.tipo
@@ -389,6 +431,7 @@ class RespostaPerguntaSerializer(serializers.ModelSerializer):
 class RespostaPerguntaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaPergunta.objects.all()
     serializer_class = RespostaPerguntaSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 """ Resposta Questionario """
@@ -406,6 +449,7 @@ class RespostaQuestionarioSerializer(serializers.ModelSerializer):
 class RespostaQuestionarioViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaQuestionario.objects.all()
     serializer_class = RespostaQuestionarioSerializer
+    pagination_class = StandardResultsSetPagination
 
 
 class RecursiveField(serializers.Serializer):
@@ -438,7 +482,6 @@ class SetorCensitarioExpandidoViewset(viewsets.ModelViewSet):
 
 
 class SetorCensitarioSerializer(serializers.ModelSerializer):
-    #id = serializers.UUIDField(required=False)
     class Meta:
         model = SetorCensitario
         fields = "__all__"
@@ -448,7 +491,7 @@ class SetorCensitarioSerializer(serializers.ModelSerializer):
                 'required': False,
                 'validators': [UniqueValidator(queryset=SetorCensitario.objects.all()), ],
             }
-}
+        }
 
 
 class SetorCensitarioViewset(viewsets.ModelViewSet):
