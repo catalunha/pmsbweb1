@@ -367,6 +367,32 @@ class ImagemRespostaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
 
 class RespostaPerguntaSerializer(serializers.ModelSerializer):
     localizacao = LocalizacaoSerializer(allow_null=True)
+    tipo = serializers.SerializerMethodField()
+
+    class Meta(FakeDeleteSerializerMeta):
+        model = RespostaPergunta
+        fields = (
+            "id",
+            "localizacao",
+            "resposta_questionario",
+            "pergunta",
+            "tipo",
+        )
+
+    def get_tipo(self, instance):
+        return instance.pergunta.tipo
+
+    def create(self, validated_data):
+        localizacao = validated_data.pop("localizacao")
+        local = LocalizacaoSerializer(data=localizacao)
+        if local.is_valid():
+            local.save()
+            validated_data["localizacao"] = local.instance
+        return super().create(validated_data)
+
+
+class RespostaPerguntaExpandidoSerializer(serializers.ModelSerializer):
+    localizacao = LocalizacaoSerializer(allow_null=True)
     pergunta = PerguntaSerializer()
     resposta = serializers.SerializerMethodField()
     tipo = serializers.SerializerMethodField()
@@ -431,7 +457,7 @@ class RespostaPerguntaSerializer(serializers.ModelSerializer):
 class RespostaPerguntaViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaPergunta.objects.all()
     serializer_class = RespostaPerguntaSerializer
-    pagination_class = StandardResultsSetPagination
+    # pagination_class = StandardResultsSetPagination
 
 
 """ Resposta Questionario """
@@ -449,7 +475,7 @@ class RespostaQuestionarioSerializer(serializers.ModelSerializer):
 class RespostaQuestionarioViewSet(CreateListModelMixin, viewsets.ModelViewSet):
     queryset = RespostaQuestionario.objects.all()
     serializer_class = RespostaQuestionarioSerializer
-    pagination_class = StandardResultsSetPagination
+    # pagination_class = StandardResultsSetPagination
 
 
 class RecursiveField(serializers.Serializer):
