@@ -295,7 +295,7 @@ class ExcludeFakeDeleteFieldsMeta:
 
 
 class PossivelEscolhaRespostaSerializer(serializers.ModelSerializer):
-    possivel_escolha = PossivelEscolhaSerializer()
+    possivel_escolha = PossivelEscolhaSerializer
 
     class Meta(FakeDeleteSerializerMeta, ExcludeFakeDeleteFieldsMeta):
         model = PossivelEscolhaResposta
