@@ -502,9 +502,28 @@ class SetorCensitarioExpandidoSerializer(serializers.ModelSerializer):
         )
 
 
+def strboolornone(str):
+    if str == 'True':
+        return True
+    elif str == 'False':
+        return False
+    else:
+        return None
+
+
 class SetorCensitarioExpandidoViewset(viewsets.ModelViewSet):
     serializer_class = SetorCensitarioExpandidoSerializer
     queryset = SetorCensitario.objects.filter(setor_superior=None)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        ativo = self.request.query_params.get('ativo', None)
+        ativo = strboolornone(ativo)
+        if ativo is not None:
+            queryset = queryset.filter(ativo=ativo)
+
+        return queryset
 
 
 class SetorCensitarioSerializer(serializers.ModelSerializer):
