@@ -114,7 +114,7 @@ class RespostaPerguntaStackedInline(admin.StackedInline):
     extra = 0
 
 class RespostaQuestionarioAdmin(admin.ModelAdmin):
-    list_display = ("id", "questionario")
+    list_display = ("id", "questionario", "setor_censitario")
     list_filter = ("questionario", )
     inlines = (RespostaPerguntaStackedInline, )
 
