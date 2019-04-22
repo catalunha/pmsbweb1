@@ -359,7 +359,7 @@ class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
 
 class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    nome = models.CharField(max_length=255, unique=True)
+    nome = models.CharField(max_length=255)
     setor_superior = models.ForeignKey("SetorCensitario", null=True, blank=True, on_delete=models.SET_NULL,
                                        related_name="subsetores")
     ativo = models.BooleanField(default=True)
@@ -377,17 +377,14 @@ class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
 
 class RespostaQuestionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
-    setor_censitario = models.ForeignKey(SetorCensitario, on_delete=models.CASCADE, related_name="respostas", null=True)
+    setor_censitario = models.ForeignKey(SetorCensitario, on_delete=models.CASCADE, related_name="respostas")
     questionario = models.ForeignKey(Questionario, on_delete=models.CASCADE, related_name="respostas")
     objects = models.Manager()
 
     class Meta:
         verbose_name = "Resposta Questionario"
         verbose_name_plural = "Respostas Questionarios"
-        """
-        adicionar e remove null=True na proxima migração
         unique_together = ("setor_censitario", "questionario")
-        """
 
     def __str__(self):
         return "Resposta do {0}".format(self.questionario)
