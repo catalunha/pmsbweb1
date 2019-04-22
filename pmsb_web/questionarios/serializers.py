@@ -511,10 +511,7 @@ def strboolornone(str):
         return None
 
 
-class SetorCensitarioExpandidoViewset(viewsets.ModelViewSet):
-    serializer_class = SetorCensitarioExpandidoSerializer
-    queryset = SetorCensitario.objects.filter(setor_superior=None)
-
+class SetorCensitorioQueryset(object):
     def get_queryset(self):
         queryset = super().get_queryset()
 
@@ -524,6 +521,11 @@ class SetorCensitarioExpandidoViewset(viewsets.ModelViewSet):
             queryset = queryset.filter(ativo=ativo)
 
         return queryset
+
+
+class SetorCensitarioExpandidoViewset(SetorCensitorioQueryset, viewsets.ModelViewSet):
+    serializer_class = SetorCensitarioExpandidoSerializer
+    queryset = SetorCensitario.objects.filter(setor_superior=None)
 
 
 class SetorCensitarioSerializer(serializers.ModelSerializer):
@@ -539,6 +541,6 @@ class SetorCensitarioSerializer(serializers.ModelSerializer):
         }
 
 
-class SetorCensitarioViewset(viewsets.ModelViewSet):
+class SetorCensitarioViewset(SetorCensitorioQueryset, viewsets.ModelViewSet):
     serializer_class = SetorCensitarioSerializer
     queryset = SetorCensitario.objects.all()
