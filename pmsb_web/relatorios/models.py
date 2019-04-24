@@ -33,10 +33,10 @@ class RelatorioQueryset(FakeDeleteQuerysetMixin, models.QuerySet):
         editor = models.Q(blocos__editor=user)
 
         return self.filter(editor | dono)
-    
+
     def by_superior(self, user):
         usuarios_subordinados = user.get_subordinados()
-        subordinados_queryset = self.filter(usuario__in = usuarios_subordinados)
+        subordinados_queryset = self.filter(usuario__in=usuarios_subordinados)
         return subordinados_queryset
 
 
@@ -106,6 +106,23 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         for filhos in self.subblocos.all():
             filhos.fake_delete()
         super().fake_delete()
+
+    @property
+    def verbose_nivel(self):
+        if self.nivel == self.PART:
+            return "part"
+        elif self.nivel == self.CHAPTER:
+            return "chapter"
+        elif self.nivel == self.SECTION:
+            return "section"
+        elif self.nivel == self.SUBSECTION:
+            return "subsection"
+        elif self.nivel == self.SUBSUBSECTION:
+            return "subsubsection"
+        elif self.nivel == self.PARAGRAPH:
+            return "paragraph"
+        elif self.nivel == self.SUBPARAGRAPH:
+            return "subparagraph"
 
     @property
     def usuario(self):
@@ -189,7 +206,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         if ordem > 0:
             if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None,
                                             fake_deletado=False).first() or self == Bloco.objects.filter(
-                    relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).first():
+                relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).first():
                 # raise OrdemException("Bloco nao pode subir")
                 return 0
             if self.nivel_superior is None:
@@ -202,7 +219,7 @@ class Bloco(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
         else:
             if self == Bloco.objects.filter(relatorio=self.relatorio, nivel_superior=None,
                                             fake_deletado=False).last() or self == Bloco.objects.filter(
-                    relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).last():
+                relatorio=self.relatorio, nivel_superior=self.nivel_superior, fake_deletado=False).last():
                 # raise OrdemException("Bloco nao pode descer")
                 return 0
             if self.nivel_superior is None:
@@ -258,3 +275,29 @@ class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMod
     legenda = models.CharField(max_length=255)
 
     objects = FiguraManager()
+
+
+class PreambuloLatex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+    titulo = models.CharField(max_length=255)
+    conteudo = models.TextField()
+    ordem = models.SmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ('ordem', )
+        verbose_name = "Preambulo Latex"
+        verbose_name_plural = "Preambulos Latex"
+
+    def __str__(self):
+        return self.titulo
+
+
+class Bibtex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+    titulo = models.CharField(max_length=255)
+    conteudo = models.TextField()
+
+    class Meta:
+        verbose_name = "Bibtex"
+        verbose_name_plural = "Bibtex"
+
+    def __str__(self):
+        return self.titulo
