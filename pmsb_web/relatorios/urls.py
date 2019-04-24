@@ -36,4 +36,6 @@ urlpatterns = [
     path("<uuid:relatorio_pk>/figuras/nova/", views.FiguraCreateView.as_view(), name = "create_figura"),
     path("figuras/<uuid:pk>/editar/", views.FiguraUpdateView.as_view(), name = "update_figura"),
     path("figuras/<uuid:pk>/delete/", views.FiguraDeleteView.as_view(), name = "delete_figura"),
+
+    path('pdf/<uuid:pk>/', views.render_pdf, name='render_pdf'),
 ]

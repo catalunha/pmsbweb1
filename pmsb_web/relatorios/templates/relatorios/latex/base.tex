@@ -1,0 +1,60 @@
+\documentclass[12pt,a4paper,twoside]{report}
+
+\usepackage{filecontents}
+
+\begin{filecontents}{refbib.bib}
+
+{% for bibtex_item in bibtex %}
+
+% inicio preambulo: {{bibtex_item}}
+{{bibtex_item.conteudo}}
+
+{% endfor %}
+
+\end{filecontents}
+
+{% for preambulo in preambulos %}
+
+% inicio preambulo: {{preambulo}}
+{{preambulo.conteudo}}
+
+{% endfor %}
+
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+\fancyhead[LO,RE]{}
+\fancyhead[RO,LE]{ {{relatorio.usuario.first_name}} - {{relatorio.titulo}} }
+\fancyfoot[RO,LE]{\thepage}
+\fancyfoot[LO,RE]{Atualizado via \LaTeX \ em \today \ as \currenttime}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+\newcommand{\ver}{S}
+
+% Title Page
+\title{ {{relatorio.titulo}} }
+\author{ {{relatorio.usuario.first_name}} - {{relatorio.usuario.email}} }
+\date{Atualizado via \LaTeX \ em \today \ as \currenttime}
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+% inicio do conteúdo %
+
+{% for bloco in blocos %}
+
+\{{bloco.verbose_nivel}}{ {{bloco.titulo}} }
+{{bloco.texto}}
+
+{% empty %}
+\chapter{Instruções}
+Este relatorio foi gerado automaticamente dentro do sistema PMSB.
+{% endfor %}
+
+% fim do conteúdo %
+\bibliographystyle{apalike}
+\bibliography{refbib.bib}
+\end{document}

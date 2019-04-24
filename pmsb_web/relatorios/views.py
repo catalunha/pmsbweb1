@@ -1,4 +1,3 @@
-from django.http import HttpResponseRedirect
 from core.views import (
     FakeDeleteView,
     AjaxableFormResponseMixin,
@@ -347,3 +346,50 @@ class EditorUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("relatorios:detail_relatorio", kwargs={"pk": self.object.relatorio.pk})
+
+
+"""Render PDF"""
+
+from django.shortcuts import render
+from django.template.loader import render_to_string
+from .models import PreambuloLatex, Bibtex
+from django.conf import settings
+from subprocess import call
+
+
+def render_pdf(request, pk):
+    bibs = Bibtex.objects.all()
+    preambulos = PreambuloLatex.objects.all()
+    relatorio = get_object_or_404(Relatorio, pk=pk)
+    blocos = Bloco.objects.filter(relatorio=relatorio)
+    context = {
+        'preambulos': preambulos,
+        'bibtex': bibs,
+        'relatorio': relatorio,
+        'blocos': blocos,
+    }
+
+    tex_filename = f"{settings.MEDIA_ROOT}/{pk}.tex"
+    pdf_filename = f"{settings.MEDIA_ROOT}/{pk}.pdf"
+    aux_filename = f"{settings.MEDIA_ROOT}/{pk}.aux"
+    toc_filename = f"{settings.MEDIA_ROOT}/{pk}.toc"
+    log_filename = f"{settings.MEDIA_ROOT}/{pk}.log"
+    out_filename = f"{settings.MEDIA_ROOT}/{pk}.out"
+
+    tex_contet = render_to_string('relatorios/latex/base.tex', context, request)
+
+    with open(tex_filename, 'w') as f:
+        f.write(tex_contet)
+
+    call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=settings.MEDIA_ROOT)
+
+    """
+    os.remove(tex_filename)
+    os.remove(aux_filename)
+    os.remove(toc_filename)
+    os.remove(log_filename)
+    os.remove(out_filename)
+    """
+    # os.remove(pdf_filename) # remover apos mandar para spaces
+
+    return render(request, 'relatorios/latex/base.tex', context)
