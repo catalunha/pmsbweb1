@@ -4,6 +4,8 @@ from .models import (
     Relatorio,
     Bloco,
     Figura,
+    PreambuloLatex,
+    Bibtex,
 )
 
 
@@ -24,3 +26,7 @@ class BlocoAdmin(admin.ModelAdmin):
 admin.site.register(Bloco, BlocoAdmin)
 
 admin.site.register(Figura)
+
+admin.site.register(PreambuloLatex)
+
+admin.site.register(Bibtex)
