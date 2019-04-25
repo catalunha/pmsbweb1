@@ -360,7 +360,6 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.storage import default_storage
 import shutil
-from django.utils.safestring import SafeText
 
 
 def render_pdf(request, pk):
@@ -398,9 +397,14 @@ def render_pdf(request, pk):
     with template_relatorio.arquivo.open(mode='r') as f:
         template_relatorio_conteudo = f.read()
 
+    try:
+        template_relatorio_conteudo = template_relatorio_conteudo.decode()
+    except AttributeError:
+        pass
+
     t = Template(template_relatorio_conteudo)
     c = Context(context)
-    tex_content: SafeText = t.render(c)
+    tex_content = t.render(c)
 
     try:
         tex_content = tex_content.encode()
