@@ -349,47 +349,74 @@ class EditorUpdateView(PermissionRequiredMixin, UpdateView):
 
 
 """Render PDF"""
-
+import os
+from django.http import Http404
 from django.shortcuts import render
-from django.template.loader import render_to_string
-from .models import PreambuloLatex, Bibtex
+from .models import TemplateLatex, TemplateLatexRelatorio, Bibtex
 from django.conf import settings
 from subprocess import call
+from django.template import Template, Context
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.core.files.storage import default_storage
+import shutil
 
 
 def render_pdf(request, pk):
-    bibs = Bibtex.objects.all()
-    preambulos = PreambuloLatex.objects.all()
     relatorio = get_object_or_404(Relatorio, pk=pk)
+
+    templates_latex: TemplateLatexRelatorio = relatorio.templatelatexrelatorio
+
+    if not hasattr(relatorio, 'templatelatexrelatorio'):
+        raise Http404
+
+    template_relatorio: TemplateLatex = templates_latex.template_relatorio
+
+    bibs = Bibtex.objects.all()
+
     blocos = Bloco.objects.filter(relatorio=relatorio)
+
     context = {
-        'preambulos': preambulos,
         'bibtex': bibs,
         'relatorio': relatorio,
         'blocos': blocos,
     }
 
-    tex_filename = f"{settings.MEDIA_ROOT}/{pk}.tex"
-    pdf_filename = f"{settings.MEDIA_ROOT}/{pk}.pdf"
-    aux_filename = f"{settings.MEDIA_ROOT}/{pk}.aux"
-    toc_filename = f"{settings.MEDIA_ROOT}/{pk}.toc"
-    log_filename = f"{settings.MEDIA_ROOT}/{pk}.log"
-    out_filename = f"{settings.MEDIA_ROOT}/{pk}.out"
+    relatorio_dir = os.path.join(settings.TEMP_DIR, f"{pk}")
+    os.makedirs(relatorio_dir, exist_ok=True)
 
-    tex_contet = render_to_string('relatorios/latex/base.tex', context, request)
+    tex_filename = f"{relatorio_dir}/{pk}.tex"
+    pdf_filename = f"{relatorio_dir}/{pk}.pdf"
+    aux_filename = f"{relatorio_dir}/{pk}.aux"
+    toc_filename = f"{relatorio_dir}/{pk}.toc"
+    log_filename = f"{relatorio_dir}/{pk}.log"
+
+    RELATORIOS_MEDIA = os.path.join(settings.MEDIA_ROOT, 'relatorios')
+    RELATORIOS_MEDIA_PDF = os.path.join(RELATORIOS_MEDIA, 'pdfs')
+
+    with template_relatorio.arquivo.open(mode='r') as f:
+        template_relatorio_conteudo = f.read()
+
+    t = Template(template_relatorio_conteudo)
+    c = Context(context)
+    tex_content = t.render(c)
 
     with open(tex_filename, 'w') as f:
-        f.write(tex_contet)
+        f.write(tex_content)
 
-    call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=settings.MEDIA_ROOT)
+    call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=relatorio_dir)
 
-    """
-    os.remove(tex_filename)
-    os.remove(aux_filename)
-    os.remove(toc_filename)
-    os.remove(log_filename)
-    os.remove(out_filename)
-    """
-    # os.remove(pdf_filename) # remover apos mandar para spaces
+    storage_filename = os.path.join(RELATORIOS_MEDIA_PDF, f'{pk}.pdf')
+    image_temp_file = NamedTemporaryFile(delete=True)
 
-    return render(request, 'relatorios/latex/base.tex', context)
+    with open(pdf_filename, mode='rb') as f:
+        image_temp_file.write(f.read())
+
+    image_temp_file.flush()
+    temp_file = File(name="outro-nome.pdf", file=image_temp_file)
+    default_storage.delete(storage_filename)
+    default_storage.save(storage_filename, temp_file)
+
+    shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
+
+    return render(request, 'relatorios/render_pdf.html', context)
