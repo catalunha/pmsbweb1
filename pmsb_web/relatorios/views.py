@@ -394,15 +394,7 @@ def render_pdf(request, pk):
     RELATORIOS_MEDIA = 'relatorios'
     RELATORIOS_MEDIA_PDF = os.path.join(RELATORIOS_MEDIA, 'pdfs')
 
-    with template_relatorio.arquivo.open(mode='r') as f:
-        template_relatorio_conteudo = f.read()
-
-    try:
-        template_relatorio_conteudo = template_relatorio_conteudo.decode()
-    except AttributeError:
-        pass
-
-    t = Template(template_relatorio_conteudo)
+    t = Template(template_relatorio.conteudo)
     c = Context(context)
     tex_content = t.render(c)
 
@@ -427,7 +419,7 @@ def render_pdf(request, pk):
     default_storage.delete(storage_filename)
     default_storage.save(storage_filename, temp_file)
 
-    shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
+    # shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
 
     pdf_url = default_storage.url(storage_filename)
     context['pdf_url'] = pdf_url

@@ -277,13 +277,9 @@ class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMod
     objects = FiguraManager()
 
 
-def template_latex_upload_to(instance, filename):
-    return f"{RELATORIOS_MEDIA}/templates_latex/{instance.pk}.tex"
-
-
 class TemplateLatex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length=255)
-    arquivo = models.FileField(upload_to=template_latex_upload_to)
+    conteudo = models.TextField()
 
     def __str__(self):
         return self.titulo

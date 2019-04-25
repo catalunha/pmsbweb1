@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
                 ('fake_deletado', models.BooleanField(default=False)),
                 ('fake_deletado_em', models.DateTimeField(blank=True, null=True)),
                 ('titulo', models.CharField(max_length=255)),
-                ('arquivo', models.FileField(upload_to=relatorios.models.template_latex_upload_to)),
+                ('arquivo', models.FileField()),
                 ('usuario', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
