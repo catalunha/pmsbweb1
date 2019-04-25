@@ -23,7 +23,9 @@
                     <b>Título:</b> {{relatorio}}                    
                 </div>
                 <div class="col-sm-6" style="text-align:right;">
+                    {% if relatorio.templatelatexrelatorio %}
                     <a href="{% url 'relatorios:render_pdf' relatorio.id %}"><span class="badge badge-secondary">Gerar PDF</span></a>
+                    {% endif %}
                     <a href="{% url 'relatorios:detail_relatorio' relatorio.id %}"><span class="badge badge-secondary">Gerênciar
                             índices</span></a>
                     <a href="{% url 'relatorios:update_relatorio' relatorio.id %}"><span class="badge badge-secondary">Editar
