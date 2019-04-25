@@ -7,8 +7,10 @@
     <p>
         <a class="btn btn-primary" href="{% url 'relatorios:list_figura' object.pk %}">
             <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-image" style="color:white;"></i>Gerenciar Figuras</a>
-        <a class="btn btn-primary" href="#">
+        {% if object.templatelatexrelatorio %}
+        <a class="btn btn-primary" href="{% url 'relatorios:render_pdf' object.pk %}">
             <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-file-text-o" style="color:white;"></i>Visualizar PDF</a>
+        {% endif %}
         <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
     </p>
     <p style="text-align: center;">
