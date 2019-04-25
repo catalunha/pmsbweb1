@@ -400,14 +400,15 @@ def render_pdf(request, pk):
 
     t = Template(template_relatorio_conteudo)
     c = Context(context)
-    tex_content:SafeText = t.render(c)
+    tex_content: SafeText = t.render(c)
 
-    if hasattr(tex_content, 'decode'):
-        tex_content = tex_content.decode(encoding='utf-8')
+    try:
+        tex_content = tex_content.encode()
+    except AttributeError:
+        pass
 
-    with open(tex_filename, 'w') as f:
-        f.write(str(tex_content))
-
+    with open(tex_filename, 'wb') as f:
+        f.write(tex_content)
 
     call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=relatorio_dir)
 
