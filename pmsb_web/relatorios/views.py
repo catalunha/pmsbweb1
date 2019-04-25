@@ -429,4 +429,7 @@ def render_pdf(request, pk):
 
     shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
 
+    pdf_url = default_storage.url(storage_filename)
+    context['pdf_url'] = pdf_url
+
     return render(request, 'relatorios/render_pdf.html', context)
