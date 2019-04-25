@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ relatorio.titulo }}</title>
+    <style>
+        embed {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<embed src="/media/relatorios/pdfs/{{ relatorio.pk }}.pdf" type="application/pdf" />
+</body>
+</html>
