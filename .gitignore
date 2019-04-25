@@ -100,4 +100,4 @@ local_settings.py
 *.sqlite3
 .idea
 venv
-tmp
+
