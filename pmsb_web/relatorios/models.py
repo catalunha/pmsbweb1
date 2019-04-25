@@ -277,18 +277,25 @@ class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMod
     objects = FiguraManager()
 
 
-class PreambuloLatex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    titulo = models.CharField(max_length=255)
-    conteudo = models.TextField()
-    ordem = models.SmallIntegerField(default=0)
+def template_latex_upload_to(instance, filename):
+    return f"{RELATORIOS_MEDIA}/templates_latex/{instance.pk}.tex"
 
-    class Meta:
-        ordering = ('ordem', )
-        verbose_name = "Preambulo Latex"
-        verbose_name_plural = "Preambulos Latex"
+
+class TemplateLatex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+    titulo = models.CharField(max_length=255)
+    arquivo = models.FileField(upload_to=template_latex_upload_to)
 
     def __str__(self):
         return self.titulo
+
+
+class TemplateLatexRelatorio(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+    template_relatorio = models.ForeignKey(TemplateLatex, on_delete=models.CASCADE, related_name='relatorio_set')
+    template_blocos = models.ForeignKey(TemplateLatex, on_delete=models.CASCADE, related_name='bloco_set')
+    relatorio = models.OneToOneField(Relatorio, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.template_relatorio} para {self.relatorio}"
 
 
 class Bibtex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
@@ -301,3 +308,12 @@ class Bibtex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMod
 
     def __str__(self):
         return self.titulo
+
+
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+
+
+@receiver(post_delete, sender=TemplateLatex)
+def templatelatexrelatorio_post_delete(sender, instance, **kwargs):
+    instance.arquivo.delete(False)
