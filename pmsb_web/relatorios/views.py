@@ -365,10 +365,10 @@ import shutil
 def render_pdf(request, pk):
     relatorio = get_object_or_404(Relatorio, pk=pk)
 
-    templates_latex: TemplateLatexRelatorio = relatorio.templatelatexrelatorio
-
     if not hasattr(relatorio, 'templatelatexrelatorio'):
         raise Http404
+
+    templates_latex: TemplateLatexRelatorio = relatorio.templatelatexrelatorio
 
     template_relatorio: TemplateLatex = templates_latex.template_relatorio
 
@@ -419,7 +419,70 @@ def render_pdf(request, pk):
     default_storage.delete(storage_filename)
     default_storage.save(storage_filename, temp_file)
 
-    # shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
+    shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
+
+    pdf_url = default_storage.url(storage_filename)
+    context['pdf_url'] = pdf_url
+
+    return render(request, 'relatorios/render_pdf.html', context)
+
+
+def render_pdf_bloco(request, pk):
+
+    bloco = get_object_or_404(Bloco, pk=pk)
+
+    if not hasattr(bloco.relatorio, 'templatelatexrelatorio'):
+        raise Http404
+
+    templates_latex: TemplateLatexRelatorio = bloco.relatorio.templatelatexrelatorio
+
+    template_relatorio: TemplateLatex = templates_latex.template_blocos
+
+    bibs = Bibtex.objects.all()
+
+    context = {
+        'bibtex': bibs,
+        'bloco': bloco,
+    }
+
+    relatorio_dir = os.path.join(settings.TEMP_DIR, f"{pk}")
+    os.makedirs(relatorio_dir, exist_ok=True)
+
+    tex_filename = f"{relatorio_dir}/{pk}.tex"
+    pdf_filename = f"{relatorio_dir}/{pk}.pdf"
+    aux_filename = f"{relatorio_dir}/{pk}.aux"
+    toc_filename = f"{relatorio_dir}/{pk}.toc"
+    log_filename = f"{relatorio_dir}/{pk}.log"
+
+    BLOCOS_MEDIA = os.path.join('relatorios', 'blocos')
+    BLOCOS_MEDIA_PDF = os.path.join(BLOCOS_MEDIA, 'pdfs')
+
+    t = Template(template_relatorio.conteudo)
+    c = Context(context)
+    tex_content = t.render(c)
+
+    try:
+        tex_content = tex_content.encode()
+    except AttributeError:
+        pass
+
+    with open(tex_filename, 'wb') as f:
+        f.write(tex_content)
+
+    call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=relatorio_dir)
+
+    storage_filename = os.path.join(BLOCOS_MEDIA_PDF, f'{pk}.pdf')
+    image_temp_file = NamedTemporaryFile(delete=True)
+
+    with open(pdf_filename, mode='rb') as f:
+        image_temp_file.write(f.read())
+
+    image_temp_file.flush()
+    temp_file = File(name="outro-nome.pdf", file=image_temp_file)
+    default_storage.delete(storage_filename)
+    default_storage.save(storage_filename, temp_file)
+
+    shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
 
     pdf_url = default_storage.url(storage_filename)
     context['pdf_url'] = pdf_url

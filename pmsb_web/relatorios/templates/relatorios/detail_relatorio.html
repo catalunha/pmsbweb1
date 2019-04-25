@@ -1,23 +1,25 @@
 {% extends "base/base.html" %} {% block conteudo %}
-<div class="card-body p-4">
+    <div class="card-body p-4">
     <h2 style="text-align: center;">
-        {{object.titulo}}
+        {{ object.titulo }}
     </h2>
     <hr>
     <p>
         <a class="btn btn-primary" href="{% url 'relatorios:list_figura' object.pk %}">
-            <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-image" style="color:white;"></i>Gerenciar Figuras</a>
+            <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-image" style="color:white;"></i>Gerenciar
+            Figuras</a>
         {% if object.templatelatexrelatorio %}
-        <a class="btn btn-primary" href="{% url 'relatorios:render_pdf' object.pk %}">
-            <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-file-text-o" style="color:white;"></i>Visualizar PDF</a>
+            <a class="btn btn-primary" href="{% url 'relatorios:render_pdf' object.pk %}">
+                <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-file-text-o" style="color:white;"></i>Visualizar
+                PDF</a>
         {% endif %}
         <a class="btn btn-primary" href="{% url 'relatorios:list_relatorio' %}" style="float:right;">Voltar</a>
     </p>
     <p style="text-align: center;">
-        <b>Criado em:</b> {{object.criado_em}}
+        <b>Criado em:</b> {{ object.criado_em }}
     </p>
     <p>
-        <a class="btn btn-primary" href="{% url 'relatorios:create_bloco' object.pk  %}">
+        <a class="btn btn-primary" href="{% url 'relatorios:create_bloco' object.pk %}">
             <i aria-hidden="true" data-hidden="true" class="nav-icon fa fa-plus" style="color:white;"></i>Inserir nível
         </a>
     </p>
@@ -31,37 +33,49 @@
         d = new dTree('d');
         d.add(0, -1, 'Índices');
         {% if object.usuario == request.user %}
-        // sou o dono da porra toda
-        {% for bloco in blocos_nfd %}
-            var seta = "";
+            // sou o dono da porra toda
+            {% for bloco in blocos_nfd %}
+                var seta = "";
+                var links = "";
+                links += ' - <a href="{% url 'relatorios:update_editor_bloco' bloco.pk %}" data-toggle="tooltip" title="{{bloco.editor}}" ><span class="badge badge-warning"><i class="nav-icon fa fa-user" style="color:white; margin-right:1px;"></i></span></a>';
+                links += ' - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a>';
 
-            d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_editor_bloco' bloco.pk %}" data-toggle="tooltip" title="{{bloco.editor}}" ><span class="badge badge-warning"><i class="nav-icon fa fa-user" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-primary"><i class="nav-icon fa fa-plus" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:subir_bloco' bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-up" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url 'relatorios:descer_bloco' bloco.pk  %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-down" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url "relatorios:update_bloco_nivel_superior" bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-right" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
+                {% if object.templatelatexrelatorio %}
+                    links += ' - <a href="{% url 'relatorios:render_pdf_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-pdf-o" style="color:white; margin-right:1px;"></i></span></a>';
+                {% endif %}
 
-            {% empty %}
-            <p>
-                Sem itens
-            </p>
-        {% endfor %}
+
+                d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}}' + links + ' - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:create_bloco_nivel_superior' object.pk bloco.pk  %}"><span class="badge badge-primary"><i class="nav-icon fa fa-plus" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:subir_bloco' bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-up" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url 'relatorios:descer_bloco' bloco.pk  %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-down" style="color:white; margin-right:1px;"></i></span></a> <a href="{% url "relatorios:update_bloco_nivel_superior" bloco.pk %}"><span class="badge badge-warning"><i class="nav-icon fa fa-arrow-right" style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:delete_bloco' bloco.pk  %}"><span class="badge badge-danger"><i class="nav-icon fa fa-trash" style="color:white; margin-right:1px;"></i></span></a>');
+
+                {% empty %}
+                <p >
+            Sem itens
+            < /p>
+            {% endfor %}
         {% else %}
             {% for bloco in blocos_nfd %}
                 var seta = "";
+                var pdf_link = "";
+                {% if object.templatelatexrelatorio %}
+                    pdf_link = ' - <a href="{% url 'relatorios:render_pdf_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-pdf-o" style="color:white; margin-right:1px;"></i></span></a>';
+                {% endif %}
                 {% if bloco.editor == request.user %}
-                    d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a> - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a>');
+                    d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}} - <a href="{% url 'relatorios:update_text_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-file-word-o " style="color:white; margin-right:1px;"></i></span></a>'+pdf_link+' - <a href="{% url 'relatorios:update_bloco' bloco.pk %}"><span class="badge badge-primary"><i class="nav-icon fa fa-edit" style="color:white; margin-right:1px;"></i></span></a>');
                 {% else %}
-                    d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}}');
+                    d.add('{{bloco.id}}', '{{bloco.nivel_superior.id}}', '{{bloco.titulo}}'+pdf_link);
                 {% endif %}
                 {% empty %}
-                <p>
-                    Sem itens
-                </p>
+                <p >
+            Sem itens
+            < /p>
             {% endfor %}
         {% endif %}
         document.write(d);
-    </script> 
+    </script>
     <script>
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();   
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
-    {% endblock %}
+{% endblock %}
 </div>

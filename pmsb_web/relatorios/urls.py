@@ -38,4 +38,5 @@ urlpatterns = [
     path("figuras/<uuid:pk>/delete/", views.FiguraDeleteView.as_view(), name = "delete_figura"),
 
     path('pdf/<uuid:pk>/', views.render_pdf, name='render_pdf'),
+    path('bloco/pdf/<uuid:pk>/', views.render_pdf_bloco, name='render_pdf_bloco'),
 ]
