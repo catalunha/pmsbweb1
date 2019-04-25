@@ -391,7 +391,7 @@ def render_pdf(request, pk):
     toc_filename = f"{relatorio_dir}/{pk}.toc"
     log_filename = f"{relatorio_dir}/{pk}.log"
 
-    RELATORIOS_MEDIA = os.path.join(settings.MEDIA_ROOT, 'relatorios')
+    RELATORIOS_MEDIA = 'relatorios'
     RELATORIOS_MEDIA_PDF = os.path.join(RELATORIOS_MEDIA, 'pdfs')
 
     with template_relatorio.arquivo.open(mode='r') as f:
