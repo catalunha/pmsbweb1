@@ -360,6 +360,7 @@ from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.core.files.storage import default_storage
 import shutil
+from django.utils.safestring import SafeText
 
 
 def render_pdf(request, pk):
@@ -399,10 +400,14 @@ def render_pdf(request, pk):
 
     t = Template(template_relatorio_conteudo)
     c = Context(context)
-    tex_content = t.render(c)
+    tex_content:SafeText = t.render(c)
 
-    with open(tex_filename, 'w', encoding='utf-8') as f:
-        f.write(tex_content)
+    if hasattr(tex_content, 'decode'):
+        tex_content = tex_content.decode(encoding='utf-8')
+
+    with open(tex_filename, 'w') as f:
+        f.write(str(tex_content))
+
 
     call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=relatorio_dir)
 
@@ -417,6 +422,6 @@ def render_pdf(request, pk):
     default_storage.delete(storage_filename)
     default_storage.save(storage_filename, temp_file)
 
-    #shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
+    shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
 
     return render(request, 'relatorios/render_pdf.html', context)
