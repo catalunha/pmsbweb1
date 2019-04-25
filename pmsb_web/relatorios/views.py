@@ -401,7 +401,7 @@ def render_pdf(request, pk):
     c = Context(context)
     tex_content = t.render(c)
 
-    with open(tex_filename, 'w') as f:
+    with open(tex_filename, 'w', encoding='utf-8') as f:
         f.write(tex_content)
 
     call(["pdflatex", "-interaction", "nonstopmode", tex_filename], cwd=relatorio_dir)
@@ -417,6 +417,6 @@ def render_pdf(request, pk):
     default_storage.delete(storage_filename)
     default_storage.save(storage_filename, temp_file)
 
-    shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
+    #shutil.rmtree(relatorio_dir, ignore_errors=True)  # remove todos os arquivos gerados
 
     return render(request, 'relatorios/render_pdf.html', context)
