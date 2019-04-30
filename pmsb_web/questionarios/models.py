@@ -71,11 +71,19 @@ class QuestionarioManager(models.Manager):
         return q
 
 
+class Grupo(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+    nome = models.CharField(max_length=255, unique=True)
+    descricao = models.TextField()
+
+    def __str__(self):
+        return self.nome
+
 class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
     Questionario: Representação do questionario
     """
     nome = models.CharField(max_length=255)
+    grupo = models.ForeignKey(Grupo, on_delete=models.SET_NULL, null=True, blank=True)
     publicado = models.BooleanField(default=False)
     objects = QuestionarioManager()
 

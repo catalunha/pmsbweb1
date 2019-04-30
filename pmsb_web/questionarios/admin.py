@@ -3,10 +3,13 @@ from django.contrib import admin
 from .models import (
     Localizacao,
     UnidadeMedida,
-    PerguntaRequisito, EscolhaRequisito)
+    PerguntaRequisito, 
+    EscolhaRequisito,
+)
 
 #perguntas 
 from .models import (
+    Grupo,
     Questionario,
     Pergunta,
     SetorCensitario,
@@ -42,6 +45,11 @@ class UnidadeMedidaAdmin(admin.ModelAdmin):
     list_display = ("id", "nome", "sigla")
 
 admin.site.register(UnidadeMedida)
+
+class GrupoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'descricao')
+
+admin.site.register(Grupo, GrupoAdmin)
 
 #questionario
 class RespostaStackedInlineAdmin(admin.StackedInline):

@@ -18,7 +18,7 @@ from .models import (
 class QuestionarioForm(forms.ModelForm):
     class Meta:
         model = Questionario
-        fields = ("nome", )
+        fields = ("nome", "grupo")
 
 class QuestionarioDeleteForm(forms.Form):
     id = forms.UUIDField()
