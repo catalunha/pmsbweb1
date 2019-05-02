@@ -193,7 +193,7 @@ class PerguntaUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, U
     
     def get_context_data(self, **kwargs):
         context = super(PerguntaUpdateView, self).get_context_data(**kwargs)
-        context["pergunta_do_questionario_pk"] = self.pergunta_do_questionario.pk
+        context['pergunta_do_questionario'] = self.pergunta_do_questionario        
         return context
 
     def get_form_class(self):        

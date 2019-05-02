@@ -5,7 +5,9 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            <b>Pergunta Tipo:</b> {{object.verbose_name_tipo}}
+            <p><b>Questionario:</b> {{pergunta_do_questionario.questionario}}</p>
+            <p><b>Ordem:</b> {{pergunta_do_questionario.ordem}}</p>
+            <p><b>Pergunta Tipo:</b> {{object.verbose_name_tipo}}</p>
         </h3>
         
         <form method="post">
@@ -54,7 +56,7 @@
         
         <li class="list-group-item">
             <b>{{requisito.pergunta_requisito.questionario}}</b> <b style="color:blue">{{requisito.pergunta_requisito.pergunta}}</b> <b style="color:red">{{requisito.escolha_requisito.texto}}</b>
-            <a href="{% url "questionarios:perguntarequisito_delete" pergunta_do_questionario_pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
+            <a href="{% url "questionarios:perguntarequisito_delete" pergunta_do_questionario.pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
         </li>
         {% empty %}
         
@@ -68,7 +70,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <a class="btn btn-primary" href="{% url "questionarios:perguntarequisito_create" pergunta_do_questionario_pk %}">Adicionar Pergunta Requisito</a>
+        <a class="btn btn-primary" href="{% url "questionarios:perguntarequisito_create" pergunta_do_questionario.pk %}">Adicionar Pergunta Requisito</a>
     </div>
 </div>
 
@@ -81,7 +83,7 @@
         
         <li class="list-group-item">
             <b>{{requisito.questionario}}</b> <b style="color:blue">{{requisito.escolha_requisito.pergunta}}</b> <b style="color:red">{{requisito.escolha_requisito.texto}}</b>
-            <a href="{% url "questionarios:escolharequisito_delete" pergunta_do_questionario_pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
+            <a href="{% url "questionarios:escolharequisito_delete" pergunta_do_questionario.pk requisito.pk %}"><span class="badge badge-secondary">Remover</span></a>
         </li>
         {% empty %}
         
@@ -94,7 +96,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <a class="btn btn-primary" href="{% url "questionarios:escolharequisito_create" pergunta_do_questionario_pk %}">Adicionar Escolha Requisito</a>
+        <a class="btn btn-primary" href="{% url "questionarios:escolharequisito_create" pergunta_do_questionario.pk %}">Adicionar Escolha Requisito</a>
     </div>
 </div>
 
@@ -111,8 +113,8 @@
         <ul class="list-group">
         {% for a in object.possiveis_escolhas_fake_delete %}
             <li class="list-group-item">{{a.texto}}
-                <a href="{% url "questionarios:update_possivelescolha" pergunta_do_questionario_pk a.pk %}"><span class="badge badge-secondary">Editar</span></a>
-                <a href="{% url "questionarios:delete_possivelescolha" pergunta_do_questionario_pk a.pk %}"><span class="badge badge-secondary">Remover</span></a>
+                <a href="{% url "questionarios:update_possivelescolha" pergunta_do_questionario.pk a.pk %}"><span class="badge badge-secondary">Editar</span></a>
+                <a href="{% url "questionarios:delete_possivelescolha" pergunta_do_questionario.pk a.pk %}"><span class="badge badge-secondary">Remover</span></a>
             </li>
         {% empty %}
             <li class="list-group-item">Não existem escolhas</li>
@@ -123,7 +125,7 @@
 
 <div class="row">
     <div class="col-lg-12">
-        <a class="btn btn-primary" href="{% url "questionarios:create_possivelescolha" pergunta_do_questionario_pk %}">Adicionar Escolha</a>
+        <a class="btn btn-primary" href="{% url "questionarios:create_possivelescolha" pergunta_do_questionario.pk %}">Adicionar Escolha</a>
     </div>
 </div>
 {% endif %}
