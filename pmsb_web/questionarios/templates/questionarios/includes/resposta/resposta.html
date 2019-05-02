@@ -1,0 +1,41 @@
+<div>
+    {% if resposta.tipo == 0 %}
+    <ul>
+        {% for escolha in resposta.escolhas.all %}
+        <li>{{escolha.texto}}</li>
+        {% empty %}
+        <li>Sem escolhas!</li>
+        {% endfor %}
+    </ul>
+    {% elif resposta.tipo == 1 %}
+        {% if resposta.texto %}
+        <p>{{resposta.texto}}</p>
+        {% else %}
+        Sem Resposta
+        {% endif %}
+    {% elif resposta.tipo == 2 %}
+        {% if resposta.arquivo %}
+        <p>{{resposta.arquivo}}</p>
+        {% else %}
+        Sem Resposta
+        {% endif %}
+    {% elif resposta.tipo == 3 %}    
+        {% if resposta.imagem %}
+        <p>{{resposta.imagem}}</p>
+        {% else %}
+        Sem Resposta
+        {% endif %}
+    {% elif resposta.tipo == 4 %}    
+        {% if resposta.coordenada %}
+        <p>{{resposta.coordenada}}</p>
+        {% else %}
+        Sem Resposta
+        {% endif %}
+    {% elif resposta.tipo == 5 %}
+        {% if resposta.numero %}
+        <p>{{resposta.numero}}</p>
+        {% else %}
+        Sem Resposta
+        {% endif %}
+    {% endif %}
+</div>

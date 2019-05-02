@@ -46,4 +46,7 @@ urlpatterns = [
     path("editar/pergunta/<uuid:pergunta_questionario_pk>/delete_escolha/<uuid:pk>", views.PossivelEscolhaDeleteView.as_view(), name = "delete_possivelescolha"),
 
     path("teste/", views.TesteTemplateView.as_view(), name = "teste"),
+
+    path("respostas/", views.RespostaQuestionarioListView.as_view(), name="respostaquestionario_list" ),
+    path("respostas/<uuid:pk>/", views.RespostaQuestionarioDetailView.as_view(), name="respostaquestionario_detail" ),
 ]

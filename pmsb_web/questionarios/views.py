@@ -30,6 +30,9 @@ from .models import (
     PossivelEscolha,
     PerguntaRequisito,
     EscolhaRequisito,
+
+    RespostaQuestionario,
+    RespostaPergunta,
 )
 from .forms import (
     QuestionarioForm,
@@ -386,3 +389,32 @@ class PerguntaDetailView(PermissionRequiredMixin, DetailView):
     model = Pergunta
     template_name = "questionarios/pergunta_detail.html"
     permission_required = ["questionarios.view_pergunta", ]
+
+
+class RespostasQuerysetMixin(object):
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        superior_queryset = Questionario.objects.get_by_superior(
+                usuario_superior=self.request.user,
+            )
+        user_questionarios = Questionario.objects.filter(usuario=self.request.user)
+        questionarios_queryset = superior_queryset | user_questionarios
+        
+        queryset = queryset.filter(questionario__in=questionarios_queryset)
+        
+        return queryset
+
+class RespostaFakeDeleteQuerysetMixin(RespostasQuerysetMixin, FakeDeleteQuerysetViewMixin):
+    pass 
+
+class RespostaQuestionarioListView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, ListView):
+    model = RespostaQuestionario
+    permission_required = ['questionarios.view_questionario', ]
+    template_name = "questionarios/respostaquestionario_list.html"
+
+    
+class RespostaQuestionarioDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, DetailView):
+    model = RespostaQuestionario
+    permission_required = ['questionarios.view_questionario']
+    template_name = "questionarios/respostaquestionario_detail.html"
