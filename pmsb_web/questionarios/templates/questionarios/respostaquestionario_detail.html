@@ -3,19 +3,22 @@
 {% block conteudo %}
 <div class="row">
     <div class="col-lg-12">
-        <h3>
-            <p><b>Questionario: </b> {{object.questionario}}</p>
-            <p><b>Grupo: </b> {{object.questionario.grupo}}</p>
-            <p><b>Area: </b> {{object.setor_censitario}}</p>
-            <p><b>Usuario: </b> {{object.usuario}}</p>
-        </h3>
+        <p><a class="btn btn-primary" href="{% url 'questionarios:respostaquestionario_list'%}">Voltar</a></p>
+
+        <p><b>Grupo: </b> {{object.questionario.grupo}}</p>
+        <p><b>Area: </b> {{object.setor_censitario}}</p>
+        <p><b>Questionario: </b> {{object.questionario}}</p>
+        <p><b>Usuario: </b> {{object.usuario}}</p>
+        {% include 'core/includes/timed.html' with timed_object=object %}
+
         <hr>
         {% for resposta in object.perguntas.all %}
 
-        <h5><b>Variavel: </b>{{resposta.pergunta.variavel}}</h5>        
-        <h5>{% include 'questionarios/includes/pergunta/tipo.html' with pergunta=resposta.pergunta %}</h5>
-        <p>{{resposta.pergunta.texto}}</p>
-        <h5><b>Resposta:</b></h5>
+        <p>{% include 'questionarios/includes/pergunta/tipo.html' with pergunta=resposta.pergunta %}</p>
+        <p><b>Pergunta: </b>{{resposta.pergunta.variavel}}</p>
+        <p><b>Descrição: </b>{{resposta.pergunta.texto}}</p>
+
+        <b>Resposta:</b>
         {% include 'questionarios/includes/resposta/resposta.html' with resposta=resposta %}
         <hr>
         {% empty %}

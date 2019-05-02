@@ -9,31 +9,31 @@
     </ul>
     {% elif resposta.tipo == 1 %}
         {% if resposta.texto %}
-        <p>{{resposta.texto}}</p>
+        <p>{{resposta.texto.texto}}</p>
         {% else %}
         Sem Resposta
         {% endif %}
     {% elif resposta.tipo == 2 %}
-        {% if resposta.arquivo %}
-        <p>{{resposta.arquivo}}</p>
+        {% if resposta.arquivo %}        
+        <p><a target="_blank" href="{{resposta.arquivo.arquivo.url}}">imagem</a></p>
         {% else %}
         Sem Resposta
         {% endif %}
     {% elif resposta.tipo == 3 %}    
         {% if resposta.imagem %}
-        <p>{{resposta.imagem}}</p>
+        <p><a target="_blank" href="{{resposta.imagem.imagem.url}}">imagem</a></p>
         {% else %}
         Sem Resposta
         {% endif %}
     {% elif resposta.tipo == 4 %}    
         {% if resposta.coordenada %}
-        <p>{{resposta.coordenada}}</p>
+        <p>{{resposta.coordenada.coordenada}}</p>
         {% else %}
         Sem Resposta
         {% endif %}
     {% elif resposta.tipo == 5 %}
         {% if resposta.numero %}
-        <p>{{resposta.numero}}</p>
+        <p>{{resposta.numero.numero}}</p>
         {% else %}
         Sem Resposta
         {% endif %}
