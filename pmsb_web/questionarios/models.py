@@ -132,7 +132,7 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
     """
     Pergunta: Representação da pergunta
     """
-    TIPO = None
+    TIPO = None    
     TIPO_VERBOSE = None
     variavel = models.CharField(max_length=255)
     texto = models.TextField()
@@ -162,22 +162,22 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
         # atualiza editado_em nos questionarios com esta pergunta
         for perguntadoquestionario in self.perguntadoquestionario_set.all():
             perguntadoquestionario.questionario.save()
-
+    
     @property
     def verbose_name_tipo(self):
-
+        
         if self.tipo == PerguntaEscolha.TIPO:
-            return "Pergunta Escolha"
+            return PerguntaEscolha.TIPO_VERBOSE
         elif self.tipo == PerguntaTexto.TIPO:
-            return "Pergunta Texto"
+            return PerguntaTexto.TIPO_VERBOSE
         elif self.tipo == PerguntaCoordenada.TIPO:
-            return "Pergunta Coordenada"
+            return PerguntaCoordenada.TIPO_VERBOSE
         elif self.tipo == PerguntaArquivo.TIPO:
-            return "Pergunta Arquivo"
+            return PerguntaArquivo.TIPO_VERBOSE
         elif self.tipo == PerguntaImagem.TIPO:
-            return "Pergunta Imagem"
+            return PerguntaImagem.TIPO_VERBOSE
         elif self.tipo == PerguntaNumero.TIPO:
-            return "Pergunta Numero"
+            return PerguntaNumero.TIPO_VERBOSE
 
     def cast(self):
         if self.tipo == PerguntaEscolha.TIPO:
@@ -428,6 +428,9 @@ class PossivelEscolhaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMi
         verbose_name = "Possivel Escolha Resposta"
         verbose_name_plural = "Possiveis Escolhas Resposta"
         unique_together = ("resposta_pergunta", "possivel_escolha")
+    
+    def texto(self):
+        return self.possivel_escolha.texto
 
 
 class CoordenadaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
