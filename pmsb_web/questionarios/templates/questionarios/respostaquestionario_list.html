@@ -5,13 +5,13 @@
 {% for resposta in object_list %}
 <div class="row">
     <div class="col-lg-12">
-        <p><b>Questionario: </b> {{resposta.questionario}}</p>
-        <p><b>Proposto por: </b> {{resposta.questionario.usuario}}</p>
-        <p><b>Aplicado na Área: </b> {{resposta.setor_censitario}}</p>
-        <p><b>Respondido por: </b> {{resposta.usuario}}</p>
-        <p>
+        <div><b>Questionario: </b> {{resposta.questionario}}</div>
+        <div><b>Proposto por: </b> {{resposta.questionario.usuario}}</div>
+        <div><b>Aplicado no Eixo: </b> {{resposta.setor_censitario}}</div>
+        <div><b>Respondido por: </b> {{resposta.usuario}}</div>
+        <div>
             {% include 'core/includes/timed.html' with timed_object=resposta %}
-        </p>
+        </div>
         <a class="btn btn-primary" href="{% url 'questionarios:respostaquestionario_detail' resposta.pk %}">ver
             resposta</a>
     </div>

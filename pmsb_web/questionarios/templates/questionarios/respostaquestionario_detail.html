@@ -3,20 +3,21 @@
 {% block conteudo %}
 <div class="row">
     <div class="col-lg-12">
-        <p><a class="btn btn-primary" href="{% url 'questionarios:respostaquestionario_list'%}">Voltar</a></p>
+        <div><a class="btn btn-primary" href="{% url 'questionarios:respostaquestionario_list'%}">Voltar</a></div>
 
-        <p><b>Grupo: </b> {{object.questionario.grupo}}</p>
-        <p><b>Area: </b> {{object.setor_censitario}}</p>
-        <p><b>Questionario: </b> {{object.questionario}}</p>
-        <p><b>Usuario: </b> {{object.usuario}}</p>
+        <div><b>Grupo: </b> {{object.questionario.grupo}}</div>
+        <div><b>Eixo: </b> {{object.setor_censitario}}</div>
+        <div><b>Questionario: </b> {{object.questionario}}</div>
+        <div><b>Usuario: </b> {{object.usuario}}</div>
+
         {% include 'core/includes/timed.html' with timed_object=object %}
 
         <hr>
         {% for resposta in object.perguntas.all %}
 
-        <p>{% include 'questionarios/includes/pergunta/tipo.html' with pergunta=resposta.pergunta %}</p>
-        <p><b>Pergunta: </b>{{resposta.pergunta.variavel}}</p>
-        <p><b>Descrição: </b>{{resposta.pergunta.texto}}</p>
+        <div>{% include 'questionarios/includes/pergunta/tipo.html' with pergunta=resposta.pergunta %}</div>
+        <div><b>Pergunta: </b>{{resposta.pergunta.variavel}}</div>
+        <div><b>Descrição: </b>{{resposta.pergunta.texto}}</div>
 
         <b>Resposta:</b>
         {% include 'questionarios/includes/resposta/resposta.html' with resposta=resposta %}
