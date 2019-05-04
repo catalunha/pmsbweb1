@@ -33,6 +33,8 @@ from .serializers import (
 
     SetorCensitarioViewset,
     SetorCensitarioExpandidoViewset,
+
+    GrupoViewset,
 )
 
 questionario_router = routers.DefaultRouter()
@@ -40,6 +42,8 @@ questionario_router = routers.DefaultRouter()
 questionario_router.register(r'localizacoes', LocalizacaoViewSet)
 
 questionario_router.register(r'usuarios', UserViewSet)
+
+questionario_router.register(r'grupo', GrupoViewset)
 
 questionario_router.register(r'questionarios', QuestionarioViewSet)
 questionario_router.register(r'perguntas', PerguntasViewSet)

@@ -35,7 +35,7 @@ from .models import (
     NumeroResposta,
     ArquivoResposta,
     ImagemResposta,
-
+    Grupo,
 )
 
 User = get_user_model()
@@ -272,7 +272,7 @@ class QuestionarioSerializer(serializers.ModelSerializer):
 
     class Meta(FakeDeleteSerializerMeta):
         model = Questionario
-        fields = ("id", "usuario", "nome", "criado_em",
+        fields = ("id", "usuario", "grupo", "nome", "criado_em",
                   "editado_em", "publicado", "perguntas")
 
     def get_perguntas(self, instance):
@@ -544,3 +544,14 @@ class SetorCensitarioSerializer(serializers.ModelSerializer):
 class SetorCensitarioViewset(SetorCensitorioQueryset, viewsets.ModelViewSet):
     serializer_class = SetorCensitarioSerializer
     queryset = SetorCensitario.objects.all()
+
+
+class GrupoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Grupo
+        fields = "__all__"
+
+
+class GrupoViewset(viewsets.ModelViewSet):
+    serializer_class = GrupoSerializer
+    queryset = Grupo.objects.all()
