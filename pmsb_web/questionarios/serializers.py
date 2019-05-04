@@ -42,7 +42,7 @@ User = get_user_model()
 
 
 class StandardResultsSetPagination(PageNumberPagination):
-    page_size = 100
+    page_size = 25
     page_size_query_param = 'page_size'
     max_page_size = 1000
 
@@ -72,6 +72,18 @@ class FakeDeleteListSerializer(serializers.ListSerializer):
 
 class FakeDeleteSerializerMeta:
     list_serializer_class = FakeDeleteListSerializer
+
+
+class GrupoSerializer(serializers.ModelSerializer):
+    class Meta(FakeDeleteSerializerMeta):
+        model = Grupo
+        fields = ("id", "nome", "descricao")
+
+
+class GrupoViewset(viewsets.ModelViewSet):
+    serializer_class = GrupoSerializer
+    queryset = Grupo.objects.all()
+    pagination_class = StandardResultsSetPagination
 
 
 class PerguntaDoQuestionarioSerializer(serializers.ModelSerializer):
@@ -269,6 +281,7 @@ class PerguntaImagemViewSet(viewsets.ModelViewSet):
 class QuestionarioSerializer(serializers.ModelSerializer):
     usuario = UserSerializer()
     perguntas = serializers.SerializerMethodField()
+    grupo = GrupoSerializer(read_only=True)
 
     class Meta(FakeDeleteSerializerMeta):
         model = Questionario
@@ -545,13 +558,3 @@ class SetorCensitarioViewset(SetorCensitorioQueryset, viewsets.ModelViewSet):
     serializer_class = SetorCensitarioSerializer
     queryset = SetorCensitario.objects.all()
 
-
-class GrupoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Grupo
-        fields = "__all__"
-
-
-class GrupoViewset(viewsets.ModelViewSet):
-    serializer_class = GrupoSerializer
-    queryset = Grupo.objects.all()
