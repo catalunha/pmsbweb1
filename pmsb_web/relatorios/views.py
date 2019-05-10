@@ -270,16 +270,18 @@ class FiguraDonoOuEditorQuerysetMixin(object):
         return queryset
 
 
-class FiguraRelatorioContextMixin(object):
+class RelatorioContextMixin(object):
+    relatorio_url_kwarg = "relatorio_pk"
+    relatorio_field = "pk"
     def get_context_data(self, **kwargs):
-        context = super(FiguraRelatorioContextMixin,
+        context = super(RelatorioContextMixin,
                         self).get_context_data(**kwargs)
         context["relatorio_object"] = get_object_or_404(
-            Relatorio, pk=self.kwargs.get("relatorio_pk"))
+            Relatorio, pk=self.kwargs.get(self.relatorio_url_kwarg))
         return context
 
 
-class FiguraListView(FiguraRelatorioContextMixin, FiguraDonoOuEditorQuerysetMixin, PermissionRequiredMixin, ListView):
+class FiguraListView(RelatorioContextMixin, FiguraDonoOuEditorQuerysetMixin, PermissionRequiredMixin, ListView):
     model = Figura
     template_name = "relatorios/list_figura.html"
     permission_required = [
@@ -293,7 +295,7 @@ class FiguraDetailView(FiguraDonoOuEditorQuerysetMixin, PermissionRequiredMixin,
         "relatorios.view_relatorio", "relatorios.view_figura", ]
 
 
-class FiguraCreateView(FiguraRelatorioContextMixin, PermissionRequiredMixin, CreateView):
+class FiguraCreateView(RelatorioContextMixin, PermissionRequiredMixin, CreateView):
     model = Figura
     form_class = FiguraForm
     template_name = "relatorios/create_figura.html"
@@ -488,3 +490,43 @@ def render_pdf_bloco(request, pk):
     context['pdf_url'] = pdf_url
 
     return render(request, 'relatorios/render_pdf.html', context)
+
+from .models import Pdf
+
+class PdfListView(FakeDeleteQuerysetViewMixin, RelatorioContextMixin, ListView):
+    model = Pdf
+    template_name = "relatorios/pdf_list.html"
+    relatorio_url_kwarg = 'pk'
+
+class PdfDetailView(DetailView):
+    model = Pdf
+
+class PdfCreateView(RelatorioContextMixin, CreateView):
+    model = Pdf
+    fields = ("titulo", "arquivo")
+    
+
+    def get_success_url(self):
+        return reverse_lazy('relatorios:pdf_list', kwargs={'pk':self.kwargs.get(self.relatorio_url_kwarg)})
+    
+    def form_valid(self, form=None):
+        relatorio = get_object_or_404(Relatorio, pk = self.kwargs.get(self.relatorio_url_kwarg))
+        form.instance.relatorio = relatorio
+        form.instance.usuario = self.request.user
+        return super().form_valid(form)
+
+class PdfUpdateView(FakeDeleteQuerysetViewMixin, UpdateView):
+    model = Pdf
+    fields = ("titulo", )
+    template_name = "relatorios/pdf_update.html"
+
+    def get_success_url(self):
+        return reverse_lazy('relatorios:pdf_list', kwargs={'pk':self.object.relatorio.pk})
+
+    
+class PdfDeleteView(FakeDeleteQuerysetViewMixin, FakeDeleteView):
+    model = Pdf
+    template_name = "relatorios/pdf_delete.html"
+
+    def get_success_url(self):
+        return reverse_lazy('relatorios:pdf_list', kwargs={'pk':self.object.relatorio.pk})

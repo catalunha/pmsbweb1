@@ -37,6 +37,14 @@ urlpatterns = [
     path("figuras/<uuid:pk>/editar/", views.FiguraUpdateView.as_view(), name = "update_figura"),
     path("figuras/<uuid:pk>/delete/", views.FiguraDeleteView.as_view(), name = "delete_figura"),
 
+    #pdfs incluidos
+    path("<uuid:pk>/pdfs/", views.PdfListView.as_view(), name="pdf_list"),
+    path("<uuid:relatorio_pk>/pdfs/add", views.PdfCreateView.as_view(), name="pdf_create"),
+    path("pdfs/<uuid:pk>/", views.PdfDetailView.as_view(), name="pdf_detail"),
+    path("pdfs/<uuid:pk>/editar", views.PdfUpdateView.as_view(), name="pdf_update"),
+    path("pdfs/<uuid:pk>/delete", views.PdfDeleteView.as_view(), name="pdf_delete"),
+
+
     path('pdf/<uuid:pk>/', views.render_pdf, name='render_pdf'),
     path('bloco/pdf/<uuid:pk>/', views.render_pdf_bloco, name='render_pdf_bloco'),
 ]

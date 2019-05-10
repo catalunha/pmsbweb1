@@ -276,6 +276,19 @@ class Figura(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedMod
 
     objects = FiguraManager()
 
+def upload_pdfs(instance, filename):
+    hoje = timezone.now()
+    return f"{RELATORIOS_MEDIA}/pdfs/{hoje.year}/{hoje.month}/{hoje.day}/{instance.pk}-{filename}"
+
+class Pdf(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
+    relatorio = models.ForeignKey(Relatorio, on_delete=models.CASCADE, related_name="pdfs")    
+    titulo = models.CharField(max_length=255)
+    arquivo = models.FileField(upload_to=upload_pdfs, max_length=255)
+
+    def __str__(self):
+        return self.titulo
+
+
 
 class TemplateLatex(UUIDModelMixin, UserOwnedModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     titulo = models.CharField(max_length=255)

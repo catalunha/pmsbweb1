@@ -1,50 +1,51 @@
 {% extends "base/base.html" %} {% block conteudo %}
 <div class="card-body p-4">
-    <h2 style="text-align: center;">{{relatorio_object}}</h2>
+    <h2 style="text-align: center;">{{object}}</h2>
     <h5 class="text-muted" style="text-align:center;"> Lista de figuras deste produto </h5>
     <hr>
-    <a class="btn btn-primary" href="{% url 'relatorios:create_figura' relatorio_object.pk %}">
-        <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Nova Figura</a>
+    <a class="btn btn-primary" href="{% url 'relatorios:pdf_create' relatorio_object.pk %}">
+        <i aria-hidden="true" data-hidden="true" class="fa fa-image" style="color:white;"></i>Novo PDF</a>
     <a class="btn btn-primary" href="{% url 'relatorios:detail_relatorio' relatorio_object.pk %}" style="float:right;">
         <i aria-hidden="true" data-hidden="true" class="fa icon-note" style="color:white;"></i>Voltar ao Produto</a>
     <div class="row" style="padding-top: 10px;">
-        {% for figura in object_list %} {{figura.url}}
+        {% for pdf in object_list %}
         <div class="col-sm-6 col-md-4">
             <div class="card">
-                <a target="_blank" href="{{figura.imagem.url}}">
-                    <img class="card-img-top" src="{{figura.imagem.url}}" alt="">
+                <a target="_blank" href="{{pdf.arquivo.url}}">
+                    Abrir PDF
                 </a>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm">
-                            <p class="card-text content"> <b>Legenda: </b>{{figura.legenda}} </p>
+                            <p class="card-text content"> <b>Titulo: </b>{{pdf.titulo}} </p>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-sm">
-                            <button class="btn btn-warning" onclick="copyStringToClipboard(this.value)" value="\begin{figure}[!hb]\centering\includegraphics[scale=1]{ {{figura.imagem.name}} }\caption{ {{figura.legenda}} }\label{ coloque uma palavra única de referência para essa imagem }\end{figure}">Copiar Referência</button>
+                            <button class="btn btn-warning" onclick="copyStringToClipboard('{{pdf.arquivo.url}}')">Copiar Referência</button>
                         </div>
                     </div>
                     <br>
                     <div class="row">
                         <div class="col-sm">
-                            <a class="btn btn-primary" href="{% url 'relatorios:update_figura' figura.pk %}">
+                            <a class="btn btn-primary" href="{% url 'relatorios:pdf_update' pdf.pk %}">
                                 <i aria-hidden="true" data-hidden="true" class="fa fa-edit" style="color:white;"></i>Editar</a>
                         </div>
                         <div class="col-sm">
-                            <a class="btn btn-danger" style="float:right;" href="{% url 'relatorios:delete_figura' figura.pk %}">
+                            <a class="btn btn-danger" style="float:right;" href="{% url 'relatorios:pdf_delete' pdf.pk %}">
                                 <i aria-hidden="true" data-hidden="true" class="fa fa-trash" style="color:white;"></i>Excluir</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        {% empty %} Sem figuras {% endfor %}
+        {% empty %} Sem pdfs {% endfor %}
     </div>
 </div>
 <script>
-    function copyStringToClipboard(str) {
+    function copyStringToClipboard(pdf_url) {
+        var str = "\includepdf[pages=-]{"+pdf_url+"}";
         // Create new element
         var el = document.createElement('textarea');
         // Set value (string to be copied)
