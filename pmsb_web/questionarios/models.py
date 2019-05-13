@@ -367,7 +367,7 @@ class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
 
 class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    nome = models.CharField(max_length=255, unique = True)
+    nome = models.CharField(max_length=255)
     setor_superior = models.ForeignKey("SetorCensitario", null=True, blank=True, on_delete=models.SET_NULL,
                                        related_name="subsetores")
     ativo = models.BooleanField(default=True)
@@ -376,6 +376,7 @@ class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
     class Meta:
         ordering = ('nome', )
+        unique_together = ("nome", "setor_superior")
 
     def __str__(self):
         if self.setor_superior is not None:
