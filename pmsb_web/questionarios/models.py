@@ -367,7 +367,7 @@ class EscolhaRequisito(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
 
 
 class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
-    nome = models.CharField(max_length=255)
+    nome = models.CharField(max_length=255, unique = True)
     setor_superior = models.ForeignKey("SetorCensitario", null=True, blank=True, on_delete=models.SET_NULL,
                                        related_name="subsetores")
     ativo = models.BooleanField(default=True)
