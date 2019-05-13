@@ -5,7 +5,13 @@ from .forms import FakeDeleteForm
 from django.views.generic import (
     DeleteView,
     UpdateView,
+    ListView,
+    DetailView,
+    CreateView,
+    FormView,
+    TemplateView,
 )
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from django.views.generic.edit import FormMixin
 
@@ -13,6 +19,10 @@ from django.http import (
     HttpResponseRedirect,
     JsonResponse,
 )
+
+from django.urls import resolve
+from .models import AppBlock
+
 
 class FakeDeleteView(UpdateView):
     form_class = FakeDeleteForm
@@ -32,11 +42,13 @@ class FakeDeleteView(UpdateView):
             raise Exception("model não tem metodo fake_delete")
         return super().form_valid(form)
 
+
 class AjaxableFormResponseMixin(object):
     """
     Mixin to add AJAX support to a form.
     Must be used with an object-based FormView (e.g. CreateView)
     """
+
     def form_invalid(self, form):
         response = super(AjaxableFormResponseMixin, self).form_invalid(form)
         if self.request.is_ajax():
@@ -60,4 +72,42 @@ class AjaxableFormResponseMixin(object):
 
 class FakeDeleteQuerysetViewMixin(object):
     def get_queryset(self):
-        return super().get_queryset().filter(fake_deletado = False)
+        return super().get_queryset().filter(fake_deletado=False)
+
+
+class BlockAppTestMixin(UserPassesTestMixin):
+    def test_func(self):
+        app_name = resolve(self.request.path).app_name
+        try:
+            app_block = AppBlock.objects.get(app_name=app_name)
+            return False
+        except:
+            return True
+
+
+class BlockAppTestDeleteView(BlockAppTestMixin, DeleteView):
+    pass
+
+
+class BlockAppTestUpdateView(BlockAppTestMixin, UpdateView):
+    pass
+
+
+class BlockAppTestListView(BlockAppTestMixin, ListView):
+    pass
+
+
+class BlockAppTestDetailView(BlockAppTestMixin, DetailView):
+    pass
+
+
+class BlockAppTestCreateView(BlockAppTestMixin, CreateView):
+    pass
+
+
+class BlockAppTestFormView(BlockAppTestMixin, FormView):
+    pass
+
+
+class BlockAppTestTemplateView(BlockAppTestMixin, TemplateView):
+    pass

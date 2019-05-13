@@ -5,15 +5,15 @@ from django.views import View
 
 from core.views import FakeDeleteView, FakeDeleteQuerysetViewMixin
 
-from django.views.generic import (
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    ListView,
-    TemplateView,
-    FormView,
+from core.views import (
+    BlockAppTestDetailView as DetailView,
+    BlockAppTestCreateView as CreateView,
+    BlockAppTestUpdateView as UpdateView,
+    BlockAppTestListView as ListView,
+    BlockAppTestTemplateView as TemplateView,
+    BlockAppTestFormView as FormView,
 )
+
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
 
