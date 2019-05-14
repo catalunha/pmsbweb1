@@ -80,7 +80,7 @@ class BlockAppTestMixin(UserPassesTestMixin):
         app_name = resolve(self.request.path).app_name
         try:
             app_block = AppBlock.objects.get(app_name=app_name)
-            return False
+            return self.request.user.is_superuser
         except:
             return True
 
