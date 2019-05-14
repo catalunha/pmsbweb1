@@ -1,70 +1,72 @@
 {% extends "conta/base.html" %} {% block body %}
 
 <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
-    <header class="app-header navbar ">
-      <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand" href="#">PMSB - TO
-        <!-- <img class="navbar-brand-full" src="img/brand/logo.svg" width="89" height="25" alt="CoreUI Logo">
+  <header class="app-header navbar ">
+    <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">PMSB - TO
+      <!-- <img class="navbar-brand-full" src="img/brand/logo.svg" width="89" height="25" alt="CoreUI Logo">
         <img class="navbar-brand-minimized" src="img/brand/sygnet.svg" width="30" height="30" alt="CoreUI Logo"> -->
-      </a>
-      <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    
-      <ul class="nav navbar-nav ml-auto">
-        <li class="nav-item dropdown d-md-down-none">
-    
-        </li>
-        <li class="nav-item dropdown">
-          {% if user.foto %}
-          <a href="#" class="nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            {{user.first_name}}
-            <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="" draggable="false" style="-moz-user-select: none;" >
-            &#9660;
-          </a>
-          {% else %}
-          <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-            {{user.first_name}}
-            <img class="img-avatar" src="media/default.png" alt="">
-            &#9660;
-          </a>
-          {% endif %}
-          <div class="dropdown-menu dropdown-menu-right">
-            <div class="dropdown-header text-center">
-              <strong>Usuário</strong>
-            </div>
-            <a class="dropdown-item" href="{% url 'conta:user_dados'  %}">
-              <i class="fa icon-user"></i> Conta
-            </a>
-            <a class="dropdown-item" href="{% url 'conta:perfil_list' %}">
-              <i class="fa icon-user"></i> Perfil
-            </a>
-            <div class="dropdown-header text-center">
-              <strong>Tarefas</strong>
-            </div>
-            <a class="dropdown-item" href="{% url 'pinax_messages:inbox' %}">
-              <i class="fa fa-tasks"></i> Tarefas
-            </a>
-            <div class="dropdown-header text-center">
-              <strong>Configurações</strong>
-            </div>
-            <div class="divider"></div>
-            <a class="dropdown-item" href="{% url 'conta:logout' %}">
-              <i class="icon-logout"></i> Sair</a>
+    </a>
+    <button class="navbar-toggler sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <ul class="nav navbar-nav ml-auto">
+      <li class="nav-item dropdown d-md-down-none">
+
+      </li>
+      <li class="nav-item dropdown">
+        {% if user.foto %}
+        <a href="#" class="nav-link" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          {{user.first_name}}
+          <img class="img-avatar" src="{{MEDIA}}{{request.user.foto.url}}" alt="" draggable="false"
+            style="-moz-user-select: none;">
+          &#9660;
+        </a>
+        {% else %}
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          {{user.first_name}}
+          <img class="img-avatar" src="media/default.png" alt="">
+          &#9660;
+        </a>
+        {% endif %}
+        <div class="dropdown-menu dropdown-menu-right">
+          <div class="dropdown-header text-center">
+            <strong>Usuário</strong>
           </div>
-    
-        </li>
-      </ul>
-    </header>
+          <a class="dropdown-item" href="{% url 'conta:user_dados'  %}">
+            <i class="fa icon-user"></i> Conta
+          </a>
+          <a class="dropdown-item" href="{% url 'conta:perfil_list' %}">
+            <i class="fa icon-user"></i> Perfil
+          </a>
+          <div class="dropdown-header text-center">
+            <strong>Tarefas</strong>
+          </div>
+          <a class="dropdown-item" href="{% url 'pinax_messages:inbox' %}">
+            <i class="fa fa-tasks"></i> Tarefas
+          </a>
+          <div class="dropdown-header text-center">
+            <strong>Configurações</strong>
+          </div>
+          <div class="divider"></div>
+          <a class="dropdown-item" href="{% url 'conta:logout' %}">
+            <i class="icon-logout"></i> Sair</a>
+        </div>
+
+      </li>
+    </ul>
+  </header>
   <div class="app-body">
     <div class="sidebar">
       <nav class="sidebar-nav ps ps--active-y">
         <ul class="nav">
           {% if 'pinax_messages' in perms %}
           <li class="nav-item nav-dropdown ">
-            <a {% if request.resolver_match.app_names.0 == 'pinax_messages' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'pinax_messages:inbox' %} ">
+            <a {% if request.resolver_match.app_names.0 == 'pinax_messages' %} class="nav-link  active" {% else %}
+              class="nav-link" {% endif%} href="{% url 'pinax_messages:inbox' %} ">
               <i class="nav-icon icon-list"></i>Tarefas</a>
             <!--<ul class="nav-dropdown-items">
               <li class="nav-item">
@@ -80,25 +82,25 @@
           {% endif %}
           <li class="nav-item nav-dropdown ">
             <a class="nav-link nav-dropdown-toggle" href="#">
-                <i class="nav-icon fa fa-sitemap"></i>Organograma</a>
+              <i class="nav-icon fa fa-sitemap"></i>Organograma</a>
             <ul class="nav-dropdown-items">
               {% if 'conta.view_departamento' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:departamento_tree' %}">
-                  <i class="nav-icon fa fa-building-o" style="margin-left: 15px" ></i>Área</a>
+                  <i class="nav-icon fa fa-building-o" style="margin-left: 15px"></i>Área</a>
               </li>
               {% endif %}
               {% if 'conta.view_cargo' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:cargo_tree' %}">
-                  <i class="nav-icon fa fa-address-card" style="margin-left: 15px" ></i>Cargos</a>
+                  <i class="nav-icon fa fa-address-card" style="margin-left: 15px"></i>Cargos</a>
               </li>
               {% endif %}
               {% comment %}
               {% if 'conta.view_user' in perms %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'conta:hierarquia_tree' %}">
-                  <i class="nav-icon icon-people" style="margin-left: 15px" ></i>Hierárquia</a>
+                  <i class="nav-icon icon-people" style="margin-left: 15px"></i>Hierárquia</a>
               </li>
               {% endif %}
               {% endcomment %}
@@ -106,9 +108,10 @@
           </li>
           {% if 'questionarios' in perms %}
           <li class="nav-item ">
-            <a {% if request.resolver_match.app_names.0 == 'questionarios' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'questionarios:list' %} ">
+            <a {% if request.resolver_match.app_names.0 == 'questionarios' %} class="nav-link  active" {% else %}
+              class="nav-link" {% endif%} href="{% url 'questionarios:list' %} ">
               <i class="nav-icon fa fa-question"></i>Questionarios</a>
-              <!--<ul class="nav-dropdown-items ">                
+            <!--<ul class="nav-dropdown-items ">                
                 
                 <li class="nav-item ">
                   <a class="nav-link " href="{% url 'questionarios:list' %} ">
@@ -117,11 +120,20 @@
               </ul>-->
           </li>
           {% endif %}
+
+          {% if 'questionarios' in perms %}
+          <li class="nav-item ">
+            <a {% if request.resolver_match.app_names.0 == 'api' %} class="nav-link  active" {% else %}
+              class="nav-link" {% endif%} href="{% url 'api:index' %} ">
+              <i class="nav-icon fa fa-mobile"></i>Mobile</a>            
+          </li>
+          {% endif %}
           {% if 'relatorios' in perms %}
           <li class="nav-item ">
-            <a {% if request.resolver_match.app_names.0 == 'relatorios' %} class="nav-link  active" {% else %} class="nav-link" {% endif%} href="{% url 'relatorios:list_relatorio' %} " href="#">
+            <a {% if request.resolver_match.app_names.0 == 'relatorios' %} class="nav-link  active" {% else %}
+              class="nav-link" {% endif%} href="{% url 'relatorios:list_relatorio' %} " href="#">
               <i class="nav-icon icon-note"></i>Produtos</a>
-              <!--<ul class="nav-dropdown-items">                
+            <!--<ul class="nav-dropdown-items">                
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'relatorios:list_relatorio' %}">
                   <i class="nav-icon icon-layers"></i>Lista</a>
@@ -134,7 +146,7 @@
     </div>
     <main class="main">
       {% block breadcrumb %}
-      {% endblock %}  
+      {% endblock %}
       <div class="container-fluid">
         <div class="animated fadeIn">
           {% block main %} {% endblock %}

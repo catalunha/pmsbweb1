@@ -1,0 +1,73 @@
+{% extends "dashboard/index.html" %}
+{% load static %}
+{% block main %}
+<style>
+    #questionarios .row {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="justify-content-center pinax-messages-inbox-container" style="margin-top: 10px;">
+    <div class="card">
+
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="btn-align"><i class="nav-icon fa icon-note"></i>Mobile</div>
+                </div>
+
+                <div class="col-sm">
+                    {% block ul_menu %}
+
+                    {% endblock ul_menu %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <h2 style="text-align: center;">{% block card_titulo %} Mobile {% endblock %}</h2>
+            <hr>
+        </div>
+
+        {% if mobileapp %}
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="alert alert-info">
+
+                    <span>
+                        Aplicativo para celular Android:
+                        {% if mobileapp.android %}
+                        <a href="{{ mobileapp.android.url }}">clique para baixar</a>
+                        {% else %}
+                        em manutenção
+                        {% endif %}
+                    </span>
+                    |
+                    <span>
+                        Aplicativo para celular iOS:
+                        {% if mobileapp.ios %}
+                        <a href="{{ mobileapp.ios.url }}">clique para baixar</a>
+                        {% else %}
+                        em manutenção.
+                        {% endif %}
+                    </span>
+
+
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+        <div class="row" style="margin-bottom: 70px;">
+            <div class="col-lg-10 offset-lg-1">
+                {% block conteudo %}
+                {% endblock %}
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
