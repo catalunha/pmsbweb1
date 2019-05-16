@@ -408,10 +408,46 @@ class RespostasQuerysetMixin(object):
 class RespostaFakeDeleteQuerysetMixin(RespostasQuerysetMixin, FakeDeleteQuerysetViewMixin):
     pass 
 
+from .models import SetorCensitario
+
 class RespostaQuestionarioListView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, ListView):
     model = RespostaQuestionario
     permission_required = ['questionarios.view_questionario', ]
     template_name = "questionarios/respostaquestionario_list.html"
+
+    def get_context_data(self):
+        context = super().get_context_data()
+        superior_queryset = Questionario.objects.get_by_superior(
+            usuario_superior=self.request.user,
+        )
+        user_questionarios = Questionario.objects.filter(usuario=self.request.user)
+        questionarios_queryset = superior_queryset | user_questionarios
+
+        context['questionarios'] = questionarios_queryset
+        context['setores_censitarios'] = SetorCensitario.objects.all()
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        setor_id = self.request.GET.get("setor", None)
+        questionario_id = self.request.GET.get("questionario", None)
+
+        if setor_id is not None and setor_id is not "":
+            try:
+                setor = SetorCensitario.objects.get(pk=setor_id)
+                queryset = queryset.filter(setor_censitario = setor)
+            except SetorCensitario.DoesNotExist:
+                pass
+
+        if questionario_id is not None and questionario_id is not "":
+            try:
+                questionario = Questionario.objects.get(pk=questionario_id)
+                queryset = queryset.filter(questionario = questionario)
+            except SetorCensitario.DoesNotExist:
+                pass
+
+        return queryset
 
     
 class RespostaQuestionarioDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, DetailView):
