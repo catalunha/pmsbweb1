@@ -1,0 +1,4 @@
+{% block conteudo %}{{ object.to_csv }}
+{% for resposta in object.perguntas.all %}{{ resposta.to_csv }}
+{% endfor %}
+{% endblock %}

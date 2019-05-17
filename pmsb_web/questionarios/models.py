@@ -78,6 +78,7 @@ class Grupo(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     def __str__(self):
         return self.nome
 
+
 class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedModelMixin):
     """
     Questionario: Representação do questionario
@@ -88,7 +89,7 @@ class Questionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, Ti
     objects = QuestionarioManager()
 
     class Meta:
-        ordering = ('nome', )
+        ordering = ('nome',)
         verbose_name = "Questionario"
         verbose_name_plural = "Questionarios"
 
@@ -132,7 +133,7 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
     """
     Pergunta: Representação da pergunta
     """
-    TIPO = None    
+    TIPO = None
     TIPO_VERBOSE = None
     variavel = models.CharField(max_length=255)
     texto = models.TextField()
@@ -162,10 +163,10 @@ class Pergunta(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelMixin, TimedM
         # atualiza editado_em nos questionarios com esta pergunta
         for perguntadoquestionario in self.perguntadoquestionario_set.all():
             perguntadoquestionario.questionario.save()
-    
+
     @property
     def verbose_name_tipo(self):
-        
+
         if self.tipo == PerguntaEscolha.TIPO:
             return PerguntaEscolha.TIPO_VERBOSE
         elif self.tipo == PerguntaTexto.TIPO:
@@ -239,6 +240,10 @@ class PerguntaEscolha(Pergunta):
             return "Multipla"
         else:
             return "Unica"
+
+    @property
+    def verbose_name_tipo(self):
+        return f"{super().verbose_name_tipo} {self.multipla_verbose}"
 
 
 class PerguntaTexto(Pergunta):
@@ -375,7 +380,7 @@ class SetorCensitario(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     objects = models.Manager()
 
     class Meta:
-        ordering = ('nome', )
+        ordering = ('nome',)
         unique_together = ("nome", "setor_superior")
 
     def __str__(self):
@@ -398,6 +403,20 @@ class RespostaQuestionario(UUIDModelMixin, FakeDeleteModelMixin, UserOwnedModelM
     def __str__(self):
         return "Resposta do {0}".format(self.questionario)
 
+    @property
+    def to_csv(self, separador=','):
+        csv_str = f"Grupo{separador} Aplicado na Área{separador}"
+        csv_str += f"Questionario{separador} "
+        csv_str += f"RespostaQuestionario{separador} "
+        csv_str += f"Usuario{separador} Questionario Criado Em{separador} Questionario Editado Em{separador} Tipo{separador} "
+        csv_str += f"Variavel{separador} "
+        csv_str += f"Texto{separador} "
+        csv_str += f"Criado Em{separador} "
+        csv_str += f"Editado Em{separador} "
+        csv_str += f"Localização{separador} "
+        csv_str += f"Resposta{separador} "
+        return csv_str
+
 
 class RespostaPergunta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     resposta_questionario = models.ForeignKey(RespostaQuestionario, on_delete=models.CASCADE, related_name="perguntas")
@@ -418,6 +437,72 @@ class RespostaPergunta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     def tipo(self):
         return self.pergunta.tipo
 
+    @property
+    def questionario(self):
+        return self.resposta_questionario.questionario
+
+    @property
+    def grupo(self):
+        return self.questionario.grupo
+
+    @property
+    def usuario(self):
+        return self.resposta_questionario.usuario
+
+    @property
+    def setor_censitario(self):
+        return self.resposta_questionario.setor_censitario
+
+    @property
+    def resposta(self):
+        resposta_str = ""
+        virgula = ';'
+        if self.tipo == 0:
+            for escolha in self.escolhas.all():
+                resposta_str += f"{escolha.texto()}{virgula} "
+        elif self.tipo == 1:
+            if self.texto:
+                resposta_str = f"{self.texto.texto}"
+
+        elif self.tipo == 2:
+            if self.arquivo:
+                resposta_str = f"{self.arquivo.arquivo.url}"
+
+        elif self.tipo == 3:
+            if self.imagem:
+                resposta_str = f"{self.imagem.imagem.url}"
+
+        elif self.tipo == 4:
+            if self.coordenada:
+                resposta_str = f"{self.coordenada.coordenada}"
+
+        elif self.tipo == 5:
+            if self.numero:
+                resposta_str = f"{self.numero.numero}"
+
+        return resposta_str
+
+    def to_csv(self, separador=','):
+        csv_str = ""
+        csv_str += f"{self.grupo}{separador} "
+        csv_str += f"{self.setor_censitario}{separador} "
+        csv_str += f"{self.questionario}{separador} "
+        csv_str += f"{self.resposta_questionario.pk}{separador} "
+        csv_str += f"{self.usuario}{separador} "
+        csv_str += f"{self.questionario.criado_em}{separador} "
+        csv_str += f"{self.questionario.editado_em}{separador} "
+
+        csv_str += f"{self.pergunta.cast().verbose_name_tipo}{separador} "
+
+        csv_str += f"{self.pergunta.variavel}{separador} "
+        csv_str += f"{self.pergunta.texto}{separador} "
+        csv_str += f"{self.criado_em}{separador} "
+        csv_str += f"{self.editado_em}{separador} "
+        csv_str += f"{self.localizacao}{separador} "
+
+        csv_str += f"{self.resposta}{separador} "
+        return csv_str
+
 
 class PossivelEscolhaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMixin):
     resposta_pergunta = models.ForeignKey(RespostaPergunta, on_delete=models.CASCADE, related_name="escolhas")
@@ -429,7 +514,7 @@ class PossivelEscolhaResposta(UUIDModelMixin, FakeDeleteModelMixin, TimedModelMi
         verbose_name = "Possivel Escolha Resposta"
         verbose_name_plural = "Possiveis Escolhas Resposta"
         unique_together = ("resposta_pergunta", "possivel_escolha")
-    
+
     def texto(self):
         return self.possivel_escolha.texto
 

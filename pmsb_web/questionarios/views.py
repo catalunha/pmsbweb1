@@ -454,3 +454,11 @@ class RespostaQuestionarioDetailView(PermissionRequiredMixin, RespostaFakeDelete
     model = RespostaQuestionario
     permission_required = ['questionarios.view_questionario']
     template_name = "questionarios/respostaquestionario_detail.html"
+
+
+class RespostaQuestionarioCsvDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, DetailView):
+    model = RespostaQuestionario
+    permission_required = ['questionarios.view_questionario']
+    template_name = "questionarios/respostaquestionario_csv_detail.html"
+
+    content_type = "csv"

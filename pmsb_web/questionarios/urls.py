@@ -49,4 +49,5 @@ urlpatterns = [
 
     path("respostas/", views.RespostaQuestionarioListView.as_view(), name="respostaquestionario_list" ),
     path("respostas/<uuid:pk>/", views.RespostaQuestionarioDetailView.as_view(), name="respostaquestionario_detail" ),
+    path("respostas/<uuid:pk>.csv", views.RespostaQuestionarioCsvDetailView.as_view(), name="respostaquestionario_csv_detail" ),
 ]
