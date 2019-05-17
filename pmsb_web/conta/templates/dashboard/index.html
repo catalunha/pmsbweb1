@@ -111,7 +111,7 @@
             <a {% if request.resolver_match.app_names.0 == 'questionarios' %} class="nav-link  active" {% else %}
               class="nav-link" {% endif%} href="{% url 'questionarios:list' %} ">
               <i class="nav-icon fa fa-question"></i>Questionarios</a>
-            <!--<ul class="nav-dropdown-items ">                
+            <!--<ul class="nav-dropdown-items ">
                 
                 <li class="nav-item ">
                   <a class="nav-link " href="{% url 'questionarios:list' %} ">
@@ -119,13 +119,17 @@
                 </li>
               </ul>-->
           </li>
-          {% endif %}
 
-          {% if 'questionarios' in perms %}
+          <li class="nav-item ">
+            <a {% if request.resolver_match.view_name == 'questionarios:respostaquestionario_list' %} class="nav-link  active" {% else %}
+              class="nav-link" {% endif%} href="{% url 'questionarios:respostaquestionario_list' %} ">
+              <i class="nav-icon fa fa-mobile"></i>Respostas</a>
+          </li>
+
           <li class="nav-item ">
             <a {% if request.resolver_match.app_names.0 == 'api' %} class="nav-link  active" {% else %}
               class="nav-link" {% endif%} href="{% url 'api:index' %} ">
-              <i class="nav-icon fa fa-mobile"></i>Mobile</a>            
+              <i class="nav-icon fa fa-mobile"></i>Mobile</a>
           </li>
           {% endif %}
           {% if 'relatorios' in perms %}
@@ -133,7 +137,7 @@
             <a {% if request.resolver_match.app_names.0 == 'relatorios' %} class="nav-link  active" {% else %}
               class="nav-link" {% endif%} href="{% url 'relatorios:list_relatorio' %} " href="#">
               <i class="nav-icon icon-note"></i>Produtos</a>
-            <!--<ul class="nav-dropdown-items">                
+            <!--<ul class="nav-dropdown-items">
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'relatorios:list_relatorio' %}">
                   <i class="nav-icon icon-layers"></i>Lista</a>

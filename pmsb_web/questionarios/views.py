@@ -1,22 +1,31 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import JsonResponse, HttpResponseRedirect
-from django.urls import reverse_lazy
-from django.views import View
-
-from core.views import FakeDeleteView, FakeDeleteQuerysetViewMixin
-
+from api.models import MobileApp
 from core.views import (
     BlockAppTestDetailView as DetailView,
     BlockAppTestCreateView as CreateView,
     BlockAppTestUpdateView as UpdateView,
     BlockAppTestListView as ListView,
     BlockAppTestTemplateView as TemplateView,
-    BlockAppTestFormView as FormView,
 )
-
-from django.views.generic.edit import FormMixin
+from core.views import FakeDeleteView, FakeDeleteQuerysetViewMixin
 from django.contrib.auth.mixins import UserPassesTestMixin, PermissionRequiredMixin
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views import View
 
+from .forms import (
+    QuestionarioForm,
+    BasePerguntaForm,
+    PerguntaArquivoForm,
+    PerguntaCoordenadaForm,
+    PerguntaEscolhaForm,
+    PerguntaImagemForm,
+    PerguntaNumeroForm,
+    PerguntaTextoForm,
+    PossivelEscolhaForm,
+    CreatePerguntaRequisitoForm,
+    CreateEscolhaRequisitoForm,
+)
 from .models import (
     Questionario,
     Pergunta,
@@ -32,28 +41,11 @@ from .models import (
     EscolhaRequisito,
 
     RespostaQuestionario,
-    RespostaPergunta,
 )
-from .forms import (
-    QuestionarioForm,
-    BasePerguntaForm,
-    QuestionarioDeleteForm,
-    PerguntaArquivoForm,
-    PerguntaCoordenadaForm,
-    PerguntaEscolhaForm,
-    PerguntaImagemForm,
-    PerguntaNumeroForm,
-    PerguntaTextoForm,
-    PossivelEscolhaForm,
-    PerguntaRequisitoHiddenChangeForm,
-
-    CreatePerguntaRequisitoForm,
-    CreateEscolhaRequisitoForm,
-)
-
-from api.models import MobileApp
 
 """Questionario"""
+
+
 class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, ListView):
     model = Questionario
     template_name = "questionarios/list_questionario.html"
@@ -63,7 +55,7 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
         equipe = self.request.GET.get('equipe', 'True')
 
         queryset = super(QuestionarioListView, self).get_queryset()
-        queryset = queryset.filter(usuario = self.request.user)
+        queryset = queryset.filter(usuario=self.request.user)
         if equipe == 'True':
             superior_queryset = Questionario.objects.get_by_superior(
                 usuario_superior=self.request.user,
@@ -72,7 +64,7 @@ class QuestionarioListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin,
             queryset = superior_queryset | queryset
 
         return queryset.order_by('nome')
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['mobileapp'] = MobileApp.latest() or True
@@ -87,6 +79,7 @@ class QuestionarioEquipeListView(PermissionRequiredMixin, FakeDeleteQuerysetView
     def get_queryset(self):
         return Questionario.objects.get_by_superior(self.request.user)
 
+
 class QuestionarioCreateView(PermissionRequiredMixin, CreateView):
     model = Questionario
     form_class = QuestionarioForm
@@ -98,6 +91,7 @@ class QuestionarioCreateView(PermissionRequiredMixin, CreateView):
         form.instance.usuario = self.request.user
         return super(QuestionarioCreateView, self).form_valid(form)
 
+
 class QuestioanrioUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, UpdateView):
     template_name = "questionarios/update_questionario.html"
     model = Questionario
@@ -105,17 +99,20 @@ class QuestioanrioUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixi
     permission_required = ["questionarios.change_questionario"]
     success_url = reverse_lazy("questionarios:list")
 
+
 class QuestioanrioDeleteView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
     template_name = "questionarios/delete_questionario.html"
     model = Questionario
-    
+
     success_url = reverse_lazy("questionarios:list")
     permission_required = ["questionarios.delete_questionario"]
+
 
 class QuestionarioOrdenarDetailView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, DetailView):
     model = Questionario
     template_name = "questionarios/ordenar_detail.html"
     permission_required = ["questionarios.change_questionario"]
+
 
 class QuestionarioOrdenarSubmitAjaxView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, View):
     template_name = "questionarios/ordenar_detail.html"
@@ -124,26 +121,31 @@ class QuestionarioOrdenarSubmitAjaxView(PermissionRequiredMixin, FakeDeleteQuery
     def get(self, request, *args, **kwargs):
         uuid = self.request.GET.get("id")
         ordem = self.request.GET.get("ordem")
-        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = uuid)
+        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk=uuid)
         pergunta_do_questionario.ordem = ordem
         pergunta_do_questionario.save()
-        return JsonResponse({"id":uuid})
+        return JsonResponse({"id": uuid})
+
 
 """Pergunta"""
+
 
 class PerguntaUserPassTest(UserPassesTestMixin):
     """
     TODO: Testar implementação do teste de usuario permitido
     TODO: Adicionar teste as views
     """
+
     def test_func(self):
-        pergunta = get_object_or_404(Pergunta, pk = self.kwargs.get(self.pk_url_kwarg))
+        pergunta = get_object_or_404(Pergunta, pk=self.kwargs.get(self.pk_url_kwarg))
         return self.request.user == pergunta.usuario or self.request.user.is_subordinado(pergunta.usuario)
+
 
 class PerguntaEscolherTipoTemplateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, DetailView):
     model = Questionario
     template_name = "questionarios/escolher_tipo_pergunta.html"
     permission_required = ["questionarios.change_questionario"]
+
 
 class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     template_name = "questionarios/pergunta_create.html"
@@ -151,9 +153,9 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     form_class = BasePerguntaForm
     permission_required = ["questionarios.change_questionario", "questionarios.add_pergunta"]
     pergunta_questionario = None
-    
+
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.pergunta_questionario.pk})
+        return reverse_lazy("questionarios:update_pergunta", kwargs={"pk": self.pergunta_questionario.pk})
 
     def get_form_class(self):
         instance = self.kwargs.get("tipo")
@@ -175,12 +177,13 @@ class PerguntaCreateView(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.usuario = self.request.user
         self.object = form.save()
-        questionario = get_object_or_404(Questionario, pk = self.kwargs.get("pk"))
+        questionario = get_object_or_404(Questionario, pk=self.kwargs.get("pk"))
         self.pergunta_questionario = PerguntaDoQuestionario()
         self.pergunta_questionario.questionario = questionario
         self.pergunta_questionario.pergunta = self.object
         self.pergunta_questionario.save()
         return HttpResponseRedirect(self.get_success_url())
+
 
 class PerguntaUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, UpdateView):
     template_name = "questionarios/pergunta_update.html"
@@ -191,15 +194,16 @@ class PerguntaUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, U
     pergunta_do_questionario = None
 
     def get_object(self):
-        self.pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = self.kwargs.get("pk"), fake_deletado = False)
+        self.pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk=self.kwargs.get("pk"),
+                                                          fake_deletado=False)
         return self.pergunta_do_questionario.pergunta.cast()
-    
+
     def get_context_data(self, **kwargs):
         context = super(PerguntaUpdateView, self).get_context_data(**kwargs)
-        context['pergunta_do_questionario'] = self.pergunta_do_questionario        
+        context['pergunta_do_questionario'] = self.pergunta_do_questionario
         return context
 
-    def get_form_class(self):        
+    def get_form_class(self):
 
         if isinstance(self.object, PerguntaEscolha):
             return PerguntaEscolhaForm
@@ -219,14 +223,16 @@ class PerguntaUpdateView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, U
 
 """Requisitos"""
 
+
 class PerguntaDoQuestionarioPKOnContextMixin(object):
     pergunta_do_questionario_pk = None
 
     def get_context_data(self, **kwargs):
-        assert self.pergunta_do_questionario_pk is not None, "pergunta_do_questionario_pk deve ser definida!" 
+        assert self.pergunta_do_questionario_pk is not None, "pergunta_do_questionario_pk deve ser definida!"
         context = super().get_context_data(**kwargs)
         context["pergunta_do_questionario_pk"] = self.kwargs.get(self.pergunta_do_questionario_pk)
         return context
+
 
 class PerguntaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, CreateView):
     template_name = "questionarios/perguntarequisito_create.html"
@@ -236,59 +242,65 @@ class PerguntaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionari
     pergunta_do_questionario_pk = "pk"
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pk")})
-    
+        return reverse_lazy("questionarios:update_pergunta", kwargs={"pk": self.kwargs.get("pk")})
+
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form()
-        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = self.kwargs.get("pk"))
+        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk=self.kwargs.get("pk"))
         form.instance.pergunta = pergunta_do_questionario.pergunta
         return form
 
-    def form_valid(self, form = None):
+    def form_valid(self, form=None):
         return super().form_valid(form)
+
 
 def ajax_get_perguntas_do_questionario(request):
     questionario_pk = request.GET.get("questionario_pk", None)
     perguntas_escolha = request.GET.get("perguntas_escolha", None)
-    questionario_obj = get_object_or_404(Questionario, pk = questionario_pk, fake_deletado = False)
-    
+    questionario_obj = get_object_or_404(Questionario, pk=questionario_pk, fake_deletado=False)
+
     queryset = questionario_obj.perguntas_do_questionario
 
     if perguntas_escolha == "True":
-        queryset = queryset.filter(pergunta__tipo = PerguntaEscolha.TIPO)
-    
+        queryset = queryset.filter(pergunta__tipo=PerguntaEscolha.TIPO)
+
     perguntas_do_questionario = queryset.values("id", "pergunta__variavel", "questionario__nome")
 
     rdict = dict()
 
     for p in perguntas_do_questionario:
         rdict[str(p["id"])] = {
-            "id":p["id"],
-            "pergunta":p["pergunta__variavel"],
-            "questionario":p["questionario__nome"],
+            "id": p["id"],
+            "pergunta": p["pergunta__variavel"],
+            "questionario": p["questionario__nome"],
         }
-    
+
     return JsonResponse(rdict)
+
 
 def ajax_get_escolhas_da_pergunta_do_questionario(request):
     pergunta_do_questionario_pk = request.GET.get("pergunta_do_questionario_pk", None)
-    pergunta_do_questionario_obj = get_object_or_404(PerguntaDoQuestionario, pk = pergunta_do_questionario_pk, fake_deletado = False)
+    pergunta_do_questionario_obj = get_object_or_404(PerguntaDoQuestionario, pk=pergunta_do_questionario_pk,
+                                                     fake_deletado=False)
     escolhas_da_pergunta_do_questionario = PossivelEscolha.objects.filter(
-        pergunta = pergunta_do_questionario_obj.pergunta,
-        fake_deletado = False).values("id", "texto")
+        pergunta=pergunta_do_questionario_obj.pergunta,
+        fake_deletado=False).values("id", "texto")
 
     return JsonResponse(dict(escolhas=list(escolhas_da_pergunta_do_questionario)))
 
 
-class PerguntaRequisitoDeleteView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
+class PerguntaRequisitoDeleteView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin,
+                                  FakeDeleteQuerysetViewMixin, FakeDeleteView):
     model = PerguntaRequisito
     template_name = "questionarios/perguntarequisito_delete.html"
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
     pergunta_do_questionario_pk = "pergunta_do_questionario_pk"
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_do_questionario_pk")})
+        return reverse_lazy("questionarios:update_pergunta",
+                            kwargs={"pk": self.kwargs.get("pergunta_do_questionario_pk")})
+
 
 class EscolhaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, CreateView):
     template_name = "questionarios/escolharequisito_create.html"
@@ -298,25 +310,27 @@ class EscolhaRequisitoCreateView(PermissionRequiredMixin, PerguntaDoQuestionario
     pergunta_do_questionario_pk = "pk"
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pk")})
-    
+        return reverse_lazy("questionarios:update_pergunta", kwargs={"pk": self.kwargs.get("pk")})
+
     def get_form(self, form_class=None):
         """Return an instance of the form to be used in this view."""
         form = super().get_form()
-        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = self.kwargs.get("pk"))
+        pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk=self.kwargs.get("pk"))
         form.instance.pergunta = pergunta_do_questionario.pergunta
         return form
 
 
-
-class EscolhaRequisitoDeleteView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
+class EscolhaRequisitoDeleteView(PermissionRequiredMixin, PerguntaDoQuestionarioPKOnContextMixin,
+                                 FakeDeleteQuerysetViewMixin, FakeDeleteView):
     model = EscolhaRequisito
     template_name = "questionarios/escolharequisito_delete.html"
     permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta"]
     pergunta_do_questionario_pk = "pergunta_do_questionario_pk"
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_do_questionario_pk")})
+        return reverse_lazy("questionarios:update_pergunta",
+                            kwargs={"pk": self.kwargs.get("pergunta_do_questionario_pk")})
+
 
 class PerguntaDoQuestionarioDeleteView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, FakeDeleteView):
     template_name = "questionarios/delete_pergunta_do_questionario.html"
@@ -324,25 +338,31 @@ class PerguntaDoQuestionarioDeleteView(PermissionRequiredMixin, FakeDeleteQuerys
     success_url = reverse_lazy("questionarios:list")
     permission_required = ["questionarios.change_questionario", "questionarios.delete_perguntadoquestionario"]
 
+
 """PossivelEscolha"""
+
+
 class PerguntaQuestionarioMixin(object):
     pergunta_do_questionario = None
     pergunta_do_questionario_pk_field = "pergunta_questionario_pk"
 
     def dispatch(self, request, *args, **kwargs):
-        self.pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario, pk = self.kwargs.get(self.pergunta_do_questionario_pk_field))
+        self.pergunta_do_questionario = get_object_or_404(PerguntaDoQuestionario,
+                                                          pk=self.kwargs.get(self.pergunta_do_questionario_pk_field))
         return super().dispatch(request, *args, **kwargs)
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["pergunta_do_questionario_pk"] = self.pergunta_do_questionario.pk
         return context
 
+
 class PossivelEscolhaCreateView(PerguntaQuestionarioMixin, PermissionRequiredMixin, CreateView):
     template_name = "questionarios/create_possivelescolha.html"
     model = PossivelEscolha
     form_class = PossivelEscolhaForm
-    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta", "questionarios.add_possivelescolha"]
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta",
+                           "questionarios.add_possivelescolha"]
     pergunta_do_questionario_pk_field = "pk"
 
     def form_valid(self, form):
@@ -350,27 +370,32 @@ class PossivelEscolhaCreateView(PerguntaQuestionarioMixin, PermissionRequiredMix
         return super(PossivelEscolhaCreateView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pk")})
+        return reverse_lazy("questionarios:update_pergunta", kwargs={"pk": self.kwargs.get("pk")})
 
 
-class PossivelEscolhaUpdateView(PerguntaQuestionarioMixin, FakeDeleteQuerysetViewMixin, PermissionRequiredMixin, UpdateView):
+class PossivelEscolhaUpdateView(PerguntaQuestionarioMixin, FakeDeleteQuerysetViewMixin, PermissionRequiredMixin,
+                                UpdateView):
     template_name = "questionarios/update_possivelescolha.html"
     model = PossivelEscolha
     form_class = PossivelEscolhaForm
-    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta", "questionarios.change_possivelescolha"]
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta",
+                           "questionarios.change_possivelescolha"]
     pergunta_do_questionario_pk_field = "pergunta_questionario_pk"
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_questionario_pk")})
+        return reverse_lazy("questionarios:update_pergunta", kwargs={"pk": self.kwargs.get("pergunta_questionario_pk")})
 
-class PossivelEscolhaDeleteView(PerguntaQuestionarioMixin, FakeDeleteQuerysetViewMixin, PermissionRequiredMixin, FakeDeleteView):
+
+class PossivelEscolhaDeleteView(PerguntaQuestionarioMixin, FakeDeleteQuerysetViewMixin, PermissionRequiredMixin,
+                                FakeDeleteView):
     template_name = "questionarios/delete_possivelescolha.html"
     model = PossivelEscolha
-    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta", "questionarios.delete_possivelescolha"]
+    permission_required = ["questionarios.change_questionario", "questionarios.change_pergunta",
+                           "questionarios.delete_possivelescolha"]
     pergunta_do_questionario_pk_field = "pergunta_questionario_pk"
 
     def get_success_url(self):
-        return reverse_lazy("questionarios:update_pergunta", kwargs = {"pk":self.kwargs.get("pergunta_questionario_pk")})
+        return reverse_lazy("questionarios:update_pergunta", kwargs={"pk": self.kwargs.get("pergunta_questionario_pk")})
 
 
 class TesteTemplateView(TemplateView):
@@ -383,7 +408,8 @@ class PerguntaListView(PermissionRequiredMixin, FakeDeleteQuerysetViewMixin, Lis
     permission_required = ["questionarios.view_pergunta", ]
 
     def get_queryset(self):
-        return super(PerguntaListView, self).get_queryset().filter(usuario = self.request.user)
+        return super(PerguntaListView, self).get_queryset().filter(usuario=self.request.user)
+
 
 class PerguntaDetailView(PermissionRequiredMixin, DetailView):
     model = Pergunta
@@ -392,25 +418,30 @@ class PerguntaDetailView(PermissionRequiredMixin, DetailView):
 
 
 class RespostasQuerysetMixin(object):
-    
+
     def get_queryset(self):
         queryset = super().get_queryset()
         superior_queryset = Questionario.objects.get_by_superior(
-                usuario_superior=self.request.user,
-            )
+            usuario_superior=self.request.user,
+        )
         user_questionarios = Questionario.objects.filter(usuario=self.request.user)
         questionarios_queryset = superior_queryset | user_questionarios
-        
+
         queryset = queryset.filter(questionario__in=questionarios_queryset)
-        
+
         return queryset
 
+
 class RespostaFakeDeleteQuerysetMixin(RespostasQuerysetMixin, FakeDeleteQuerysetViewMixin):
-    pass 
+    pass
+
 
 from .models import SetorCensitario
+from django.views.generic import ListView as GenericListView
+from django.views.generic import DetailView as GenericDetailView
 
-class RespostaQuestionarioListView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, ListView):
+
+class RespostaQuestionarioListView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, GenericListView):
     model = RespostaQuestionario
     permission_required = ['questionarios.view_questionario', ]
     template_name = "questionarios/respostaquestionario_list.html"
@@ -436,27 +467,27 @@ class RespostaQuestionarioListView(PermissionRequiredMixin, RespostaFakeDeleteQu
         if setor_id is not None and setor_id is not "":
             try:
                 setor = SetorCensitario.objects.get(pk=setor_id)
-                queryset = queryset.filter(setor_censitario = setor)
+                queryset = queryset.filter(setor_censitario=setor)
             except SetorCensitario.DoesNotExist:
                 pass
 
         if questionario_id is not None and questionario_id is not "":
             try:
                 questionario = Questionario.objects.get(pk=questionario_id)
-                queryset = queryset.filter(questionario = questionario)
+                queryset = queryset.filter(questionario=questionario)
             except SetorCensitario.DoesNotExist:
                 pass
 
         return queryset
 
-    
-class RespostaQuestionarioDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, DetailView):
+
+class RespostaQuestionarioDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, GenericDetailView):
     model = RespostaQuestionario
     permission_required = ['questionarios.view_questionario']
     template_name = "questionarios/respostaquestionario_detail.html"
 
 
-class RespostaQuestionarioCsvDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, DetailView):
+class RespostaQuestionarioCsvDetailView(PermissionRequiredMixin, RespostaFakeDeleteQuerysetMixin, GenericDetailView):
     model = RespostaQuestionario
     permission_required = ['questionarios.view_questionario']
     template_name = "questionarios/respostaquestionario_csv_detail.html"
