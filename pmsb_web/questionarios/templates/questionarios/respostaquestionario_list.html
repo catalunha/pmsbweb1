@@ -4,6 +4,7 @@
     <form method="get">
         <div class="row">
             <div class="col-md-12">
+                <label>Questionario:</label>
                 <select name="questionario">
                     <option value="">--------</option>
                     {% for questionario in questionarios %}
@@ -14,6 +15,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                <label>Área:</label>
                 <select name="setor">
                     <option value="">--------</option>
                     {% for setor in setores_censitarios %}
@@ -25,11 +27,13 @@
 
         <div class="row">
             <div class="col-md-12">
-                <input type="submit" value="Filtrar">
+                <input class="btn btn-success" type="submit" value="Filtrar">
                 <a class="btn btn-primary" href="{% url 'questionarios:respostaquestionario_list' %}">Limpar</a>
             </div>
         </div>
     </form>
+
+    <hr/>
 
     {% for resposta in object_list %}
         <div class="row">
@@ -45,6 +49,7 @@
                     resposta</a>
             </div>
         </div>
+        <hr/>
         {% empty %}
 
         <div class="row">
