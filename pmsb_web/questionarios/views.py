@@ -492,4 +492,4 @@ class RespostaQuestionarioCsvDetailView(PermissionRequiredMixin, RespostaFakeDel
     permission_required = ['questionarios.view_questionario']
     template_name = "questionarios/respostaquestionario_csv_detail.html"
 
-    content_type = "csv"
+    content_type = "text/csv; charset=utf-8"
