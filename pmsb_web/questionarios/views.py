@@ -455,7 +455,7 @@ class RespostaQuestionarioListView(PermissionRequiredMixin, RespostaFakeDeleteQu
         user_questionarios = Questionario.objects.filter(usuario=self.request.user)
         questionarios_queryset = superior_queryset | user_questionarios
 
-        context['questionarios'] = questionarios_queryset
+        context['questionarios'] = Questionario.objects.all()
         context['setores_censitarios'] = SetorCensitario.objects.all()
         return context
 
