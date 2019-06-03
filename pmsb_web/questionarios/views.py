@@ -421,6 +421,7 @@ class RespostasQuerysetMixin(object):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        """
         superior_queryset = Questionario.objects.get_by_superior(
             usuario_superior=self.request.user,
         )
@@ -428,7 +429,7 @@ class RespostasQuerysetMixin(object):
         questionarios_queryset = superior_queryset | user_questionarios
 
         queryset = queryset.filter(questionario__in=questionarios_queryset)
-
+        """
         return queryset
 
 
